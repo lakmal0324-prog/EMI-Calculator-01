@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lease Ledger - Pro Suite</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF & AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        body { user-select: none; -webkit-user-select: none; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Top Banner -->
+    <div class="bg-slate-900 text-emerald-400 text-center py-1.5 text-xs font-bold tracking-widest uppercase border-b border-slate-800">
+        <i class="fa-solid fa-shield-halved"></i> Created by Lakmal Maduranga
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-file-invoice-dollar text-emerald-400 text-2xl"></i>
+                <span class="font-extrabold text-xl tracking-wide">Lease Ledger</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="togglePage()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs shadow transition flex items-center gap-1">
+                    <i class="fa-solid fa-table"></i> <span id="navBtnText">Rate Sheet</span>
+                </button>
+                <button onclick="openAdminModal()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg text-xs transition" title="Admin Panel">
+                    <i class="fa-solid fa-user-lock text-base"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Body Content -->
+    <main class="max-w-7xl mx-auto p-4 flex-grow w-full">
+
+        <!-- PAGE 1: Interest Rate Sheet -->
+        <section id="ratePage" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-5 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-table-list text-emerald-400"></i> Leasing Rate Matrix</h1>
+                    <p class="text-blue-200 text-xs">Live Synchronized Interest Rates</p>
+                </div>
+                <button onclick="showPage('calcPage')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center gap-2 text-xs">
+                    Open Calculator <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Unregistered Rates Table -->
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+                <div class="bg-slate-800 text-white px-4 py-2.5 font-bold flex items-center gap-2 text-xs">
+                    <i class="fa-solid fa-car text-emerald-400"></i> 1. Unregistered Vehicles
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-700">
+                        <thead class="bg-slate-100 text-slate-800 uppercase font-bold">
+                            <tr>
+                                <th class="p-2.5">Category</th>
+                                <th class="p-2.5">12-24M</th>
+                                <th class="p-2.5">25-36M</th>
+                                <th class="p-2.5">37-48M</th>
+                                <th class="p-2.5">49-60M</th>
+                                <th class="p-2.5">61-72M</th>
+                                <th class="p-2.5">73-84M</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unregTable" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Registered Rates Table -->
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+                <div class="bg-slate-800 text-white px-4 py-2.5 font-bold flex items-center gap-2 text-xs">
+                    <i class="fa-solid fa-car-side text-emerald-400"></i> 2. Registered Vehicles
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-700">
+                        <thead class="bg-slate-100 text-slate-800 uppercase font-bold">
+                            <tr>
+                                <th class="p-2.5">Category</th>
+                                <th class="p-2.5">12-24M</th>
+                                <th class="p-2.5">25-36M</th>
+                                <th class="p-2.5">37-48M</th>
+                                <th class="p-2.5">49-60M</th>
+                                <th class="p-2.5">61-72M</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regTable" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: Multi-Balloon Calculator -->
+        <section id="calcPage" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Inputs Controls -->
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-blue-600"></i> Calculator Inputs
+                        </h2>
+                        <button onclick="openProfileModal()" class="text-xs text-blue-600 font-bold hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-user-gear"></i> Profile
+                        </button>
+                    </div>
+
+                    <!-- Officer Details -->
+                    <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-lg border">
+                        <div>
+                            <label class="block text-[9px] font-bold text-gray-500 uppercase">Officer Name</label>
+                            <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-bold text-slate-800 bg-transparent outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-gray-500 uppercase">Mobile No.</label>
+                            <input type="text" id="officerMobileDisplay" readonly class="w-full text-xs font-bold text-slate-800 bg-transparent outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Leasing Amount (Rs.)</label>
+                        <input type="number" id="facilityAmount" value="1500000" onclick="this.select()" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-gray-800 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Rate (% p.a.)</label>
+                            <input type="number" step="0.01" id="annualRate" value="14.00" onclick="this.select()" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-gray-800 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tenure (Months)</label>
+                            <input type="number" id="tenureMonths" value="60" onclick="this.select()" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-gray-800 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Balloon Payments -->
+                    <div class="pt-2 border-t">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-bold text-emerald-800 uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-layer-group text-emerald-600"></i> Balloon Payments
+                            </label>
+                            <button onclick="addBalloonField()" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-2 py-1 rounded transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> Add Balloon
+                            </button>
+                        </div>
+                        <div id="balloonContainer" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <button onclick="calculateMultiBalloonSchedule()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition flex justify-center items-center gap-2 text-sm">
+                        <i class="fa-solid fa-calculator"></i> Calculate Schedule
+                    </button>
+                </div>
+
+                <!-- Schedule Preview Section -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-md border border-gray-100 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-3 gap-2">
+                        <div>
+                            <h2 class="text-base font-bold text-gray-800">Repayment Schedule</h2>
+                            <p id="summaryText" class="text-xs text-blue-600 font-semibold">Regular Monthly Rental: Rs. 0.00</p>
+                        </div>
+                        <button onclick="sharePDFDirectly()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-base"></i> Share PDF Schedule
+                        </button>
+                    </div>
+
+                    <!-- Schedule Table Preview -->
+                    <div class="overflow-y-auto max-h-[380px] border rounded-lg">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900 text-white sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-2">#</th>
+                                    <th class="p-2">Due Date</th>
+                                    <th class="p-2">Principal</th>
+                                    <th class="p-2">Interest</th>
+                                    <th class="p-2">Total Rental</th>
+                                    <th class="p-2">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTable" class="divide-y">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-400">Click Calculate to generate schedule</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: Admin Modal Dashboard -->
+        <div id="adminModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-3">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+                <div class="bg-slate-900 text-white p-3.5 flex justify-between items-center">
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-user-shield text-emerald-400"></i> Admin & User Activity</h3>
+                    <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                
+                <div id="adminAuth" class="p-6 text-center space-y-4">
+                    <i class="fa-solid fa-lock text-4xl text-slate-700"></i>
+                    <h4 class="font-bold text-gray-800 text-base">Admin Passcode Required</h4>
+                    <input type="password" id="adminPass" class="border px-4 py-2 rounded-lg text-center text-base outline-none focus:ring-2 focus:ring-blue-500 w-48" placeholder="••••••••">
+                    <div>
+                        <button onclick="verifyAdmin()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold text-xs shadow transition">Unlock Dashboard</button>
+                    </div>
+                </div>
+
+                <div id="adminContent" class="p-4 overflow-y-auto space-y-5 hidden">
+                    <!-- User Login Activity Table -->
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-2 border-b pb-1 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-users text-emerald-600"></i> Officer Login Tracking
+                        </h4>
+                        <div class="overflow-x-auto border rounded-xl bg-white shadow-sm max-h-40">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-800 text-white sticky top-0">
+                                    <tr>
+                                        <th class="p-2">Name</th>
+                                        <th class="p-2">Mobile</th>
+                                        <th class="p-2 text-center">Logins</th>
+                                        <th class="p-2 text-right">Last Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userLogsTable" class="divide-y"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Unregistered Rates Editor -->
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-2 border-b pb-1 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-600"></i> Edit Unregistered Rates (%)
+                        </h4>
+                        <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border p-2 rounded-lg bg-slate-50"></div>
+                    </div>
+
+                    <!-- Registered Rates Editor -->
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-2 border-b pb-1 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-600"></i> Edit Registered Rates (%)
+                        </h4>
+                        <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border p-2 rounded-lg bg-slate-50"></div>
+                    </div>
+
+                    <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl shadow transition text-xs flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Publish Changes Globally
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 4: First-Time Login Profile Modal -->
+        <div id="profileModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-3">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 space-y-4">
+                <div class="text-center space-y-1">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-lg">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-base">Officer Registration</h3>
+                    <p class="text-[11px] text-gray-500">Enter Name & Mobile to continue using the app.</p>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Full Name</label>
+                        <input type="text" id="setupName" placeholder="Ex: Lakmal Maduranga" class="w-full px-3 py-1.5 border rounded-lg font-semibold text-slate-800 text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Mobile Number</label>
+                        <input type="text" id="setupMobile" placeholder="Ex: 071XXXXXXX" class="w-full px-3 py-1.5 border rounded-lg font-semibold text-slate-800 text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <button onclick="saveProfile()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs shadow transition">
+                    Save Details & Continue
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-2.5 text-center text-[10px] border-t border-slate-800">
+        <p>Designed by <span class="text-emerald-400 font-semibold">Lakmal Maduranga</span> | Lease Ledger Native App</p>
+    </footer>
+
+    <!-- Script Engine -->
+    <script>
+        // FIREBASE CONFIGURATION (Your Project Keys Applied)
+        const firebaseConfig = {
+            authDomain: "emi-calculator-9e048.firebaseapp.com",
+            databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
+            projectId: "emi-calculator-9e048",
+            storageBucket: "emi-calculator-9e048.appspot.com",
+            messagingSenderId: "181063869117"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        let calculatedSchedule = [];
+        let defaultRateData = {
+            unregistered: [
+                { category: "Cars, SUVs & Double Cabs", rates: ["13.50%", "13.50%", "14.00%", "14.50%", "15.00%", "16.00%"] },
+                { category: "Vans", rates: ["14.00%", "14.50%", "15.00%", "15.50%", "N/A", "N/A"] },
+                { category: "Small Trucks & Buses", rates: ["16.25%", "16.75%", "17.25%", "17.75%", "N/A", "N/A"] },
+                { category: "Tractors", rates: ["20.25%", "20.50%", "20.75%", "21.00%", "N/A", "N/A"] },
+                { category: "3 Wheelers", rates: ["22.25%", "23.25%", "24.25%", "25.25%", "N/A", "N/A"] },
+                { category: "Motor Cycles", rates: ["24.25%", "25.25%", "N/A", "N/A", "N/A", "N/A"] }
+            ],
+            registered: [
+                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
+                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
+                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
+                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
+                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
+            ]
+        };
+
+        let rateData = defaultRateData;
+
+        window.onload = function() {
+            checkUserProfile();
+            listenToDatabaseUpdates();
+            calculateMultiBalloonSchedule();
+        };
+
+        function listenToDatabaseUpdates() {
+            db.ref('rateData').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    rateData = data;
+                    renderRates();
+                } else {
+                    renderRates();
+                }
+            });
+        }
+
+        function trackIndividualUserLogin(name, mobile) {
+            if (!mobile) return;
+            const userKey = mobile.replace(/[^0-9]/g, "");
+
+            const userRef = db.ref('userLogs/' + userKey);
+            userRef.transaction((currentUserData) => {
+                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                if (currentUserData) {
+                    currentUserData.loginCount = (currentUserData.loginCount || 0) + 1;
+                    currentUserData.lastActive = nowStr;
+                    currentUserData.name = name;
+                    return currentUserData;
+                } else {
+                    return {
+                        name: name,
+                        mobile: mobile,
+                        loginCount: 1,
+                        lastActive: nowStr
+                    };
+                }
+            });
+        }
+
+        function checkUserProfile() {
+            const name = localStorage.getItem('officerName');
+            const mobile = localStorage.getItem('officerMobile');
+
+            if (!name || !mobile) {
+                document.getElementById('profileModal').classList.remove('hidden');
+            } else {
+                document.getElementById('officerNameDisplay').value = name;
+                document.getElementById('officerMobileDisplay').value = mobile;
+                trackIndividualUserLogin(name, mobile);
+            }
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('setupName').value;
+            const mobile = document.getElementById('setupMobile').value;
+
+            if (!name || !mobile) {
+                alert("Please enter Name and Mobile.");
+                return;
+            }
+
+            localStorage.setItem('officerName', name);
+            localStorage.setItem('officerMobile', mobile);
+            document.getElementById('officerNameDisplay').value = name;
+            document.getElementById('officerMobileDisplay').value = mobile;
+            document.getElementById('profileModal').classList.add('hidden');
+            
+            trackIndividualUserLogin(name, mobile);
+        }
+
+        function openProfileModal() {
+            document.getElementById('setupName').value = localStorage.getItem('officerName') || '';
+            document.getElementById('setupMobile').value = localStorage.getItem('officerMobile') || '';
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function addBalloonField(defaultMonth = '', defaultAmount = '') {
+            const container = document.getElementById('balloonContainer');
+            const div = document.createElement('div');
+            div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-1 rounded border";
+            div.innerHTML = `
+                <div class="w-1/3">
+                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 border rounded text-xs text-center font-bold outline-none">
+                </div>
+                <div class="w-7/12">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 border rounded text-xs font-bold text-emerald-700 outline-none">
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-rose-500 p-1"><i class="fa-solid fa-circle-xmark"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function getBalloonConfig() {
+            const map = {};
+            document.querySelectorAll('.balloon-row').forEach(row => {
+                const m = parseInt(row.querySelector('.b-month').value);
+                const a = parseFloat(row.querySelector('.b-amount').value);
+                if (m > 0 && a > 0) map[m] = a;
+            });
+            return map;
+        }
+
+        function calculateMultiBalloonSchedule() {
+            const P = parseFloat(document.getElementById('facilityAmount').value) || 0;
+            const annualRate = parseFloat(document.getElementById('annualRate').value) || 0;
+            const N = parseInt(document.getElementById('tenureMonths').value) || 0;
+            const balloonMap = getBalloonConfig();
+
+            if (P <= 0 || annualRate <= 0 || N <= 0) return;
+
+            const r = (annualRate / 100) / 12;
+            let sumPvBalloons = 0;
+            for (let m in balloonMap) {
+                sumPvBalloons += balloonMap[m] / Math.pow(1 + r, parseInt(m));
+            }
+
+            const amortizedP = P - sumPvBalloons;
+            const regularEMI = (amortizedP * r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
+
+            let balance = P;
+            calculatedSchedule = [];
+            const startDate = new Date();
+
+            for (let i = 1; i <= N; i++) {
+                let interest = balance * r;
+                let balloonExtra = balloonMap[i] || 0;
+                let currentTotalDue = regularEMI + balloonExtra;
+                let principal = currentTotalDue - interest;
+
+                if (i === N) {
+                    principal = balance;
+                    currentTotalDue = principal + interest;
+                    balance = 0;
+                } else {
+                    balance = balance - principal;
+                }
+
+                let dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + i, startDate.getDate());
+                let dateStr = dueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+
+                calculatedSchedule.push({
+                    month: i,
+                    dueDate: dateStr,
+                    principal: principal,
+                    interest: interest,
+                    totalDue: currentTotalDue,
+                    balance: balance < 0 ? 0 : balance,
+                    isBalloon: balloonExtra > 0
+                });
+            }
+
+            document.getElementById('summaryText').innerText = `Regular Monthly Rental: Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            const tbody = document.getElementById('scheduleTable');
+            tbody.innerHTML = calculatedSchedule.map(s => `
+                <tr class="${s.isBalloon ? 'bg-emerald-50/80 font-bold' : 'hover:bg-slate-50'}">
+                    <td class="p-2 font-semibold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-emerald-600 text-white px-1 py-0.5 rounded ml-0.5">B</span>' : ''}</td>
+                    <td class="p-2 font-medium text-slate-600">${s.dueDate}</td>
+                    <td class="p-2">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2 text-gray-500">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2 ${s.isBalloon ? 'text-emerald-700 font-extrabold' : 'text-blue-700 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2 text-slate-700">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRates() {
+            const unregTbody = document.getElementById('unregTable');
+            const regTbody = document.getElementById('regTable');
+
+            if(unregTbody) {
+                unregTbody.innerHTML = rateData.unregistered.map(r => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 font-semibold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-2 font-medium ${val === 'N/A' ? 'text-gray-300' : ''}">${val}</td>`).join('')}
+                    </tr>
+                `).join('');
+            }
+
+            if(regTbody) {
+                regTbody.innerHTML = rateData.registered.map(r => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 font-semibold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-2 font-medium ${val === 'N/A' ? 'text-gray-300' : ''}">${val}</td>`).join('')}
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function togglePage() {
+            const isCalc = !document.getElementById('calcPage').classList.contains('hidden');
+            showPage(isCalc ? 'ratePage' : 'calcPage');
+        }
+
+        function showPage(pageId) {
+            document.getElementById('ratePage').classList.add('hidden');
+            document.getElementById('calcPage').classList.add('hidden');
+            document.getElementById(pageId).classList.remove('hidden');
+
+            const btnText = document.getElementById('navBtnText');
+            btnText.innerText = (pageId === 'calcPage') ? "Rate Sheet" : "Calculator";
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminAuth').classList.remove('hidden');
+            document.getElementById('adminContent').classList.add('hidden');
+            document.getElementById('adminPass').value = '';
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function verifyAdmin() {
+            if (document.getElementById('adminPass').value === 'Lakmal@93') {
+                document.getElementById('adminAuth').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                loadAdminUserLogs();
+                renderRateEditor();
+            } else {
+                alert('Access Denied');
+            }
+        }
+
+        function loadAdminUserLogs() {
+            db.ref('userLogs').on('value', (snapshot) => {
+                const data = snapshot.val();
+                const tbody = document.getElementById('userLogsTable');
+                if (!data) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3 text-gray-400">No user logs yet.</td></tr>`;
+                    return;
+                }
+
+                let html = '';
+                for (let key in data) {
+                    const u = data[key];
+                    html += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2 font-bold text-slate-800">${u.name || 'Unknown'}</td>
+                            <td class="p-2 text-slate-600 font-semibold">${u.mobile || 'N/A'}</td>
+                            <td class="p-2 text-center"><span class="bg-blue-100 text-blue-800 font-extrabold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
+                            <td class="p-2 text-right text-slate-500 font-medium">${u.lastActive || 'N/A'}</td>
+                        </tr>
+                    `;
+                }
+                tbody.innerHTML = html;
+            });
+        }
+
+        function renderRateEditor() {
+            const unregContainer = document.getElementById('unregRateEditor');
+            const regContainer = document.getElementById('regRateEditor');
+
+            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
+                <div class="p-1.5 bg-white border rounded space-y-1">
+                    <label class="text-[10px] font-bold text-gray-700">${item.category}</label>
+                    <div class="grid grid-cols-6 gap-1">
+                        ${item.rates.map((r, col) => `
+                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-0.5 border rounded text-[10px] text-center font-bold">
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            regContainer.innerHTML = rateData.registered.map((item, idx) => `
+                <div class="p-1.5 bg-white border rounded space-y-1">
+                    <label class="text-[10px] font-bold text-gray-700">${item.category}</label>
+                    <div class="grid grid-cols-5 gap-1">
+                        ${item.rates.map((r, col) => `
+                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-0.5 border rounded text-[10px] text-center font-bold">
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function saveAdminSettings() {
+            document.querySelectorAll('.rate-edit-input').forEach(input => {
+                const type = input.dataset.type;
+                const catIdx = input.dataset.cat;
+                const colIdx = input.dataset.col;
+                rateData[type][catIdx].rates[colIdx] = input.value;
+            });
+
+            db.ref('rateData').set(rateData, (error) => {
+                if (error) {
+                    alert("Error publishing updates: " + error.message);
+                } else {
+                    closeAdminModal();
+                    alert("Rate changes published globally!");
+                }
+            });
+        }
+
+        async function sharePDFDirectly() {
+            if (calculatedSchedule.length === 0) return alert("Calculate schedule first.");
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            const P = parseFloat(document.getElementById('facilityAmount').value);
+            const R = document.getElementById('annualRate').value;
+            const N = document.getElementById('tenureMonths').value;
+            const officerName = localStorage.getItem('officerName') || "Officer";
+            const officerMobile = localStorage.getItem('officerMobile') || "N/A";
+
+            doc.setFillColor(15, 23, 42);
+            doc.rect(10, 10, 190, 26, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Lease Ledger - Repayment Schedule", 15, 18);
+
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(203, 213, 225);
+            doc.text(`Facility Amount: Rs. ${P.toLocaleString()} | Interest Rate: ${R}% p.a. | Tenure: ${N} Months`, 15, 24);
+            doc.text(`Prepared By: ${officerName} | Contact: ${officerMobile}`, 15, 29);
+
+            const tableBody = calculatedSchedule.map(s => [
+                s.month + (s.isBalloon ? ' (Balloon)' : ''),
+                s.dueDate,
+                s.principal.toLocaleString('en-US', {minimumFractionDigits: 2}),
+                s.interest.toLocaleString('en-US', {minimumFractionDigits: 2}),
+                s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2}),
+                s.balance.toLocaleString('en-US', {minimumFractionDigits: 2})
+            ]);
+
+            doc.autoTable({
+                startY: 40,
+                head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
+                body: tableBody,
+                theme: 'plain',
+                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                bodyStyles: { fontSize: 6.5, cellPadding: 1.5 },
+                columnStyles: {
+                    0: { halign: 'center' },
+                    1: { halign: 'center' },
+                    2: { halign: 'right' },
+                    3: { halign: 'right' },
+                    4: { halign: 'right', fontStyle: 'bold' },
+                    5: { halign: 'right' }
+                },
+                alternateRowStyles: { fillColor: [248, 250, 252] },
+                margin: { left: 10, right: 10 }
+            });
+
+            const pdfBlob = doc.output('blob');
+            const file = new File([pdfBlob], `Lease_Schedule_Rs_${P}.pdf`, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Lease Schedule',
+                        text: `Lease Schedule (Prepared by ${officerName} - ${officerMobile})`
+                    });
+                } catch (err) { console.log('Share canceled', err); }
+            } else {
+                doc.save(`Lease_Schedule_Rs_${P}.pdf`);
+            }
+        }
+    </script>
+</body>
+</html>
