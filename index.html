@@ -1,861 +1,278 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lease Ledger - Pro Suite</title>
-    
-    <!-- PWA & Mobile App Setup -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Lease Ledger">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2845/2845899.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMI & Finance Management App</title>
 
-    <!-- Tailwind CSS & Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- jsPDF, AutoTable & Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- PWA & Home Screen Icon Tags -->
+  <link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=17zgIOB2azc5_eXBhx1ulfJc9pOkLApPH">
+  <link rel="apple-touch-icon" href="https://drive.google.com/uc?export=view&id=17zgIOB2azc5_eXBhx1ulfJc9pOkLApPH">
+  <meta name="apple-mobile-web-app-title" content="EMI CAL">
+  <meta name="application-name" content="EMI CAL">
 
-    <!-- Firebase JS SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- External Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <style>
-        body { 
-            user-select: none; 
-            -webkit-user-select: none; 
-            background-color: #0b0f19;
-            color: #f1f5f9;
-        }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-    </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body { background-color: #0d1117; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding-bottom: 40px; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 12px; color: #fff; margin-bottom: 20px; }
+    .form-control, .form-select { background-color: #0d1117; border: 1px solid #30363d; color: #fff; }
+    .form-control:focus, .form-select:focus { background-color: #0d1117; color: #fff; border-color: #2ea043; box-shadow: none; }
+    .btn-primary { background-color: #2ea043; border: none; font-weight: 600; }
+    .btn-primary:hover { background-color: #2c974b; }
+    .nav-tabs { border-bottom: 1px solid #30363d; }
+    .nav-tabs .nav-link { color: #8b949e; border: none; font-weight: 500; }
+    .nav-tabs .nav-link.active { background-color: #161b22; color: #2ea043; font-weight: bold; border-bottom: 2px solid #2ea043; }
+    .badge-custom { background-color: #238636; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
+  </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Top Banner -->
-    <div class="bg-slate-950 text-emerald-400 text-center py-1 text-[10px] font-bold tracking-widest uppercase border-b border-slate-800/80">
-        <i class="fa-solid fa-shield-halved"></i> Designed by Lakmal Maduranga
+  <div class="container mt-3">
+    
+    <!-- Top Navigation Bar -->
+    <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="calc-tab" data-bs-toggle="tab" data-bs-target="#calcView" type="button">EMI Calculator</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="rates-tab" data-bs-toggle="tab" data-bs-target="#ratesView" type="button">Live Rates</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminView" type="button">Admin Panel</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <!-- ================= 1. EMI CALCULATOR TAB ================= -->
+      <div class="tab-pane fade show active" id="calcView">
+        
+        <div class="card p-3">
+          <h5 class="text-success fw-bold mb-3">Leasing & Loan EMI Calculator</h5>
+          <div class="mb-3">
+            <label class="form-label">Loan Amount (Rs.)</label>
+            <input type="number" class="form-control" id="loanAmount" placeholder="Enter total loan amount" oninput="calculateEMI()">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Annual Interest Rate (%)</label>
+            <input type="number" class="form-control" id="interestRate" placeholder="Enter annual interest rate" oninput="calculateEMI()">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Period (Months)</label>
+            <input type="number" class="form-control" id="loanTenure" placeholder="Enter period in months" oninput="calculateEMI()">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Monthly EMI Payment</label>
+            <input type="text" class="form-control fw-bold text-success" id="monthlyEMI" placeholder="Rs. 0.00" readonly>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="card p-3">
+          <h6 class="text-secondary mb-3">Loan Breakdown Visualizer</h6>
+          <canvas id="emiChart" height="200"></canvas>
+          <button class="btn btn-primary w-100 mt-4" onclick="generatePDF()">Share / Download PDF Report</button>
+        </div>
+
+      </div>
+
+      <!-- ================= 2. LIVE RATES TAB ================= -->
+      <div class="tab-pane fade" id="ratesView">
+        <div class="card p-3">
+          <h5 class="text-success fw-bold mb-3">Live Interest & Leasing Rates</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Personal Loan Rate
+              <span class="badge-custom" id="ratePersonalLoan">12.5%</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Leasing Rate
+              <span class="badge-custom" id="rateLeasing">14.0%</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Fixed Deposit Interest Rate
+              <span class="badge-custom" id="rateFD">8.5%</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ================= 3. ADMIN PANEL TAB ================= -->
+      <div class="tab-pane fade" id="adminView">
+        <h4 class="mb-3 text-center fw-bold">Admin Control Panel</h4>
+
+        <!-- Total Usage Card (Top) -->
+        <div class="card p-3 text-center bg-dark border-success">
+          <h6 class="text-uppercase text-secondary">Total App Usage</h6>
+          <h1 class="display-4 fw-bold text-success" id="totalAppUsage">0</h1>
+        </div>
+
+        <!-- Update Rates -->
+        <div class="card p-3">
+          <h5 class="text-success mb-3">Update Interest & Lease Rates</h5>
+          <form id="rateUpdateForm">
+            <div class="mb-3">
+              <label class="form-label">Leasing Interest Rate (%)</label>
+              <input type="number" step="0.01" class="form-control" id="adminLeaseRate" placeholder="Enter new leasing rate" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Update Rates</button>
+          </form>
+        </div>
+
+        <!-- Usage Statistics -->
+        <div class="card p-3">
+          <h5 class="text-success mb-3">Detailed App Usage</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+              Today EMI Calculations
+              <span class="badge bg-success" id="todayUsage">0</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+              This Month Total
+              <span class="badge bg-info" id="monthUsage">0</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Change Admin Password -->
+        <div class="card p-3">
+          <h5 class="text-success mb-3">Change Admin Password</h5>
+          <form id="changePasswordForm">
+            <div class="mb-3">
+              <label class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="currentPassword" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" required>
+            </div>
+            <button type="submit" class="btn btn-warning w-100 fw-bold">Change Password</button>
+          </form>
+        </div>
+
+      </div>
+
     </div>
-
-    <!-- Navigation Header -->
-    <header class="bg-slate-900/90 text-white shadow-xl sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-file-invoice-dollar text-emerald-400 text-2xl"></i>
-                <span class="font-extrabold text-lg tracking-wider text-slate-100">Lease<span class="text-emerald-400">Ledger</span></span>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="togglePage()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold px-3 py-1.5 rounded-xl text-xs border border-emerald-500/30 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-table"></i> <span id="navBtnText">Rate Sheet</span>
-                </button>
-                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl text-xs border border-slate-700 transition" title="Admin Panel">
-                    <i class="fa-solid fa-user-lock text-base"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Body -->
-    <main class="max-w-7xl mx-auto p-4 flex-grow w-full space-y-4">
-
-        <!-- PAGE 1: Rate Sheet -->
-        <section id="ratePage" class="hidden space-y-4">
-            <div class="glass-card p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div>
-                    <h1 class="text-base font-bold text-slate-100 flex items-center gap-2"><i class="fa-solid fa-table-list text-emerald-400"></i> Interest Rate Matrix</h1>
-                    <p class="text-slate-400 text-xs">Live Synchronized Company Rates</p>
-                </div>
-                <button onclick="showPage('calcPage')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-2">
-                    Open Calculator <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- Unregistered Rates Table -->
-            <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="bg-slate-900/90 text-slate-200 px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-slate-800">
-                    <i class="fa-solid fa-car text-emerald-400"></i> 1. Unregistered Vehicles
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-900/50 text-slate-400 uppercase font-bold text-[10px]">
-                            <tr>
-                                <th class="p-2.5">Category</th>
-                                <th class="p-2.5">12-24M</th>
-                                <th class="p-2.5">25-36M</th>
-                                <th class="p-2.5">37-48M</th>
-                                <th class="p-2.5">49-60M</th>
-                                <th class="p-2.5">61-72M</th>
-                                <th class="p-2.5">73-84M</th>
-                            </tr>
-                        </thead>
-                        <tbody id="unregTable" class="divide-y divide-slate-800/50"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Registered Rates Table -->
-            <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="bg-slate-900/90 text-slate-200 px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-slate-800">
-                    <i class="fa-solid fa-car-side text-emerald-400"></i> 2. Registered Vehicles
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-900/50 text-slate-400 uppercase font-bold text-[10px]">
-                            <tr>
-                                <th class="p-2.5">Category</th>
-                                <th class="p-2.5">12-24M</th>
-                                <th class="p-2.5">25-36M</th>
-                                <th class="p-2.5">37-48M</th>
-                                <th class="p-2.5">49-60M</th>
-                                <th class="p-2.5">61-72M</th>
-                            </tr>
-                        </thead>
-                        <tbody id="regTable" class="divide-y divide-slate-800/50"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 2: Calculator Page -->
-        <section id="calcPage" class="space-y-4">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                
-                <!-- Inputs Section -->
-                <div class="glass-card p-5 rounded-2xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
-                        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-calculator text-emerald-400"></i> Facility Parameters
-                        </h2>
-                        <button onclick="openProfileModal()" class="text-xs text-emerald-400 font-bold hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-user-gear"></i> Profile
-                        </button>
-                    </div>
-
-                    <!-- Officer Details Banner -->
-                    <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase">Officer Name</label>
-                            <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase">Mobile No.</label>
-                            <input type="text" id="officerMobileDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Financed Amount (Rs.)</label>
-                        <input type="number" id="facilityAmount" value="10000000" onclick="this.select()" class="w-full px-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl focus:border-emerald-500 outline-none font-semibold text-slate-100 text-sm">
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Rate (% p.a.)</label>
-                            <input type="number" step="0.01" id="annualRate" value="14.50" onclick="this.select()" class="w-full px-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl focus:border-emerald-500 outline-none font-semibold text-slate-100 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tenure (Months)</label>
-                            <input type="number" id="tenureMonths" value="48" onclick="this.select()" class="w-full px-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl focus:border-emerald-500 outline-none font-semibold text-slate-100 text-sm">
-                        </div>
-                    </div>
-
-                    <!-- Balloon Inputs -->
-                    <div class="pt-2 border-t border-slate-800">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-xs font-bold text-amber-400 uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-layer-group"></i> Balloon Payments
-                            </label>
-                            <button onclick="addBalloonField()" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold px-2 py-1 rounded-lg border border-amber-500/20 transition flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> Add
-                            </button>
-                        </div>
-                        <div id="balloonContainer" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <button onclick="calculateMultiBalloonSchedule()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-calculator text-sm"></i> Calculate Schedule
-                    </button>
-                </div>
-
-                <!-- Schedule Preview Section -->
-                <div class="lg:col-span-2 glass-card p-5 rounded-2xl space-y-4 flex flex-col justify-between">
-                    <div class="space-y-3">
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-800 pb-3 gap-2">
-                            <div>
-                                <h2 class="text-sm font-bold text-slate-100">Repayment Summary</h2>
-                                <p id="summaryText" class="text-xs text-emerald-400 font-semibold">Regular Monthly Rental: Rs. 0.00</p>
-                            </div>
-                            <button onclick="sharePDFDirectly()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-share-nodes"></i> Share / Download PDF
-                            </button>
-                        </div>
-
-                        <!-- Schedule Dynamic Table -->
-                        <div class="overflow-y-auto max-h-[420px] border border-slate-800 rounded-xl bg-slate-950/50">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-900 text-slate-300 sticky top-0 z-10 text-[10px] uppercase">
-                                    <tr>
-                                        <th class="p-2.5">#</th>
-                                        <th class="p-2.5">Due Date</th>
-                                        <th class="p-2.5">Principal</th>
-                                        <th class="p-2.5">Interest</th>
-                                        <th class="p-2.5">Total Rental</th>
-                                        <th class="p-2.5">Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-slate-800/60 text-slate-300">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-10 text-slate-500">Click Calculate to view Schedule</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 3: Admin Modal Dashboard -->
-        <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="glass-card rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-700">
-                <div class="bg-slate-900 p-3.5 flex justify-between items-center border-b border-slate-800">
-                    <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2"><i class="fa-solid fa-user-shield text-emerald-400"></i> Admin Panel</h3>
-                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-                </div>
-                
-                <div id="adminAuth" class="p-6 text-center space-y-4">
-                    <i class="fa-solid fa-lock text-4xl text-slate-600"></i>
-                    <h4 class="font-bold text-slate-200 text-sm">Enter Passcode</h4>
-                    <input type="password" id="adminPass" class="bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl text-center text-sm outline-none focus:border-emerald-500 w-48 text-slate-100" placeholder="••••••••">
-                    <div>
-                        <button onclick="verifyAdmin()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-2 rounded-xl font-bold text-xs shadow transition">Unlock Dashboard</button>
-                    </div>
-                </div>
-
-                <div id="adminContent" class="p-4 overflow-y-auto space-y-5 hidden">
-                    <div>
-                        <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-800 pb-1 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-users text-emerald-400"></i> Officer Activity
-                        </h4>
-                        <div class="overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/60 max-h-40">
-                            <table class="w-full text-left text-xs text-slate-300">
-                                <thead class="bg-slate-900 text-slate-400 sticky top-0 text-[10px]">
-                                    <tr>
-                                        <th class="p-2">Name</th>
-                                        <th class="p-2">Mobile</th>
-                                        <th class="p-2 text-center">Logins</th>
-                                        <th class="p-2 text-right">Last Active</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userLogsTable" class="divide-y divide-slate-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-800 pb-1 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-emerald-400"></i> Edit Unregistered Rates
-                        </h4>
-                        <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-slate-800 p-2 rounded-xl bg-slate-950/40"></div>
-                    </div>
-
-                    <div>
-                        <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-800 pb-1 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-emerald-400"></i> Edit Registered Rates
-                        </h4>
-                        <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-slate-800 p-2 rounded-xl bg-slate-950/40"></div>
-                    </div>
-
-                    <button onclick="saveAdminSettings()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl transition text-xs flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Save & Publish Globally
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Modal -->
-        <div id="profileModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="glass-card rounded-2xl max-w-sm w-full p-5 space-y-4 border border-slate-700">
-                <div class="text-center space-y-1">
-                    <div class="w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-lg border border-emerald-500/20">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-100 text-sm">Officer Profile</h3>
-                    <p class="text-[11px] text-slate-400">Set up name and mobile for PDF signatures.</p>
-                </div>
-
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
-                        <input type="text" id="setupName" placeholder="Ex: Lakmal Maduranga" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl font-semibold text-slate-100 text-xs outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Mobile Number</label>
-                        <input type="text" id="setupMobile" placeholder="Ex: 071XXXXXXX" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl font-semibold text-slate-100 text-xs outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <button onclick="saveProfile()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow transition">
-                    Save Profile
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <footer class="bg-slate-950 text-slate-500 py-3 text-center text-[10px] border-t border-slate-800">
-        <p>Designed by <span class="text-emerald-400 font-semibold">Lakmal Maduranga</span> | Lease Ledger Pro Suite</p>
-    </footer>
-
-    <!-- Hidden Canvas for PDF Donut Chart rendering -->
-    <div style="position: absolute; left: -9999px; top: -9999px;">
-        <canvas id="pdfChartCanvas" width="250" height="250"></canvas>
-    </div>
-
-    <!-- Script Engine -->
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            authDomain: "emi-calculator-9e048.firebaseapp.com",
-            databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
-            projectId: "emi-calculator-9e048",
-            storageBucket: "emi-calculator-9e048.appspot.com",
-            messagingSenderId: "181063869117"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
-
-        let calculatedSchedule = [];
-        let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
-
-        let defaultRateData = {
-            unregistered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["13.50%", "13.50%", "14.00%", "14.50%", "15.00%", "16.00%"] },
-                { category: "Vans", rates: ["14.00%", "14.50%", "15.00%", "15.50%", "N/A", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.25%", "16.75%", "17.25%", "17.75%", "N/A", "N/A"] },
-                { category: "Tractors", rates: ["20.25%", "20.50%", "20.75%", "21.00%", "N/A", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.25%", "23.25%", "24.25%", "25.25%", "N/A", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.25%", "25.25%", "N/A", "N/A", "N/A", "N/A"] }
-            ],
-            registered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
-                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
-            ]
-        };
-
-        let rateData = defaultRateData;
-
-        window.onload = function() {
-            checkUserProfile();
-            listenToDatabaseUpdates();
-            addBalloonField(47, 3000000);
-            calculateMultiBalloonSchedule();
-        };
-
-        function listenToDatabaseUpdates() {
-            db.ref('rateData').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    rateData = data;
-                    renderRates();
-                } else {
-                    renderRates();
-                }
-            });
-        }
-
-        function trackIndividualUserLogin(name, mobile) {
-            if (!mobile) return;
-            const userKey = mobile.replace(/[^0-9]/g, "");
-            const userRef = db.ref('userLogs/' + userKey);
-            userRef.transaction((currentUserData) => {
-                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                if (currentUserData) {
-                    currentUserData.loginCount = (currentUserData.loginCount || 0) + 1;
-                    currentUserData.lastActive = nowStr;
-                    currentUserData.name = name;
-                    return currentUserData;
-                } else {
-                    return { name: name, mobile: mobile, loginCount: 1, lastActive: nowStr };
-                }
-            });
-        }
-
-        function checkUserProfile() {
-            const name = localStorage.getItem('officerName');
-            const mobile = localStorage.getItem('officerMobile');
-
-            if (!name || !mobile) {
-                document.getElementById('profileModal').classList.remove('hidden');
-            } else {
-                document.getElementById('officerNameDisplay').value = name;
-                document.getElementById('officerMobileDisplay').value = mobile;
-                trackIndividualUserLogin(name, mobile);
-            }
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('setupName').value;
-            const mobile = document.getElementById('setupMobile').value;
-            if (!name || !mobile) return alert("Please enter Name & Mobile.");
-
-            localStorage.setItem('officerName', name);
-            localStorage.setItem('officerMobile', mobile);
-            document.getElementById('officerNameDisplay').value = name;
-            document.getElementById('officerMobileDisplay').value = mobile;
-            document.getElementById('profileModal').classList.add('hidden');
-            trackIndividualUserLogin(name, mobile);
-        }
-
-        function openProfileModal() {
-            document.getElementById('setupName').value = localStorage.getItem('officerName') || '';
-            document.getElementById('setupMobile').value = localStorage.getItem('officerMobile') || '';
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function addBalloonField(defaultMonth = '', defaultAmount = '') {
-            const container = document.getElementById('balloonContainer');
-            const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-slate-900/80 p-1.5 rounded-xl border border-slate-800";
-            div.innerHTML = `
-                <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 bg-slate-950 border border-slate-700 rounded-lg text-xs text-center font-bold text-amber-400 outline-none">
-                </div>
-                <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-emerald-400 outline-none">
-                </div>
-                <button onclick="this.parentElement.remove()" class="text-rose-500 p-1 hover:text-rose-400"><i class="fa-solid fa-circle-xmark"></i></button>
-            `;
-            container.appendChild(div);
-        }
-
-        function getBalloonConfig() {
-            const map = {};
-            document.querySelectorAll('.balloon-row').forEach(row => {
-                const m = parseInt(row.querySelector('.b-month').value);
-                const a = parseFloat(row.querySelector('.b-amount').value);
-                if (m > 0 && a > 0) map[m] = a;
-            });
-            return map;
-        }
-
-        // ACCURATE REPLACEMENT BALLOON CALCULATION ENGINE
-        function calculateMultiBalloonSchedule() {
-            const P = parseFloat(document.getElementById('facilityAmount').value) || 0;
-            const annualRate = parseFloat(document.getElementById('annualRate').value) || 0;
-            const N = parseInt(document.getElementById('tenureMonths').value) || 0;
-            const balloonMap = getBalloonConfig();
-
-            if (P <= 0 || annualRate <= 0 || N <= 0) return;
-
-            const r = (annualRate / 100) / 12;
-            
-            // Present value of fixed replacement balloon payments
-            let sumPvBalloons = 0;
-            let annuityFactorMinusBalloons = 0;
-            let balloonTxtArr = [];
-
-            for (let k = 1; k <= N; k++) {
-                if (balloonMap[k]) {
-                    sumPvBalloons += balloonMap[k] * Math.pow(1 + r, -k);
-                    balloonTxtArr.push(`Month #${k}: Rs. ${parseFloat(balloonMap[k]).toLocaleString('en-US')}`);
-                } else {
-                    annuityFactorMinusBalloons += Math.pow(1 + r, -k);
-                }
-            }
-
-            // Regular Monthly Rental (EMI) derivation
-            const regularEMI = (P - sumPvBalloons) / annuityFactorMinusBalloons;
-
-            let balance = P;
-            calculatedSchedule = [];
-            let totalInterest = 0;
-            let totalPayable = 0;
-            const startDate = new Date();
-
-            for (let i = 1; i <= N; i++) {
-                let interest = balance * r;
-                let currentTotalDue = balloonMap[i] ? balloonMap[i] : regularEMI;
-                let principal = currentTotalDue - interest;
-
-                balance = balance - principal;
-                if (balance < 0 || i === N) balance = 0;
-
-                totalInterest += interest;
-                totalPayable += currentTotalDue;
-
-                let dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + i, startDate.getDate());
-                let dateStr = dueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-
-                calculatedSchedule.push({
-                    month: i,
-                    dueDate: dateStr,
-                    principal: principal,
-                    interest: interest,
-                    totalDue: currentTotalDue,
-                    balance: balance,
-                    isBalloon: !!balloonMap[i]
-                });
-            }
-
-            summaryMetrics = {
-                P: P,
-                R: annualRate,
-                N: N,
-                regularEMI: regularEMI,
-                totalInterest: totalInterest,
-                totalPayable: totalPayable,
-                balloonDesc: balloonTxtArr.join(', ')
-            };
-
-            document.getElementById('summaryText').innerText = `Regular Monthly Rental: Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            const tbody = document.getElementById('scheduleTable');
-            tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-amber-500/10 font-bold text-amber-300' : 'hover:bg-slate-900/50'}">
-                    <td class="p-2 font-semibold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-amber-500 text-slate-950 px-1 py-0.5 rounded ml-0.5 uppercase font-black">Balloon</span>' : ''}</td>
-                    <td class="p-2 text-slate-400 font-medium">${s.dueDate}</td>
-                    <td class="p-2 font-mono">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2 font-mono text-slate-400">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2 font-mono ${s.isBalloon ? 'text-amber-400 font-extrabold' : 'text-emerald-400 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2 font-mono text-slate-300">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderRates() {
-            const unregTbody = document.getElementById('unregTable');
-            const regTbody = document.getElementById('regTable');
-
-            if(unregTbody) {
-                unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-900/40">
-                        <td class="p-2 font-semibold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-2 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-
-            if(regTbody) {
-                regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-slate-900/40">
-                        <td class="p-2 font-semibold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-2 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-        }
-
-        function togglePage() {
-            const isCalc = !document.getElementById('calcPage').classList.contains('hidden');
-            showPage(isCalc ? 'ratePage' : 'calcPage');
-        }
-
-        function showPage(pageId) {
-            document.getElementById('ratePage').classList.add('hidden');
-            document.getElementById('calcPage').classList.add('hidden');
-            document.getElementById(pageId).classList.remove('hidden');
-
-            const btnText = document.getElementById('navBtnText');
-            btnText.innerText = (pageId === 'calcPage') ? "Rate Sheet" : "Calculator";
-        }
-
-        function openAdminModal() {
-            document.getElementById('adminAuth').classList.remove('hidden');
-            document.getElementById('adminContent').classList.add('hidden');
-            document.getElementById('adminPass').value = '';
-            document.getElementById('adminModal').classList.remove('hidden');
-        }
-
-        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
-
-        function verifyAdmin() {
-            if (document.getElementById('adminPass').value === 'Lakmal@93') {
-                document.getElementById('adminAuth').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                loadAdminUserLogs();
-                renderRateEditor();
-            } else {
-                alert('Access Denied');
-            }
-        }
-
-        function loadAdminUserLogs() {
-            db.ref('userLogs').on('value', (snapshot) => {
-                const data = snapshot.val();
-                const tbody = document.getElementById('userLogsTable');
-                if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3 text-slate-500">No logs yet.</td></tr>`;
-                    return;
-                }
-
-                let html = '';
-                for (let key in data) {
-                    const u = data[key];
-                    html += `
-                        <tr class="hover:bg-slate-900/40">
-                            <td class="p-2 font-bold text-slate-200">${u.name || 'Unknown'}</td>
-                            <td class="p-2 text-slate-400 font-semibold">${u.mobile || 'N/A'}</td>
-                            <td class="p-2 text-center"><span class="bg-emerald-500/10 text-emerald-400 font-extrabold px-1.5 py-0.5 rounded text-[10px] border border-emerald-500/20">${u.loginCount || 0}</span></td>
-                            <td class="p-2 text-right text-slate-400 font-medium">${u.lastActive || 'N/A'}</td>
-                        </tr>
-                    `;
-                }
-                tbody.innerHTML = html;
-            });
-        }
-
-        function renderRateEditor() {
-            const unregContainer = document.getElementById('unregRateEditor');
-            const regContainer = document.getElementById('regRateEditor');
-
-            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-1.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
-                    <label class="text-[10px] font-bold text-slate-400">${item.category}</label>
-                    <div class="grid grid-cols-6 gap-1">
-                        ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-0.5 bg-slate-950 border border-slate-700 rounded text-[10px] text-center font-bold text-slate-200">
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-1.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
-                    <label class="text-[10px] font-bold text-slate-400">${item.category}</label>
-                    <div class="grid grid-cols-5 gap-1">
-                        ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-0.5 bg-slate-950 border border-slate-700 rounded text-[10px] text-center font-bold text-slate-200">
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function saveAdminSettings() {
-            document.querySelectorAll('.rate-edit-input').forEach(input => {
-                const type = input.dataset.type;
-                const catIdx = input.dataset.cat;
-                const colIdx = input.dataset.col;
-                rateData[type][catIdx].rates[colIdx] = input.value;
-            });
-
-            db.ref('rateData').set(rateData, (error) => {
-                if (error) {
-                    alert("Error publishing updates: " + error.message);
-                } else {
-                    closeAdminModal();
-                    alert("Rate changes published globally!");
-                }
-            });
-        }
-
-        // GENERATE HIGH-END EXECUTIVE PDF REPORT
-        async function sharePDFDirectly() {
-            if (calculatedSchedule.length === 0) return alert("Calculate schedule first.");
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            const officerName = localStorage.getItem('officerName') || "Lakmal Maduranga";
-            const officerMobile = localStorage.getItem('officerMobile') || "";
-
-            // Render Donut Chart Image onto hidden canvas
-            const canvas = document.getElementById('pdfChartCanvas');
-            const ctx = canvas.getContext('2d');
-            if (window.pdfChartInstance) window.pdfChartInstance.destroy();
-
-            window.pdfChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Principal', 'Interest'],
-                    datasets: [{
-                        data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#0f172a', '#34d399'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    animation: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '70%'
-                }
-            });
-
-            const chartImgData = canvas.toDataURL('image/png');
-
-            // Header Section
-            doc.setFillColor(15, 23, 42); // Slate 900
-            doc.rect(0, 0, 210, 28, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text("Lease Ledger", 12, 14);
-
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(148, 163, 184);
-            doc.text("Lease / EMI Repayment Schedule", 12, 19);
-
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-            doc.text(`Disbursed ${nowStr}  ·  ${summaryMetrics.N} months  ·  ${summaryMetrics.R}% p.a.`, 12, 24);
-
-            doc.setTextColor(52, 211, 153);
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Prepared by ${officerName} ${officerMobile ? '(' + officerMobile + ')' : ''}`, 198, 14, { align: 'right' });
-
-            // Accent Bar
-            doc.setFillColor(52, 211, 153);
-            doc.rect(0, 28, 210, 1.5, 'F');
-
-            // Metric Cards
-            doc.setFillColor(15, 23, 42);
-            doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
-            doc.setTextColor(148, 163, 184);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("FINANCED AMOUNT", 16, 39);
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(11);
-            doc.text(`${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 46);
-
-            doc.setFillColor(167, 201, 182);
-            doc.roundedRect(104, 34, 94, 16, 2, 2, 'F');
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("REGULAR MONTHLY RENTAL", 108, 39);
-            doc.setFontSize(11);
-            doc.text(`${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 46);
-
-            doc.setFillColor(52, 211, 153);
-            doc.roundedRect(12, 54, 88, 16, 2, 2, 'F');
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL INTEREST", 16, 59);
-            doc.setFontSize(11);
-            doc.text(`${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 66);
-
-            doc.setFillColor(226, 232, 240);
-            doc.roundedRect(104, 54, 94, 16, 2, 2, 'F');
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL PAYABLE", 108, 59);
-            doc.setFontSize(11);
-            doc.text(`${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 66);
-
-            let startTableY = 75;
-            if (summaryMetrics.balloonDesc) {
-                doc.setFillColor(254, 242, 242);
-                doc.roundedRect(12, 73, 186, 7, 1.5, 1.5, 'F');
-                doc.setTextColor(239, 68, 68);
-                doc.setFontSize(7);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 77.5);
-                startTableY = 83;
-            }
-
-            // Visual Summary Section Header
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text("Principal vs Interest", 12, startTableY + 4);
-
-            doc.addImage(chartImgData, 'PNG', 12, startTableY + 6, 26, 26);
-            doc.setFontSize(6);
-            doc.setTextColor(100, 116, 139);
-            doc.text(`${Math.round(summaryMetrics.totalPayable / 1000)}K`, 21, startTableY + 20);
-
-            doc.setFillColor(15, 23, 42);
-            doc.rect(42, startTableY + 12, 5, 5, 'F');
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(7);
-            doc.text(`Principal: ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 16);
-
-            doc.setFillColor(52, 211, 153);
-            doc.rect(42, startTableY + 20, 5, 5, 'F');
-            doc.text(`Interest: ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 24);
-
-            // Schedule Table
-            const tableBody = calculatedSchedule.map(s => [
-                s.month,
-                s.dueDate,
-                s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
-            ]);
-
-            doc.autoTable({
-                startY: startTableY + 36,
-                head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
-                theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, halign: 'center' },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.2 },
-                columnStyles: {
-                    0: { halign: 'center', cellWidth: 10 },
-                    1: { halign: 'center', cellWidth: 28 },
-                    2: { halign: 'right' },
-                    3: { halign: 'right' },
-                    4: { halign: 'right', fontStyle: 'bold' },
-                    5: { halign: 'right' }
-                },
-                didParseCell: function(data) {
-                    if (data.section === 'body') {
-                        const rowIdx = data.row.index;
-                        if (calculatedSchedule[rowIdx] && calculatedSchedule[rowIdx].isBalloon) {
-                            data.cell.styles.fillColor = [254, 242, 242];
-                            data.cell.styles.textColor = [220, 38, 38];
-                            data.cell.styles.fontStyle = 'bold';
-                        }
-                    }
-                },
-                alternateRowStyles: { fillColor: [248, 250, 252] },
-                margin: { left: 12, right: 12 },
-                didDrawPage: function (data) {
-                    doc.setFontSize(7);
-                    doc.setTextColor(148, 163, 184);
-                    doc.setFont('helvetica', 'italic');
-                    doc.text(`${officerName}`, 105, 290, { align: 'center' });
-                    doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
-                }
-            });
-
-            const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Lease Repayment Schedule',
-                        text: `Lease Repayment Schedule (Prepared by ${officerName})`
-                    });
-                } catch (err) { console.log('Share canceled', err); }
-            } else {
-                doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
-            }
-        }
-    </script>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // --- FIREBASE INITIALIZATION ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyA86NUK-UXZJxCkPUUjVPNV4Cjm20XpWAo",
+      authDomain: "emi-calculator-9e048.firebaseapp.com",
+      databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
+      projectId: "emi-calculator-9e048",
+      storageBucket: "emi-calculator-9e048.firebasestorage.app",
+      messagingSenderId: "181063869117",
+      appId: "1:181063869117:web:e75cf8af947f7c0aa80dd4",
+      measurementId: "G-G3ZE9WP5SD"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    // --- CHART SETUP ---
+    const ctx = document.getElementById('emiChart').getContext('2d');
+    let emiChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Loan Amount', 'Total Interest', 'Monthly Payment'],
+        datasets: [{
+          data: [0, 0, 0],
+          backgroundColor: ['#36a2eb', '#ff6384', '#2ea043']
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // --- EMI CALCULATION LOGIC ---
+    function calculateEMI() {
+      const p = parseFloat(document.getElementById('loanAmount').value) || 0;
+      const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
+      const n = parseFloat(document.getElementById('loanTenure').value) || 0;
+
+      if (p > 0 && annualRate > 0 && n > 0) {
+        const r = annualRate / 12 / 100;
+        const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        const totalPayment = emi * n;
+        const totalInterest = totalPayment - p;
+
+        document.getElementById('monthlyEMI').value = "Rs. " + emi.toFixed(2);
+
+        // Update Chart
+        emiChart.data.datasets[0].data = [p, totalInterest.toFixed(2), emi.toFixed(2)];
+        emiChart.update();
+      } else {
+        document.getElementById('monthlyEMI').value = "";
+        emiChart.data.datasets[0].data = [0, 0, 0];
+        emiChart.update();
+      }
+    }
+
+    // --- ADMIN RATE UPDATE ---
+    document.getElementById('rateUpdateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newRate = document.getElementById('adminLeaseRate').value;
+      db.ref('settings/leaseRate').set(newRate);
+      document.getElementById('rateLeasing').innerText = newRate + "%";
+      alert('Leasing Rate successfully updated to: ' + newRate + '%');
+      this.reset();
+    });
+
+    // --- PASSWORD CHANGE ---
+    document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newPassword = document.getElementById('newPassword').value;
+      db.ref('admin/password').set(newPassword);
+      alert('Admin Password updated successfully!');
+      this.reset();
+    });
+
+    // --- PDF GENERATION WITH RIGHT-ALIGNED OFFICE DETAILS ---
+    function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Left Title
+      doc.setFontSize(16);
+      doc.text("EMI Calculation Report", 14, 20);
+
+      // Right-aligned Office Info
+      doc.setFontSize(10);
+      doc.text("Office: Central Branch", 196, 20, { align: "right" });
+      doc.text("Contact: +94 7X XXX XXXX", 196, 26, { align: "right" });
+
+      // Calculation Breakdown
+      const amount = document.getElementById('loanAmount').value || "0";
+      const rate = document.getElementById('interestRate').value || "0";
+      const months = document.getElementById('loanTenure').value || "0";
+      const emi = document.getElementById('monthlyEMI').value || "Rs. 0.00";
+
+      doc.setFontSize(12);
+      doc.text(`Loan Amount: Rs. ${amount}`, 14, 40);
+      doc.text(`Interest Rate: ${rate}%`, 14, 48);
+      doc.text(`Period: ${months} Months`, 14, 56);
+      doc.text(`Monthly Payment: ${emi}`, 14, 64);
+
+      // Chart
+      const chartImg = emiChart.toBase64Image();
+      doc.addImage(chartImg, 'PNG', 14, 75, 180, 90);
+
+      doc.save("EMI_Calculation_Report.pdf");
+    }
+  </script>
 </body>
 </html>
