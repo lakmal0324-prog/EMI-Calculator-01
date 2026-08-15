@@ -161,7 +161,7 @@
                         </div>
                     </div>
 
-                    <!-- Empty Inputs -->
+                    <!-- Inputs -->
                     <div>
                         <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">FINANCED AMOUNT (RS.)</label>
                         <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-gold text-xs">
@@ -274,15 +274,15 @@
                         </div>
                     </div>
 
-                    <!-- Officer Approval Logs -->
+                    <!-- Officer Access Authorization (Full Visible List) -->
                     <div>
                         <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
                             <span>Officer Access Authorization</span>
                             <span class="text-[9px] text-slate-400 font-bold">Approve first-time access</span>
                         </h4>
-                        <div class="overflow-x-auto border border-[#282c37] rounded-lg bg-[#121418]/60 max-h-48">
+                        <div class="border border-[#282c37] rounded-lg bg-[#121418]/60 overflow-hidden">
                             <table class="w-full text-left text-xs text-slate-300">
-                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
+                                <thead class="bg-[#0b0c0e] text-slate-400 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-2.5">Name</th>
                                         <th class="p-2.5">Mobile</th>
@@ -301,14 +301,14 @@
                         <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Unregistered Rates
                         </h4>
-                        <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
+                        <div id="unregRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
                     <div>
                         <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Registered Rates
                         </h4>
-                        <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
+                        <div id="regRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
                     <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
@@ -318,7 +318,7 @@
             </div>
         </div>
 
-        <!-- Profile / Access Verification Modal -->
+        <!-- Profile Modal -->
         <div id="profileModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
             <div class="clean-card rounded-xl max-w-sm w-full p-5 space-y-4 border border-[#282c37]">
                 <div class="text-center space-y-1">
@@ -329,7 +329,6 @@
                     <p class="text-[10px] text-slate-400 font-bold">First-time registration requires Admin approval.</p>
                 </div>
 
-                <!-- Input Registration Form -->
                 <div id="profileFormInputs" class="space-y-3">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
@@ -344,7 +343,6 @@
                     </button>
                 </div>
 
-                <!-- Pending Verification Banner -->
                 <div id="pendingStatusMsg" class="hidden text-center space-y-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                     <i class="fa-solid fa-clock-rotate-left text-amber-400 text-2xl animate-spin"></i>
                     <p class="text-xs text-amber-200 font-bold uppercase tracking-wider">Approval Pending</p>
@@ -366,7 +364,6 @@
         <canvas id="pdfChartCanvas" width="220" height="220"></canvas>
     </div>
 
-    <!-- Script Engine -->
     <script>
         const ADMIN_MOBILE = "0777353802";
         const ADMIN_NAME = "Lakmal";
@@ -415,7 +412,6 @@
             listenToDatabaseUpdates();
         };
 
-        // Automatic Admin Setup
         function ensureAdminApproved() {
             const adminKey = ADMIN_MOBILE.replace(/[^0-9]/g, "");
             db.ref('userLogs/' + adminKey).set({
@@ -425,7 +421,6 @@
                 role: 'admin'
             });
 
-            // Set Admin details in localStorage if empty
             if (!localStorage.getItem('officerMobile')) {
                 localStorage.setItem('officerName', ADMIN_NAME);
                 localStorage.setItem('officerMobile', ADMIN_MOBILE);
@@ -454,7 +449,6 @@
             } else {
                 const userKey = mobile.replace(/[^0-9]/g, "");
                 
-                // Bypass approval if Admin
                 if (userKey === ADMIN_MOBILE) {
                     document.getElementById('profileModal').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = ADMIN_NAME;
@@ -793,7 +787,6 @@
             });
         }
 
-        // GENERATE CLEAN PDF REPORT WITH GOLD ACCENTS
         async function sharePDFDirectly() {
             if (calculatedSchedule.length === 0) return alert("Calculate schedule first.");
 
@@ -803,7 +796,6 @@
             const officerName = localStorage.getItem('officerName') || "Lakmal";
             const officerMobile = localStorage.getItem('officerMobile') || "0777353802";
 
-            // Render Donut Chart Image
             const canvas = document.getElementById('pdfChartCanvas');
             const ctx = canvas.getContext('2d');
             if (window.pdfChartInstance) window.pdfChartInstance.destroy();
@@ -828,7 +820,6 @@
 
             const chartImgData = canvas.toDataURL('image/png');
 
-            // Top Header Bar
             doc.setFillColor(18, 20, 24);
             doc.rect(0, 0, 210, 26, 'F');
 
@@ -846,11 +837,9 @@
             doc.setTextColor(255, 255, 255);
             doc.text(`Generated: ${nowStr}  ·  ${summaryMetrics.N} Months  ·  ${summaryMetrics.R}% p.a.`, 198, 16, { align: 'right' });
 
-            // Accent Line (Gold)
             doc.setFillColor(212, 175, 55);
             doc.rect(0, 26, 210, 1.5, 'F');
 
-            // Key Metrics Grid
             doc.setFillColor(26, 29, 36);
             doc.roundedRect(12, 32, 88, 16, 2, 2, 'F');
             doc.setTextColor(212, 175, 55);
@@ -901,7 +890,6 @@
                 startTableY = 79;
             }
 
-            // Visual Section & Officer Box Side-by-Side
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
             doc.setFillColor(212, 175, 55);
@@ -915,7 +903,6 @@
             doc.rect(43, startTableY + 16, 4, 4, 'F');
             doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
 
-            // Officer Info Box
             doc.setFillColor(18, 20, 24);
             doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
 
@@ -935,7 +922,6 @@
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
             doc.text(`Lease Ledger Representative`, 120, startTableY + 26);
 
-            // Schedule Table
             const tableBody = calculatedSchedule.map(s => [
                 s.month,
                 s.dueDate,
