@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lease Ledger - Modern Slate</title>
+    <title>Lease Ledger - Obsidian Dark</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#121418">
 
     <!-- Tailwind CSS & Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,41 +26,42 @@
         body { 
             user-select: none; 
             -webkit-user-select: none; 
-            background: #0f172a;
-            color: #f8fafc;
+            background: #121418; /* Warm Soft Dark Background */
+            color: #d1d5db;
         }
         .clean-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            background: #1a1d24; /* Soft Obsidian Surface */
+            border: 1px solid #282c37;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #121418; }
+        ::-webkit-scrollbar-thumb { background: #282c37; border-radius: 4px; }
+        input { color-scheme: dark; }
     </style>
 </head>
 <body class="font-sans min-h-screen flex flex-col justify-between">
 
     <!-- Header Banner -->
-    <div class="bg-slate-950 text-slate-400 text-center py-1.5 text-[10px] font-semibold tracking-wider uppercase border-b border-slate-800">
+    <div class="bg-[#0b0c0e] text-slate-500 text-center py-1.5 text-[10px] font-medium tracking-wider uppercase border-b border-[#282c37]">
         <i class="fa-solid fa-code text-xs mr-1 text-cyan-400"></i> Designed by Lakmal Maduranga
     </div>
 
     <!-- Navigation Header -->
-    <header class="bg-slate-900/90 text-white shadow-lg sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md">
+    <header class="bg-[#1a1d24]/90 text-slate-200 shadow-md sticky top-0 z-40 border-b border-[#282c37] backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/30">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
                     <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
                 </div>
-                <span class="font-bold text-lg tracking-wide text-slate-100">Lease<span class="text-cyan-400">Ledger</span></span>
+                <span class="font-bold text-lg tracking-wide text-slate-200">Lease<span class="text-cyan-400">Ledger</span></span>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="togglePage()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-lg text-xs border border-slate-700 transition flex items-center gap-1.5">
+                <button onclick="togglePage()" class="bg-[#222630] hover:bg-[#282c37] text-slate-300 font-medium px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center gap-1.5">
                     <i class="fa-solid fa-table text-cyan-400"></i> <span id="navBtnText">Rate Sheet</span>
                 </button>
-                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg text-xs border border-slate-700 transition" title="Admin Panel">
-                    <i class="fa-solid fa-user-shield text-slate-400"></i>
+                <button onclick="openAdminModal()" class="bg-[#222630] hover:bg-[#282c37] text-slate-400 p-2 rounded-lg text-xs border border-[#282c37] transition hover:text-cyan-400" title="Admin Panel">
+                    <i class="fa-solid fa-user-shield"></i>
                 </button>
             </div>
         </div>
@@ -73,7 +74,7 @@
         <section id="ratePage" class="hidden space-y-5">
             <div class="clean-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div>
-                    <h1 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <h1 class="text-base font-bold text-slate-200 flex items-center gap-2">
                         <i class="fa-solid fa-layer-group text-cyan-400"></i> Interest Rate Matrix
                     </h1>
                     <p class="text-slate-400 text-xs">Synchronized Financial Rates</p>
@@ -84,13 +85,13 @@
             </div>
 
             <!-- Unregistered Rates Table -->
-            <div class="clean-card rounded-xl overflow-hidden border border-slate-800">
-                <div class="bg-slate-900 text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-slate-800 uppercase tracking-wider">
+            <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
+                <div class="bg-[#121418] text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
                     <i class="fa-solid fa-car"></i> 1. Unregistered Vehicles & Equipment
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+                        <thead class="bg-[#0b0c0e] text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
                             <tr>
                                 <th class="p-3">Category / Equipment</th>
                                 <th class="p-3">12-24M</th>
@@ -101,19 +102,19 @@
                                 <th class="p-3">73-84M</th>
                             </tr>
                         </thead>
-                        <tbody id="unregTable" class="divide-y divide-slate-800"></tbody>
+                        <tbody id="unregTable" class="divide-y divide-[#282c37]"></tbody>
                     </table>
                 </div>
             </div>
 
             <!-- Registered Rates Table -->
-            <div class="clean-card rounded-xl overflow-hidden border border-slate-800">
-                <div class="bg-slate-900 text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-slate-800 uppercase tracking-wider">
+            <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
+                <div class="bg-[#121418] text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
                     <i class="fa-solid fa-car-side"></i> 2. Registered Vehicles & Equipment
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+                        <thead class="bg-[#0b0c0e] text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
                             <tr>
                                 <th class="p-3">Category / Equipment</th>
                                 <th class="p-3">12-24M</th>
@@ -123,7 +124,7 @@
                                 <th class="p-3">61-72M</th>
                             </tr>
                         </thead>
-                        <tbody id="regTable" class="divide-y divide-slate-800"></tbody>
+                        <tbody id="regTable" class="divide-y divide-[#282c37]"></tbody>
                     </table>
                 </div>
             </div>
@@ -135,7 +136,7 @@
                 
                 <!-- Inputs Section -->
                 <div class="clean-card p-5 rounded-xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-700/60 pb-3">
+                    <div class="flex justify-between items-center border-b border-[#282c37] pb-3">
                         <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-cyan-400"></i> Facility Parameters
                         </h2>
@@ -145,7 +146,7 @@
                     </div>
 
                     <!-- Officer Details Banner -->
-                    <div class="grid grid-cols-2 gap-2 bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+                    <div class="grid grid-cols-2 gap-2 bg-[#121418] p-2.5 rounded-lg border border-[#282c37]">
                         <div>
                             <label class="block text-[9px] font-medium text-slate-400 uppercase tracking-wider">Officer Name</label>
                             <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-semibold text-slate-200 bg-transparent outline-none">
@@ -156,30 +157,30 @@
                         </div>
                     </div>
 
-                    <!-- Empty Input Fields as Requested -->
+                    <!-- Empty Inputs -->
                     <div>
                         <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Financed Amount (Rs.)</label>
-                        <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:border-cyan-500 outline-none font-bold text-cyan-400 text-xs">
+                        <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-cyan-400 text-xs">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Rate (% p.a.)</label>
-                            <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
+                            <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
                         </div>
                         <div>
                             <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Tenure (Months)</label>
-                            <input type="number" id="tenureMonths" placeholder="e.g. 48" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
+                            <input type="number" id="tenureMonths" placeholder="e.g. 48" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
                         </div>
                     </div>
 
                     <!-- Balloon Inputs -->
-                    <div class="pt-2 border-t border-slate-700/60">
+                    <div class="pt-2 border-t border-[#282c37]">
                         <div class="flex justify-between items-center mb-2">
                             <label class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1">
                                 <i class="fa-solid fa-cubes text-cyan-400"></i> Balloon Payments
                             </label>
-                            <button onclick="addBalloonField()" class="text-xs bg-slate-800 hover:bg-slate-700 text-cyan-400 font-medium px-2 py-0.5 rounded border border-slate-700 transition flex items-center gap-1">
+                            <button onclick="addBalloonField()" class="text-xs bg-[#222630] hover:bg-[#282c37] text-cyan-400 font-medium px-2 py-0.5 rounded border border-[#282c37] transition flex items-center gap-1">
                                 <i class="fa-solid fa-plus text-[10px]"></i> Add
                             </button>
                         </div>
@@ -194,20 +195,20 @@
                 <!-- Schedule Preview Section -->
                 <div class="lg:col-span-2 clean-card p-5 rounded-xl space-y-4 flex flex-col justify-between">
                     <div class="space-y-3">
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-700/60 pb-3 gap-2">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-[#282c37] pb-3 gap-2">
                             <div>
                                 <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Repayment Summary</h2>
                                 <p id="summaryText" class="text-xs text-cyan-400 font-medium">Regular Monthly Rental: Rs. 0.00</p>
                             </div>
-                            <button onclick="sharePDFDirectly()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-3 py-1.5 rounded-lg text-xs border border-slate-700 transition flex items-center justify-center gap-2">
+                            <button onclick="sharePDFDirectly()" class="bg-[#222630] hover:bg-[#282c37] text-slate-200 font-semibold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-share-nodes text-cyan-400"></i> PDF Report
                             </button>
                         </div>
 
-                        <!-- Schedule Dynamic Table -->
-                        <div class="overflow-y-auto max-h-[420px] border border-slate-800 rounded-lg bg-slate-900/60">
+                        <!-- Schedule Table -->
+                        <div class="overflow-y-auto max-h-[420px] border border-[#282c37] rounded-lg bg-[#121418]/60">
                             <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-950 text-slate-400 sticky top-0 z-10 text-[10px] uppercase tracking-wider border-b border-slate-800">
+                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 z-10 text-[10px] uppercase tracking-wider border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-3">#</th>
                                         <th class="p-3">Due Date</th>
@@ -217,7 +218,7 @@
                                         <th class="p-3">Balance</th>
                                     </tr>
                                 </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-slate-800/80 text-slate-300">
+                                <tbody id="scheduleTable" class="divide-y divide-[#282c37] text-slate-300">
                                     <tr>
                                         <td colspan="6" class="text-center py-12 text-slate-500 font-medium">Enter values & click Calculate</td>
                                     </tr>
@@ -230,17 +231,17 @@
         </section>
 
         <!-- PAGE 3: Admin Modal Dashboard -->
-        <div id="adminModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="clean-card rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-700">
-                <div class="bg-slate-900 p-3.5 flex justify-between items-center border-b border-slate-800">
-                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider"><i class="fa-solid fa-user-shield text-cyan-400"></i> Admin Panel</h3>
+        <div id="adminModal" class="fixed inset-0 bg-[#0b0c0e]/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
+            <div class="clean-card rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-[#282c37]">
+                <div class="bg-[#121418] p-3.5 flex justify-between items-center border-b border-[#282c37]">
+                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider"><i class="fa-solid fa-user-shield text-cyan-400"></i> Admin Management Center</h3>
                     <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
                 </div>
                 
                 <div id="adminAuth" class="p-8 text-center space-y-4">
                     <i class="fa-solid fa-shield-halved text-4xl text-slate-600"></i>
                     <h4 class="font-bold text-slate-300 text-xs uppercase tracking-wider">Security Clearance Required</h4>
-                    <input type="password" id="adminPass" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-center text-xs outline-none focus:border-cyan-500 w-48 text-slate-100 font-semibold" placeholder="••••••••">
+                    <input type="password" id="adminPass" class="bg-[#121418] border border-[#282c37] px-3 py-2 rounded-lg text-center text-xs outline-none focus:border-cyan-500 w-48 text-slate-100 font-semibold" placeholder="••••••••">
                     <div>
                         <button onclick="verifyAdmin()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-2 rounded-lg font-bold text-xs transition uppercase tracking-wider">Unlock</button>
                     </div>
@@ -248,100 +249,111 @@
 
                 <div id="adminContent" class="p-5 overflow-y-auto space-y-5 hidden">
                     
-                    <!-- App Usage Analytics -->
-                    <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-3">
-                        <h4 class="font-semibold text-slate-300 text-xs flex items-center gap-2 border-b border-slate-800 pb-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-chart-line text-cyan-400"></i> App Analytics & Engagement
+                    <!-- App Analytics -->
+                    <div class="bg-[#121418] p-3.5 rounded-lg border border-[#282c37] space-y-3">
+                        <h4 class="font-semibold text-slate-300 text-xs flex items-center gap-2 border-b border-[#282c37] pb-2 uppercase tracking-wider">
+                            <i class="fa-solid fa-chart-line text-cyan-400"></i> Analytics & Officer Activity
                         </h4>
                         <div class="grid grid-cols-3 gap-3 text-center">
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Total Logins</p>
+                            <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
+                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Total Active Logins</p>
                                 <p id="statTotalLogins" class="text-base font-bold text-cyan-400">0</p>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
                                 <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Total Officers</p>
                                 <p id="statTotalUsers" class="text-base font-bold text-slate-200">0</p>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Status</p>
-                                <p class="text-xs font-semibold text-emerald-400 mt-0.5 uppercase tracking-wider"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> Live</p>
+                            <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
+                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Pending Approvals</p>
+                                <p id="statPendingUsers" class="text-base font-bold text-amber-400">0</p>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Officer Approval Logs -->
+                    <div>
+                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
+                            <span>Officer Access Authorization</span>
+                            <span class="text-[9px] text-slate-400">Approve first-time access</span>
+                        </h4>
+                        <div class="overflow-x-auto border border-[#282c37] rounded-lg bg-[#121418]/60 max-h-48">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 text-[10px] uppercase tracking-wider border-b border-[#282c37]">
+                                    <tr>
+                                        <th class="p-2.5">Name</th>
+                                        <th class="p-2.5">Mobile</th>
+                                        <th class="p-2.5 text-center">Status</th>
+                                        <th class="p-2.5 text-center">Logins</th>
+                                        <th class="p-2.5 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userLogsTable" class="divide-y divide-[#282c37]"></tbody>
+                            </table>
                         </div>
                     </div>
 
                     <!-- Rates Editor Section -->
                     <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-slate-800 pb-1.5 text-xs uppercase tracking-wider">
+                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Unregistered Rates
                         </h4>
-                        <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-slate-800 p-2 rounded-lg bg-slate-900/40"></div>
+                        <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
                     <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-slate-800 pb-1.5 text-xs uppercase tracking-wider">
+                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Registered Rates
                         </h4>
-                        <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-slate-800 p-2 rounded-lg bg-slate-900/40"></div>
+                        <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
                     <button onclick="saveAdminSettings()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
-                        Save Rates Globally
+                        Save Rate Changes Globally
                     </button>
-
-                    <!-- Registered Officers Logs -->
-                    <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-slate-800 pb-1.5 text-xs uppercase tracking-wider">
-                            Registered Officers Logs
-                        </h4>
-                        <div class="overflow-x-auto border border-slate-800 rounded-lg bg-slate-900/60 max-h-36">
-                            <table class="w-full text-left text-xs text-slate-300">
-                                <thead class="bg-slate-950 text-slate-400 sticky top-0 text-[10px] uppercase tracking-wider">
-                                    <tr>
-                                        <th class="p-2">Name</th>
-                                        <th class="p-2">Mobile</th>
-                                        <th class="p-2 text-center">Logins</th>
-                                        <th class="p-2 text-right">Last Active</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userLogsTable" class="divide-y divide-slate-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
 
-        <!-- Profile Modal -->
-        <div id="profileModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="clean-card rounded-xl max-w-sm w-full p-5 space-y-4 border border-slate-700">
+        <!-- Profile / Access Verification Modal -->
+        <div id="profileModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
+            <div class="clean-card rounded-xl max-w-sm w-full p-5 space-y-4 border border-[#282c37]">
                 <div class="text-center space-y-1">
-                    <div class="w-10 h-10 bg-slate-800 text-cyan-400 rounded-full flex items-center justify-center mx-auto text-lg border border-slate-700">
+                    <div class="w-10 h-10 bg-[#222630] text-cyan-400 rounded-full flex items-center justify-center mx-auto text-lg border border-[#282c37]">
                         <i class="fa-solid fa-id-card"></i>
                     </div>
-                    <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Officer Profile</h3>
-                    <p class="text-[10px] text-slate-400">Enter credentials for PDF signatures.</p>
+                    <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Officer Verification</h3>
+                    <p class="text-[10px] text-slate-400">First-time registration requires Admin approval.</p>
                 </div>
 
-                <div class="space-y-3">
+                <!-- Input Registration Form -->
+                <div id="profileFormInputs" class="space-y-3">
                     <div>
                         <label class="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
-                        <input type="text" id="setupName" placeholder="Ex: Lakmal Maduranga" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
+                        <input type="text" id="setupName" placeholder="Ex: Lakmal Maduranga" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
-                        <input type="text" id="setupMobile" placeholder="Ex: 071XXXXXXX" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
+                        <input type="text" id="setupMobile" placeholder="Ex: 071XXXXXXX" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
                     </div>
+                    <button onclick="submitForApproval()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition">
+                        Submit For Approval
+                    </button>
                 </div>
 
-                <button onclick="saveProfile()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition">
-                    Save Profile
-                </button>
+                <!-- Pending Verification Banner -->
+                <div id="pendingStatusMsg" class="hidden text-center space-y-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-400 text-2xl animate-spin"></i>
+                    <p class="text-xs text-amber-200 font-bold uppercase tracking-wider">Approval Pending</p>
+                    <p class="text-[10px] text-slate-400">ඔබගේ ගිණුම සක්‍රිය කිරීමට Admin වෙත යොමු කර ඇත. Approval ලැබුණු පසු මෙතැනින් ඇතුළු විය හැක.</p>
+                    <button onclick="checkUserProfile()" class="w-full bg-[#222630] hover:bg-[#282c37] text-cyan-400 border border-[#282c37] text-[10px] font-bold py-2 rounded-lg transition uppercase tracking-wider">
+                        Re-check Status
+                    </button>
+                </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-slate-950 text-slate-500 py-3 text-center text-[10px] border-t border-slate-800 tracking-wider">
+    <footer class="bg-[#0b0c0e] text-slate-500 py-3 text-center text-[10px] border-t border-[#282c37] tracking-wider">
         <p>Designed by <span class="text-slate-300 font-semibold">Lakmal Maduranga</span> | Lease Ledger</p>
     </footer>
 
@@ -393,7 +405,6 @@
         window.onload = function() {
             checkUserProfile();
             listenToDatabaseUpdates();
-            // Input values empty on load
         };
 
         function listenToDatabaseUpdates() {
@@ -408,65 +419,82 @@
             });
         }
 
-        function trackIndividualUserLogin(name, mobile) {
-            if (!mobile) return;
-            const userKey = mobile.replace(/[^0-9]/g, "");
-            const userRef = db.ref('userLogs/' + userKey);
-            userRef.transaction((currentUserData) => {
-                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                if (currentUserData) {
-                    currentUserData.loginCount = (currentUserData.loginCount || 0) + 1;
-                    currentUserData.lastActive = nowStr;
-                    currentUserData.name = name;
-                    return currentUserData;
-                } else {
-                    return { name: name, mobile: mobile, loginCount: 1, lastActive: nowStr };
-                }
-            });
-        }
-
         function checkUserProfile() {
-            const name = localStorage.getItem('officerName');
             const mobile = localStorage.getItem('officerMobile');
 
-            if (!name || !mobile) {
+            if (!mobile) {
                 document.getElementById('profileModal').classList.remove('hidden');
+                document.getElementById('profileFormInputs').classList.remove('hidden');
+                document.getElementById('pendingStatusMsg').classList.add('hidden');
             } else {
-                document.getElementById('officerNameDisplay').value = name;
-                document.getElementById('officerMobileDisplay').value = mobile;
-                trackIndividualUserLogin(name, mobile);
+                const userKey = mobile.replace(/[^0-9]/g, "");
+                db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    
+                    if (userData && userData.status === 'approved') {
+                        document.getElementById('profileModal').classList.add('hidden');
+                        document.getElementById('officerNameDisplay').value = userData.name;
+                        document.getElementById('officerMobileDisplay').value = userData.mobile;
+                        trackLoginCount(userKey);
+                    } else {
+                        document.getElementById('profileModal').classList.remove('hidden');
+                        document.getElementById('profileFormInputs').classList.add('hidden');
+                        document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                    }
+                });
             }
         }
 
-        function saveProfile() {
+        function submitForApproval() {
             const name = document.getElementById('setupName').value;
             const mobile = document.getElementById('setupMobile').value;
             if (!name || !mobile) return alert("Please enter Name & Mobile.");
 
-            localStorage.setItem('officerName', name);
-            localStorage.setItem('officerMobile', mobile);
-            document.getElementById('officerNameDisplay').value = name;
-            document.getElementById('officerMobileDisplay').value = mobile;
-            document.getElementById('profileModal').classList.add('hidden');
-            trackIndividualUserLogin(name, mobile);
+            const userKey = mobile.replace(/[^0-9]/g, "");
+            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            db.ref('userLogs/' + userKey).set({
+                name: name,
+                mobile: mobile,
+                status: 'pending',
+                loginCount: 0,
+                lastActive: nowStr
+            }, (error) => {
+                if (!error) {
+                    localStorage.setItem('officerName', name);
+                    localStorage.setItem('officerMobile', mobile);
+                    document.getElementById('profileFormInputs').classList.add('hidden');
+                    document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                } else {
+                    alert("Error submitting details: " + error.message);
+                }
+            });
+        }
+
+        function trackLoginCount(userKey) {
+            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            db.ref('userLogs/' + userKey).update({
+                loginCount: firebase.database.ServerValue.increment(1),
+                lastActive: nowStr
+            });
         }
 
         function openProfileModal() {
             document.getElementById('setupName').value = localStorage.getItem('officerName') || '';
             document.getElementById('setupMobile').value = localStorage.getItem('officerMobile') || '';
-            document.getElementById('profileModal').classList.remove('hidden');
+            checkUserProfile();
         }
 
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
             const container = document.getElementById('balloonContainer');
             const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-slate-900 p-1.5 rounded-lg border border-slate-800";
+            div.className = "balloon-row flex gap-2 items-center bg-[#121418] p-1.5 rounded-lg border border-[#282c37]";
             div.innerHTML = `
                 <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 bg-slate-950 border border-slate-700 rounded text-xs text-center font-bold text-slate-200 outline-none">
+                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs text-center font-bold text-slate-200 outline-none">
                 </div>
                 <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-slate-950 border border-slate-700 rounded text-xs font-bold text-cyan-400 outline-none">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs font-bold text-cyan-400 outline-none">
                 </div>
                 <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-300"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
@@ -489,7 +517,6 @@
             const N = parseInt(document.getElementById('tenureMonths').value);
             const balloonMap = getBalloonConfig();
 
-            // Validate inputs
             if (!P || P <= 0 || !annualRate || annualRate <= 0 || !N || N <= 0) {
                 alert("කරුණාකර Financed Amount, Rate, සහ Tenure හිස්තැන් පුරවන්න.");
                 return;
@@ -556,7 +583,7 @@
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-cyan-500/10 font-bold text-cyan-300' : 'hover:bg-slate-800/50'}">
+                <tr class="${s.isBalloon ? 'bg-cyan-500/10 font-bold text-cyan-300' : 'hover:bg-[#222630]/40'}">
                     <td class="p-2.5 font-semibold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-cyan-500 text-slate-950 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
                     <td class="p-2.5 text-slate-400 font-medium">${s.dueDate}</td>
                     <td class="p-2.5 font-mono">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
@@ -573,7 +600,7 @@
 
             if(unregTbody) {
                 unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-800/40">
+                    <tr class="hover:bg-[#222630]/30">
                         <td class="p-3 font-semibold text-slate-200">${r.category}</td>
                         ${r.rates.map(val => `<td class="p-3 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
                     </tr>
@@ -582,7 +609,7 @@
 
             if(regTbody) {
                 regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-slate-800/40">
+                    <tr class="hover:bg-[#222630]/30">
                         <td class="p-3 font-semibold text-slate-200">${r.category}</td>
                         ${r.rates.map(val => `<td class="p-3 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
                     </tr>
@@ -629,33 +656,54 @@
                 const data = snapshot.val();
                 const tbody = document.getElementById('userLogsTable');
                 if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">No logs recorded yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500">No logs recorded yet.</td></tr>`;
                     document.getElementById('statTotalLogins').innerText = '0';
                     document.getElementById('statTotalUsers').innerText = '0';
+                    document.getElementById('statPendingUsers').innerText = '0';
                     return;
                 }
 
                 let html = '';
                 let totalLogins = 0;
                 let totalUsers = 0;
+                let pendingUsers = 0;
 
                 for (let key in data) {
                     const u = data[key];
                     totalUsers++;
                     totalLogins += (u.loginCount || 0);
 
+                    const isApproved = u.status === 'approved';
+                    if (!isApproved) pendingUsers++;
+
                     html += `
-                        <tr class="hover:bg-slate-800/40">
-                            <td class="p-2 font-semibold text-slate-200">${u.name || 'Unknown'}</td>
-                            <td class="p-2 text-slate-400">${u.mobile || 'N/A'}</td>
-                            <td class="p-2 text-center"><span class="bg-slate-800 text-cyan-400 font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
-                            <td class="p-2 text-right text-slate-400 font-medium">${u.lastActive || 'N/A'}</td>
+                        <tr class="hover:bg-[#222630]/30">
+                            <td class="p-2.5 font-semibold text-slate-200">${u.name || 'Unknown'}</td>
+                            <td class="p-2.5 text-slate-400 font-mono">${u.mobile || 'N/A'}</td>
+                            <td class="p-2.5 text-center">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${isApproved ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+                                    ${u.status || 'pending'}
+                                </span>
+                            </td>
+                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-cyan-400 font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
+                            <td class="p-2.5 text-right">
+                                ${!isApproved ? `<button onclick="approveUser('${key}')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-2.5 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>'}
+                            </td>
                         </tr>
                     `;
                 }
                 tbody.innerHTML = html;
                 document.getElementById('statTotalLogins').innerText = totalLogins;
                 document.getElementById('statTotalUsers').innerText = totalUsers;
+                document.getElementById('statPendingUsers').innerText = pendingUsers;
+            });
+        }
+
+        function approveUser(userKey) {
+            db.ref('userLogs/' + userKey).update({
+                status: 'approved'
+            }, (error) => {
+                if (!error) alert("User access approved successfully!");
             });
         }
 
@@ -664,22 +712,22 @@
             const regContainer = document.getElementById('regRateEditor');
 
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
                     <label class="text-[10px] font-semibold text-slate-300">${item.category}</label>
                     <div class="grid grid-cols-6 gap-1">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-slate-950 border border-slate-700 rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
+                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
                         `).join('')}
                     </div>
                 </div>
             `).join('');
 
             regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
                     <label class="text-[10px] font-semibold text-slate-300">${item.category}</label>
                     <div class="grid grid-cols-5 gap-1">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-slate-950 border border-slate-700 rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
+                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
                         `).join('')}
                     </div>
                 </div>
@@ -725,7 +773,7 @@
                     labels: ['Principal', 'Interest'],
                     datasets: [{
                         data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#06b6d4', '#334155'],
+                        backgroundColor: ['#06b6d4', '#282c37'],
                         borderWidth: 0
                     }]
                 },
@@ -740,17 +788,17 @@
             const chartImgData = canvas.toDataURL('image/png');
 
             // Top Header Bar
-            doc.setFillColor(15, 23, 42); // Slate 900
+            doc.setFillColor(18, 20, 24);
             doc.rect(0, 0, 210, 26, 'F');
 
-            doc.setTextColor(6, 182, 212); // Cyan 500
+            doc.setTextColor(6, 182, 212);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.text("Lease Ledger", 12, 13);
 
             doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(226, 232, 240);
+            doc.setTextColor(209, 213, 219);
             doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 19);
 
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
@@ -762,7 +810,7 @@
             doc.rect(0, 26, 210, 1.5, 'F');
 
             // Key Metrics Grid
-            doc.setFillColor(30, 41, 59);
+            doc.setFillColor(26, 29, 36);
             doc.roundedRect(12, 32, 88, 16, 2, 2, 'F');
             doc.setTextColor(6, 182, 212);
             doc.setFontSize(6.5);
@@ -774,7 +822,7 @@
 
             doc.setFillColor(6, 182, 212);
             doc.roundedRect(104, 32, 94, 16, 2, 2, 'F');
-            doc.setTextColor(15, 23, 42);
+            doc.setTextColor(18, 20, 24);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("REGULAR MONTHLY RENTAL", 108, 37);
@@ -787,7 +835,7 @@
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL INTEREST", 16, 56);
-            doc.setTextColor(15, 23, 42);
+            doc.setTextColor(18, 20, 24);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 63);
 
@@ -797,7 +845,7 @@
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL PAYABLE", 108, 56);
-            doc.setTextColor(15, 23, 42);
+            doc.setTextColor(18, 20, 24);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 63);
 
@@ -817,17 +865,17 @@
             
             doc.setFillColor(6, 182, 212);
             doc.rect(43, startTableY + 8, 4, 4, 'F');
-            doc.setTextColor(15, 23, 42);
+            doc.setTextColor(18, 20, 24);
             doc.setFontSize(7);
             doc.setFont('helvetica', 'bold');
             doc.text(`Principal: Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 11.5);
 
-            doc.setFillColor(51, 65, 85);
+            doc.setFillColor(40, 44, 55);
             doc.rect(43, startTableY + 16, 4, 4, 'F');
             doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
 
             // Officer Info Box
-            doc.setFillColor(15, 23, 42);
+            doc.setFillColor(18, 20, 24);
             doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
 
             doc.setTextColor(6, 182, 212);
@@ -861,7 +909,7 @@
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
                 body: tableBody,
                 theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [6, 182, 212], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [6, 182, 212], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2 },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 10 },
