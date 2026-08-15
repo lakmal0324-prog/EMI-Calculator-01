@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lease Ledger - Obsidian Dark</title>
+    <title>Lease Ledger - Soft Gold & Obsidian</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,41 +26,45 @@
         body { 
             user-select: none; 
             -webkit-user-select: none; 
-            background: #121418; /* Warm Soft Dark Background */
+            background: #121418; 
             color: #d1d5db;
         }
+        .text-gold { color: #D4AF37; }
+        .bg-gold { background-color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        
         .clean-card {
-            background: #1a1d24; /* Soft Obsidian Surface */
+            background: #1a1d24; 
             border: 1px solid #282c37;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #121418; }
-        ::-webkit-scrollbar-thumb { background: #282c37; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
         input { color-scheme: dark; }
     </style>
 </head>
 <body class="font-sans min-h-screen flex flex-col justify-between">
 
     <!-- Header Banner -->
-    <div class="bg-[#0b0c0e] text-slate-500 text-center py-1.5 text-[10px] font-medium tracking-wider uppercase border-b border-[#282c37]">
-        <i class="fa-solid fa-code text-xs mr-1 text-cyan-400"></i> Designed by Lakmal Maduranga
+    <div class="bg-[#0b0c0e] text-slate-500 text-center py-1.5 text-[10px] font-bold tracking-wider uppercase border-b border-[#282c37]">
+        <i class="fa-solid fa-code text-xs mr-1 text-gold"></i> Designed by Lakmal Maduranga
     </div>
 
     <!-- Navigation Header -->
     <header class="bg-[#1a1d24]/90 text-slate-200 shadow-md sticky top-0 z-40 border-b border-[#282c37] backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-                    <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
+                <div class="w-8 h-8 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/30">
+                    <i class="fa-solid fa-calculator text-gold text-sm"></i>
                 </div>
-                <span class="font-bold text-lg tracking-wide text-slate-200">Lease<span class="text-cyan-400">Ledger</span></span>
+                <span class="font-bold text-lg tracking-wide text-slate-200">Lease<span class="text-gold font-extrabold">Ledger</span></span>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="togglePage()" class="bg-[#222630] hover:bg-[#282c37] text-slate-300 font-medium px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-table text-cyan-400"></i> <span id="navBtnText">Rate Sheet</span>
+                <button onclick="togglePage()" class="bg-[#222630] hover:bg-[#282c37] text-slate-300 font-bold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-table text-gold"></i> <span id="navBtnText" class="font-bold">Rate Sheet</span>
                 </button>
-                <button onclick="openAdminModal()" class="bg-[#222630] hover:bg-[#282c37] text-slate-400 p-2 rounded-lg text-xs border border-[#282c37] transition hover:text-cyan-400" title="Admin Panel">
+                <button onclick="openAdminModal()" class="bg-[#222630] hover:bg-[#282c37] text-slate-400 p-2 rounded-lg text-xs border border-[#282c37] transition hover:text-gold" title="Admin Panel">
                     <i class="fa-solid fa-user-shield"></i>
                 </button>
             </div>
@@ -75,23 +79,23 @@
             <div class="clean-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div>
                     <h1 class="text-base font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-cyan-400"></i> Interest Rate Matrix
+                        <i class="fa-solid fa-layer-group text-gold"></i> INTEREST RATE MATRIX
                     </h1>
-                    <p class="text-slate-400 text-xs">Synchronized Financial Rates</p>
+                    <p class="text-slate-400 text-xs font-semibold">Synchronized Financial Rates</p>
                 </div>
-                <button onclick="showPage('calcPage')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 uppercase tracking-wider">
+                <button onclick="showPage('calcPage')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 uppercase tracking-wider">
                     Open Calculator <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
 
             <!-- Unregistered Rates Table -->
             <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
-                <div class="bg-[#121418] text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
-                    <i class="fa-solid fa-car"></i> 1. Unregistered Vehicles & Equipment
+                <div class="bg-[#121418] text-gold px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
+                    <i class="fa-solid fa-car"></i> 1. UNREGISTERED VEHICLES & EQUIPMENT
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-[#0b0c0e] text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+                        <thead class="bg-[#0b0c0e] text-slate-400 font-bold text-[10px] tracking-wider uppercase">
                             <tr>
                                 <th class="p-3">Category / Equipment</th>
                                 <th class="p-3">12-24M</th>
@@ -109,12 +113,12 @@
 
             <!-- Registered Rates Table -->
             <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
-                <div class="bg-[#121418] text-cyan-400 px-4 py-2.5 font-semibold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
-                    <i class="fa-solid fa-car-side"></i> 2. Registered Vehicles & Equipment
+                <div class="bg-[#121418] text-gold px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
+                    <i class="fa-solid fa-car-side"></i> 2. REGISTERED VEHICLES & EQUIPMENT
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-[#0b0c0e] text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+                        <thead class="bg-[#0b0c0e] text-slate-400 font-bold text-[10px] tracking-wider uppercase">
                             <tr>
                                 <th class="p-3">Category / Equipment</th>
                                 <th class="p-3">12-24M</th>
@@ -138,9 +142,9 @@
                 <div class="clean-card p-5 rounded-xl space-y-4">
                     <div class="flex justify-between items-center border-b border-[#282c37] pb-3">
                         <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-cyan-400"></i> Facility Parameters
+                            <i class="fa-solid fa-sliders text-gold"></i> FACILITY PARAMETERS
                         </h2>
-                        <button onclick="openProfileModal()" class="text-xs text-cyan-400 font-medium hover:underline flex items-center gap-1">
+                        <button onclick="openProfileModal()" class="text-xs text-gold font-bold hover:underline flex items-center gap-1">
                             <i class="fa-solid fa-user-gear"></i> Profile
                         </button>
                     </div>
@@ -148,47 +152,47 @@
                     <!-- Officer Details Banner -->
                     <div class="grid grid-cols-2 gap-2 bg-[#121418] p-2.5 rounded-lg border border-[#282c37]">
                         <div>
-                            <label class="block text-[9px] font-medium text-slate-400 uppercase tracking-wider">Officer Name</label>
-                            <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-semibold text-slate-200 bg-transparent outline-none">
+                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">OFFICER NAME</label>
+                            <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-medium text-slate-400 uppercase tracking-wider">Mobile No.</label>
-                            <input type="text" id="officerMobileDisplay" readonly class="w-full text-xs font-semibold text-slate-200 bg-transparent outline-none">
+                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">MOBILE NO.</label>
+                            <input type="text" id="officerMobileDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
                         </div>
                     </div>
 
                     <!-- Empty Inputs -->
                     <div>
-                        <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Financed Amount (Rs.)</label>
-                        <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-cyan-400 text-xs">
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">FINANCED AMOUNT (RS.)</label>
+                        <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-gold text-xs">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Rate (% p.a.)</label>
-                            <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
+                            <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">RATE (% P.A.)</label>
+                            <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-slate-200 text-xs">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Tenure (Months)</label>
-                            <input type="number" id="tenureMonths" placeholder="e.g. 48" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-cyan-500 outline-none font-bold text-slate-200 text-xs">
+                            <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">TENURE (MONTHS)</label>
+                            <input type="number" id="tenureMonths" placeholder="e.g. 48" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-slate-200 text-xs">
                         </div>
                     </div>
 
                     <!-- Balloon Inputs -->
                     <div class="pt-2 border-t border-[#282c37]">
                         <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                                <i class="fa-solid fa-cubes text-cyan-400"></i> Balloon Payments
+                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-solid fa-cubes text-gold"></i> BALLOON PAYMENTS
                             </label>
-                            <button onclick="addBalloonField()" class="text-xs bg-[#222630] hover:bg-[#282c37] text-cyan-400 font-medium px-2 py-0.5 rounded border border-[#282c37] transition flex items-center gap-1">
+                            <button onclick="addBalloonField()" class="text-xs bg-[#222630] hover:bg-[#282c37] text-gold font-bold px-2 py-0.5 rounded border border-[#282c37] transition flex items-center gap-1">
                                 <i class="fa-solid fa-plus text-[10px]"></i> Add
                             </button>
                         </div>
                         <div id="balloonContainer" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <button onclick="calculateMultiBalloonSchedule()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2.5 rounded-lg transition flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-calculator"></i> Calculate Schedule
+                    <button onclick="calculateMultiBalloonSchedule()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-lg transition flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-calculator"></i> CALCULATE SCHEDULE
                     </button>
                 </div>
 
@@ -197,18 +201,18 @@
                     <div class="space-y-3">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-[#282c37] pb-3 gap-2">
                             <div>
-                                <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Repayment Summary</h2>
-                                <p id="summaryText" class="text-xs text-cyan-400 font-medium">Regular Monthly Rental: Rs. 0.00</p>
+                                <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">REPAYMENT SUMMARY</h2>
+                                <p id="summaryText" class="text-xs text-gold font-bold">Regular Monthly Rental: Rs. 0.00</p>
                             </div>
-                            <button onclick="sharePDFDirectly()" class="bg-[#222630] hover:bg-[#282c37] text-slate-200 font-semibold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-share-nodes text-cyan-400"></i> PDF Report
+                            <button onclick="sharePDFDirectly()" class="bg-[#222630] hover:bg-[#282c37] text-slate-200 font-bold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-share-nodes text-gold"></i> PDF Report
                             </button>
                         </div>
 
                         <!-- Schedule Table -->
                         <div class="overflow-y-auto max-h-[420px] border border-[#282c37] rounded-lg bg-[#121418]/60">
                             <table class="w-full text-left text-xs">
-                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 z-10 text-[10px] uppercase tracking-wider border-b border-[#282c37]">
+                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 z-10 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-3">#</th>
                                         <th class="p-3">Due Date</th>
@@ -220,7 +224,7 @@
                                 </thead>
                                 <tbody id="scheduleTable" class="divide-y divide-[#282c37] text-slate-300">
                                     <tr>
-                                        <td colspan="6" class="text-center py-12 text-slate-500 font-medium">Enter values & click Calculate</td>
+                                        <td colspan="6" class="text-center py-12 text-slate-500 font-bold">Enter values & click Calculate</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -231,19 +235,19 @@
         </section>
 
         <!-- PAGE 3: Admin Modal Dashboard -->
-        <div id="adminModal" class="fixed inset-0 bg-[#0b0c0e]/80 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
+        <div id="adminModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
             <div class="clean-card rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-[#282c37]">
                 <div class="bg-[#121418] p-3.5 flex justify-between items-center border-b border-[#282c37]">
-                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider"><i class="fa-solid fa-user-shield text-cyan-400"></i> Admin Management Center</h3>
+                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider"><i class="fa-solid fa-user-shield text-gold"></i> Admin Management Center</h3>
                     <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
                 </div>
                 
                 <div id="adminAuth" class="p-8 text-center space-y-4">
-                    <i class="fa-solid fa-shield-halved text-4xl text-slate-600"></i>
+                    <i class="fa-solid fa-shield-halved text-4xl text-gold"></i>
                     <h4 class="font-bold text-slate-300 text-xs uppercase tracking-wider">Security Clearance Required</h4>
-                    <input type="password" id="adminPass" class="bg-[#121418] border border-[#282c37] px-3 py-2 rounded-lg text-center text-xs outline-none focus:border-cyan-500 w-48 text-slate-100 font-semibold" placeholder="••••••••">
+                    <input type="password" id="adminPass" class="bg-[#121418] border border-[#282c37] px-3 py-2 rounded-lg text-center text-xs outline-none focus:border-[#D4AF37] w-48 text-slate-100 font-bold" placeholder="••••••••">
                     <div>
-                        <button onclick="verifyAdmin()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-2 rounded-lg font-bold text-xs transition uppercase tracking-wider">Unlock</button>
+                        <button onclick="verifyAdmin()" class="bg-gold hover:bg-[#c49f27] text-slate-950 px-5 py-2 rounded-lg font-bold text-xs transition uppercase tracking-wider">Unlock</button>
                     </div>
                 </div>
 
@@ -251,20 +255,20 @@
                     
                     <!-- App Analytics -->
                     <div class="bg-[#121418] p-3.5 rounded-lg border border-[#282c37] space-y-3">
-                        <h4 class="font-semibold text-slate-300 text-xs flex items-center gap-2 border-b border-[#282c37] pb-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-chart-line text-cyan-400"></i> Analytics & Officer Activity
+                        <h4 class="font-bold text-slate-300 text-xs flex items-center gap-2 border-b border-[#282c37] pb-2 uppercase tracking-wider">
+                            <i class="fa-solid fa-chart-line text-gold"></i> Analytics & Officer Activity
                         </h4>
                         <div class="grid grid-cols-3 gap-3 text-center">
                             <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Total Active Logins</p>
-                                <p id="statTotalLogins" class="text-base font-bold text-cyan-400">0</p>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Active Logins</p>
+                                <p id="statTotalLogins" class="text-base font-bold text-gold">0</p>
                             </div>
                             <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Total Officers</p>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Officers</p>
                                 <p id="statTotalUsers" class="text-base font-bold text-slate-200">0</p>
                             </div>
                             <div class="bg-[#0b0c0e] p-2 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-medium uppercase tracking-wider">Pending Approvals</p>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Pending Approvals</p>
                                 <p id="statPendingUsers" class="text-base font-bold text-amber-400">0</p>
                             </div>
                         </div>
@@ -272,13 +276,13 @@
 
                     <!-- Officer Approval Logs -->
                     <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
+                        <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
                             <span>Officer Access Authorization</span>
-                            <span class="text-[9px] text-slate-400">Approve first-time access</span>
+                            <span class="text-[9px] text-slate-400 font-bold">Approve first-time access</span>
                         </h4>
                         <div class="overflow-x-auto border border-[#282c37] rounded-lg bg-[#121418]/60 max-h-48">
                             <table class="w-full text-left text-xs text-slate-300">
-                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 text-[10px] uppercase tracking-wider border-b border-[#282c37]">
+                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-2.5">Name</th>
                                         <th class="p-2.5">Mobile</th>
@@ -294,20 +298,20 @@
 
                     <!-- Rates Editor Section -->
                     <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
+                        <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Unregistered Rates
                         </h4>
                         <div id="unregRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
                     <div>
-                        <h4 class="font-semibold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
+                        <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider">
                             Edit Registered Rates
                         </h4>
                         <div id="regRateEditor" class="space-y-2 max-h-36 overflow-y-auto border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
                     </div>
 
-                    <button onclick="saveAdminSettings()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
+                    <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
                         Save Rate Changes Globally
                     </button>
                 </div>
@@ -318,24 +322,24 @@
         <div id="profileModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
             <div class="clean-card rounded-xl max-w-sm w-full p-5 space-y-4 border border-[#282c37]">
                 <div class="text-center space-y-1">
-                    <div class="w-10 h-10 bg-[#222630] text-cyan-400 rounded-full flex items-center justify-center mx-auto text-lg border border-[#282c37]">
+                    <div class="w-10 h-10 bg-[#222630] text-gold rounded-full flex items-center justify-center mx-auto text-lg border border-[#282c37]">
                         <i class="fa-solid fa-id-card"></i>
                     </div>
                     <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Officer Verification</h3>
-                    <p class="text-[10px] text-slate-400">First-time registration requires Admin approval.</p>
+                    <p class="text-[10px] text-slate-400 font-bold">First-time registration requires Admin approval.</p>
                 </div>
 
                 <!-- Input Registration Form -->
                 <div id="profileFormInputs" class="space-y-3">
                     <div>
-                        <label class="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
-                        <input type="text" id="setupName" placeholder="Ex: Lakmal Maduranga" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
+                        <input type="text" id="setupName" placeholder="Ex: Lakmal" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-bold text-slate-200 text-xs outline-none focus:border-[#D4AF37]">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
-                        <input type="text" id="setupMobile" placeholder="Ex: 071XXXXXXX" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-semibold text-slate-200 text-xs outline-none focus:border-cyan-500">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
+                        <input type="text" id="setupMobile" placeholder="Ex: 0777353802" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-bold text-slate-200 text-xs outline-none focus:border-[#D4AF37]">
                     </div>
-                    <button onclick="submitForApproval()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition">
+                    <button onclick="submitForApproval()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition">
                         Submit For Approval
                     </button>
                 </div>
@@ -344,8 +348,8 @@
                 <div id="pendingStatusMsg" class="hidden text-center space-y-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                     <i class="fa-solid fa-clock-rotate-left text-amber-400 text-2xl animate-spin"></i>
                     <p class="text-xs text-amber-200 font-bold uppercase tracking-wider">Approval Pending</p>
-                    <p class="text-[10px] text-slate-400">ඔබගේ ගිණුම සක්‍රිය කිරීමට Admin වෙත යොමු කර ඇත. Approval ලැබුණු පසු මෙතැනින් ඇතුළු විය හැක.</p>
-                    <button onclick="checkUserProfile()" class="w-full bg-[#222630] hover:bg-[#282c37] text-cyan-400 border border-[#282c37] text-[10px] font-bold py-2 rounded-lg transition uppercase tracking-wider">
+                    <p class="text-[10px] text-slate-400 font-bold">ඔබගේ ගිණුම සක්‍රිය කිරීමට Admin වෙත යොමු කර ඇත. Approval ලැබුණු පසු මෙතැනින් ඇතුළු විය හැක.</p>
+                    <button onclick="checkUserProfile()" class="w-full bg-[#222630] hover:bg-[#282c37] text-gold border border-[#282c37] text-[10px] font-bold py-2 rounded-lg transition uppercase tracking-wider">
                         Re-check Status
                     </button>
                 </div>
@@ -353,8 +357,8 @@
         </div>
     </main>
 
-    <footer class="bg-[#0b0c0e] text-slate-500 py-3 text-center text-[10px] border-t border-[#282c37] tracking-wider">
-        <p>Designed by <span class="text-slate-300 font-semibold">Lakmal Maduranga</span> | Lease Ledger</p>
+    <footer class="bg-[#0b0c0e] text-slate-500 py-3 text-center text-[10px] border-t border-[#282c37] tracking-wider font-bold">
+        <p>Designed by <span class="text-slate-300 font-bold">Lakmal Maduranga</span> | Lease Ledger</p>
     </footer>
 
     <!-- Hidden Canvas for PDF Chart -->
@@ -364,6 +368,9 @@
 
     <!-- Script Engine -->
     <script>
+        const ADMIN_MOBILE = "0777353802";
+        const ADMIN_NAME = "Lakmal";
+
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
             databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
@@ -403,9 +410,27 @@
         let rateData = defaultRateData;
 
         window.onload = function() {
+            ensureAdminApproved();
             checkUserProfile();
             listenToDatabaseUpdates();
         };
+
+        // Automatic Admin Setup
+        function ensureAdminApproved() {
+            const adminKey = ADMIN_MOBILE.replace(/[^0-9]/g, "");
+            db.ref('userLogs/' + adminKey).set({
+                name: ADMIN_NAME,
+                mobile: ADMIN_MOBILE,
+                status: 'approved',
+                role: 'admin'
+            });
+
+            // Set Admin details in localStorage if empty
+            if (!localStorage.getItem('officerMobile')) {
+                localStorage.setItem('officerName', ADMIN_NAME);
+                localStorage.setItem('officerMobile', ADMIN_MOBILE);
+            }
+        }
 
         function listenToDatabaseUpdates() {
             db.ref('rateData').on('value', (snapshot) => {
@@ -428,6 +453,16 @@
                 document.getElementById('pendingStatusMsg').classList.add('hidden');
             } else {
                 const userKey = mobile.replace(/[^0-9]/g, "");
+                
+                // Bypass approval if Admin
+                if (userKey === ADMIN_MOBILE) {
+                    document.getElementById('profileModal').classList.add('hidden');
+                    document.getElementById('officerNameDisplay').value = ADMIN_NAME;
+                    document.getElementById('officerMobileDisplay').value = ADMIN_MOBILE;
+                    trackLoginCount(userKey);
+                    return;
+                }
+
                 db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
                     const userData = snapshot.val();
                     
@@ -453,18 +488,24 @@
             const userKey = mobile.replace(/[^0-9]/g, "");
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
+            const isSystemAdmin = (userKey === ADMIN_MOBILE);
+
             db.ref('userLogs/' + userKey).set({
                 name: name,
                 mobile: mobile,
-                status: 'pending',
+                status: isSystemAdmin ? 'approved' : 'pending',
                 loginCount: 0,
                 lastActive: nowStr
             }, (error) => {
                 if (!error) {
                     localStorage.setItem('officerName', name);
                     localStorage.setItem('officerMobile', mobile);
-                    document.getElementById('profileFormInputs').classList.add('hidden');
-                    document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                    if (isSystemAdmin) {
+                        checkUserProfile();
+                    } else {
+                        document.getElementById('profileFormInputs').classList.add('hidden');
+                        document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                    }
                 } else {
                     alert("Error submitting details: " + error.message);
                 }
@@ -494,7 +535,7 @@
                     <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs text-center font-bold text-slate-200 outline-none">
                 </div>
                 <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs font-bold text-cyan-400 outline-none">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs font-bold text-gold outline-none">
                 </div>
                 <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-300"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
@@ -583,13 +624,13 @@
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-cyan-500/10 font-bold text-cyan-300' : 'hover:bg-[#222630]/40'}">
-                    <td class="p-2.5 font-semibold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-cyan-500 text-slate-950 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
-                    <td class="p-2.5 text-slate-400 font-medium">${s.dueDate}</td>
-                    <td class="p-2.5 font-mono">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono text-slate-400">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono ${s.isBalloon ? 'text-cyan-300 font-bold' : 'text-slate-100 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono text-slate-400">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <tr class="${s.isBalloon ? 'bg-[#D4AF37]/15 font-bold text-gold' : 'hover:bg-[#222630]/40'}">
+                    <td class="p-2.5 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-gold text-slate-950 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
+                    <td class="p-2.5 text-slate-400 font-bold">${s.dueDate}</td>
+                    <td class="p-2.5 font-mono font-bold">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2.5 font-mono text-slate-400 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2.5 font-mono ${s.isBalloon ? 'text-gold font-bold' : 'text-slate-100 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-2.5 font-mono text-slate-400 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
             `).join('');
         }
@@ -601,8 +642,8 @@
             if(unregTbody) {
                 unregTbody.innerHTML = rateData.unregistered.map(r => `
                     <tr class="hover:bg-[#222630]/30">
-                        <td class="p-3 font-semibold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
+                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
@@ -610,8 +651,8 @@
             if(regTbody) {
                 regTbody.innerHTML = rateData.registered.map(r => `
                     <tr class="hover:bg-[#222630]/30">
-                        <td class="p-3 font-semibold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-medium ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
+                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
@@ -656,7 +697,7 @@
                 const data = snapshot.val();
                 const tbody = document.getElementById('userLogsTable');
                 if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500">No logs recorded yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500 font-bold">No logs recorded yet.</td></tr>`;
                     document.getElementById('statTotalLogins').innerText = '0';
                     document.getElementById('statTotalUsers').innerText = '0';
                     document.getElementById('statPendingUsers').innerText = '0';
@@ -678,16 +719,16 @@
 
                     html += `
                         <tr class="hover:bg-[#222630]/30">
-                            <td class="p-2.5 font-semibold text-slate-200">${u.name || 'Unknown'}</td>
-                            <td class="p-2.5 text-slate-400 font-mono">${u.mobile || 'N/A'}</td>
+                            <td class="p-2.5 font-bold text-slate-200">${u.name || 'Unknown'}</td>
+                            <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile || 'N/A'}</td>
                             <td class="p-2.5 text-center">
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${isApproved ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
                                     ${u.status || 'pending'}
                                 </span>
                             </td>
-                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-cyan-400 font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
+                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
                             <td class="p-2.5 text-right">
-                                ${!isApproved ? `<button onclick="approveUser('${key}')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-2.5 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>'}
+                                ${!isApproved ? `<button onclick="approveUser('${key}')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-2.5 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>'}
                             </td>
                         </tr>
                     `;
@@ -713,10 +754,10 @@
 
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
                 <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
-                    <label class="text-[10px] font-semibold text-slate-300">${item.category}</label>
+                    <label class="text-[10px] font-bold text-slate-300">${item.category}</label>
                     <div class="grid grid-cols-6 gap-1">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
+                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-[#D4AF37]">
                         `).join('')}
                     </div>
                 </div>
@@ -724,10 +765,10 @@
 
             regContainer.innerHTML = rateData.registered.map((item, idx) => `
                 <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
-                    <label class="text-[10px] font-semibold text-slate-300">${item.category}</label>
+                    <label class="text-[10px] font-bold text-slate-300">${item.category}</label>
                     <div class="grid grid-cols-5 gap-1">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-cyan-500">
+                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-[#D4AF37]">
                         `).join('')}
                     </div>
                 </div>
@@ -752,15 +793,15 @@
             });
         }
 
-        // GENERATE CLEAN MINIMALIST PDF REPORT
+        // GENERATE CLEAN PDF REPORT WITH GOLD ACCENTS
         async function sharePDFDirectly() {
             if (calculatedSchedule.length === 0) return alert("Calculate schedule first.");
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            const officerName = localStorage.getItem('officerName') || "Lakmal Maduranga";
-            const officerMobile = localStorage.getItem('officerMobile') || "N/A";
+            const officerName = localStorage.getItem('officerName') || "Lakmal";
+            const officerMobile = localStorage.getItem('officerMobile') || "0777353802";
 
             // Render Donut Chart Image
             const canvas = document.getElementById('pdfChartCanvas');
@@ -773,7 +814,7 @@
                     labels: ['Principal', 'Interest'],
                     datasets: [{
                         data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#06b6d4', '#282c37'],
+                        backgroundColor: ['#D4AF37', '#282c37'],
                         borderWidth: 0
                     }]
                 },
@@ -791,13 +832,13 @@
             doc.setFillColor(18, 20, 24);
             doc.rect(0, 0, 210, 26, 'F');
 
-            doc.setTextColor(6, 182, 212);
+            doc.setTextColor(212, 175, 55);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.text("Lease Ledger", 12, 13);
 
             doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
+            doc.setFont('helvetica', 'bold');
             doc.setTextColor(209, 213, 219);
             doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 19);
 
@@ -805,14 +846,14 @@
             doc.setTextColor(255, 255, 255);
             doc.text(`Generated: ${nowStr}  ·  ${summaryMetrics.N} Months  ·  ${summaryMetrics.R}% p.a.`, 198, 16, { align: 'right' });
 
-            // Accent Line
-            doc.setFillColor(6, 182, 212);
+            // Accent Line (Gold)
+            doc.setFillColor(212, 175, 55);
             doc.rect(0, 26, 210, 1.5, 'F');
 
             // Key Metrics Grid
             doc.setFillColor(26, 29, 36);
             doc.roundedRect(12, 32, 88, 16, 2, 2, 'F');
-            doc.setTextColor(6, 182, 212);
+            doc.setTextColor(212, 175, 55);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("FINANCED AMOUNT", 16, 37);
@@ -820,7 +861,7 @@
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 44);
 
-            doc.setFillColor(6, 182, 212);
+            doc.setFillColor(212, 175, 55);
             doc.roundedRect(104, 32, 94, 16, 2, 2, 'F');
             doc.setTextColor(18, 20, 24);
             doc.setFontSize(6.5);
@@ -863,7 +904,7 @@
             // Visual Section & Officer Box Side-by-Side
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
-            doc.setFillColor(6, 182, 212);
+            doc.setFillColor(212, 175, 55);
             doc.rect(43, startTableY + 8, 4, 4, 'F');
             doc.setTextColor(18, 20, 24);
             doc.setFontSize(7);
@@ -878,7 +919,7 @@
             doc.setFillColor(18, 20, 24);
             doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
 
-            doc.setTextColor(6, 182, 212);
+            doc.setTextColor(212, 175, 55);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("PREPARED BY", 120, startTableY + 8);
@@ -890,7 +931,7 @@
 
             doc.setTextColor(203, 213, 225);
             doc.setFontSize(7.5);
-            doc.setFont('helvetica', 'normal');
+            doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
             doc.text(`Lease Ledger Representative`, 120, startTableY + 26);
 
@@ -909,8 +950,8 @@
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
                 body: tableBody,
                 theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [6, 182, 212], fontStyle: 'bold', fontSize: 7, halign: 'center' },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.2 },
+                headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [212, 175, 55], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 10 },
                     1: { halign: 'center', cellWidth: 28 },
@@ -923,8 +964,8 @@
                     if (data.section === 'body') {
                         const rowIdx = data.row.index;
                         if (calculatedSchedule[rowIdx] && calculatedSchedule[rowIdx].isBalloon) {
-                            data.cell.styles.fillColor = [207, 250, 254];
-                            data.cell.styles.textColor = [14, 116, 144];
+                            data.cell.styles.fillColor = [254, 243, 199];
+                            data.cell.styles.textColor = [180, 83, 9];
                             data.cell.styles.fontStyle = 'bold';
                         }
                     }
@@ -934,7 +975,7 @@
                 didDrawPage: function (data) {
                     doc.setFontSize(7);
                     doc.setTextColor(100, 116, 139);
-                    doc.setFont('helvetica', 'italic');
+                    doc.setFont('helvetica', 'bold');
                     doc.text(`Prepared by ${officerName} (${officerMobile})`, 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                 }
