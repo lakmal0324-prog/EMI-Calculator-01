@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lease Ledger - Advanced EMI & Rate Sheet</title>
+    <title>EMI Master Pro - Advanced EMI & Rate Sheet</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -43,13 +43,20 @@
     <!-- Header / Navbar -->
     <header class="bg-[#121418] border-b border-[#282c37] sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gold/20 border border-gold/40 flex items-center justify-center text-gold font-bold">
-                    <i class="fa-solid fa-calculator"></i>
+            <!-- Modern Logo & Title -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-gold/20 flex items-center justify-center">
+                    <div class="w-full h-full bg-[#0b0c0e] rounded-[11px] flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-crown text-gold text-xs absolute -top-1 -right-1 opacity-40"></i>
+                        <i class="fa-solid fa-calculator text-gold text-base"></i>
+                    </div>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold text-gold leading-tight">Lease Ledger</h1>
-                    <p class="text-[10px] text-slate-400 font-semibold">Official EMI & Rate Calculator</p>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base font-extrabold text-gold tracking-wide leading-none">EMI MASTER</h1>
+                        <span class="bg-gold text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Official EMI & Rate Calculator</p>
                 </div>
             </div>
 
@@ -785,7 +792,6 @@
             }
         }
 
-        // Render Rate Editor with Tenure Headings
         function renderRateEditor() {
             const unregContainer = document.getElementById('unregRateEditor');
             const regContainer = document.getElementById('regRateEditor');
@@ -822,7 +828,6 @@
             `).join('');
         }
 
-        // Automatic % Addition & Rate Saving Logic
         function saveAdminSettings() {
             document.querySelectorAll('.rate-edit-input').forEach(input => {
                 const type = input.dataset.type;
@@ -888,7 +893,7 @@
             doc.setTextColor(212, 175, 55);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
-            doc.text("Lease Ledger", 12, 13);
+            doc.text("EMI Master Pro", 12, 13);
 
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
@@ -982,7 +987,7 @@
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
-            doc.text(`Lease Ledger Representative`, 120, startTableY + 26);
+            doc.text(`EMI Master Pro Representative`, 120, startTableY + 26);
 
             const tableBody = calculatedSchedule.map(s => [
                 s.month,
