@@ -291,7 +291,7 @@
                     </div>
                 </div>
 
-                <!-- 1. Global Rate Editor (TOP POSITION) -->
+                <!-- 1. Global Rate Editor -->
                 <div class="space-y-3 pt-2">
                     <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
@@ -299,12 +299,12 @@
                     
                     <div class="space-y-2">
                         <h5 class="text-[11px] font-bold text-slate-300">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="space-y-2 pt-2 border-t border-[#282c37]/50">
                         <h5 class="text-[11px] font-bold text-slate-300">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
                     <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md">
@@ -312,7 +312,7 @@
                     </button>
                 </div>
 
-                <!-- 2. Live User Logs Table (BOTTOM POSITION) -->
+                <!-- 2. Live User Logs Table -->
                 <div class="space-y-2 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> User Approvals & Logs
@@ -373,7 +373,7 @@
                 { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
                 { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
                 { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
-                { category: "Machinery & Agricultural Equipment", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
+                { category: "Machinery & Agriculture", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
                 { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
                 { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
             ]
@@ -416,7 +416,6 @@
             });
         }
 
-        // Topup / Pending Notification Badge Listener (Only for Main Admin 0777353802)
         function listenForAdminTopupBadge() {
             const currentMobile = localStorage.getItem('officerMobile');
             const isOwner = (currentMobile === ADMIN_MOBILE);
@@ -437,7 +436,6 @@
                 const alertBox = document.getElementById('adminTopupAlert');
                 const pendingTxt = document.getElementById('topupPendingCount');
 
-                // අයිතිකරුට පමණක් Notification පෙන්වීම
                 if (isOwner && pendingCount > 0) {
                     if (badge) badge.classList.remove('hidden');
                     if (badgeDot) badgeDot.classList.remove('hidden');
@@ -451,7 +449,6 @@
             });
         }
 
-        // User profile direct database check
         function checkUserProfile() {
             const mobile = localStorage.getItem('officerMobile');
 
@@ -543,9 +540,7 @@
             });
         }
 
-        function openProfileModal() {
-            checkUserProfile();
-        }
+        function openProfileModal() { checkUserProfile(); }
 
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
             const container = document.getElementById('balloonContainer');
@@ -790,27 +785,37 @@
             }
         }
 
+        // Render Rate Editor with Tenure Headings
         function renderRateEditor() {
             const unregContainer = document.getElementById('unregRateEditor');
             const regContainer = document.getElementById('regRateEditor');
 
+            const unregPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs", "6 Yrs"];
+            const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
+
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
-                    <label class="text-[10px] font-bold text-slate-300">${item.category}</label>
-                    <div class="grid grid-cols-6 gap-1">
+                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-lg space-y-1.5">
+                    <label class="text-[11px] font-bold text-gold block">${item.category}</label>
+                    <div class="grid grid-cols-6 gap-1.5">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-[#D4AF37]">
+                            <div>
+                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
+                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-[#D4AF37]">
+                            </div>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
 
             regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2 bg-[#121418] border border-[#282c37] rounded-lg space-y-1">
-                    <label class="text-[10px] font-bold text-slate-300">${item.category}</label>
-                    <div class="grid grid-cols-5 gap-1">
+                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-lg space-y-1.5">
+                    <label class="text-[11px] font-bold text-gold block">${item.category}</label>
+                    <div class="grid grid-cols-5 gap-1.5">
                         ${item.rates.map((r, col) => `
-                            <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-200 outline-none focus:border-[#D4AF37]">
+                            <div>
+                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
+                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-[#D4AF37]">
+                            </div>
                         `).join('')}
                     </div>
                 </div>
@@ -825,7 +830,6 @@
                 const colIdx = input.dataset.col;
                 let rawValue = input.value.trim();
 
-                // N/A නෙමෙයි නම් සහ අගට % නැත්නම් auto එකතු කිරීම
                 if (rawValue.toUpperCase() !== 'N/A' && rawValue !== '') {
                     if (!rawValue.endsWith('%')) {
                         rawValue = rawValue + '%';
