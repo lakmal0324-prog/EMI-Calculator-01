@@ -65,7 +65,7 @@
                     <i class="fa-solid fa-user-gear text-slate-400"></i>
                 </button>
 
-                <!-- Admin Button with Pending Badge -->
+                <!-- Admin Button with Pending Badge (Only for Owner) -->
                 <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>Admin</span>
@@ -79,7 +79,7 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
 
-        <!-- Topup Alert for Admin -->
+        <!-- Topup Alert for Owner Admin Only -->
         <div id="adminTopupAlert" class="hidden mb-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-2.5">
                 <i class="fa-solid fa-bell text-amber-400 text-sm"></i>
@@ -291,9 +291,32 @@
                     </div>
                 </div>
 
-                <!-- Live User Logs Table -->
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">User Approvals & Logs</h4>
+                <!-- 1. Global Rate Editor (TOP POSITION) -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
+                    </h4>
+                    
+                    <div class="space-y-2">
+                        <h5 class="text-[11px] font-bold text-slate-300">Unregistered Rates</h5>
+                        <div id="unregRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h5 class="text-[11px] font-bold text-slate-300">Registered Rates</h5>
+                        <div id="regRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md">
+                        Publish Rate Updates Globally
+                    </button>
+                </div>
+
+                <!-- 2. Live User Logs Table (BOTTOM POSITION) -->
+                <div class="space-y-2 pt-4 border-t border-[#282c37]">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-users"></i> User Approvals & Logs
+                    </h4>
                     <div class="overflow-x-auto border border-[#282c37] rounded-xl max-h-48">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
@@ -310,24 +333,6 @@
                     </div>
                 </div>
 
-                <!-- Rate Editor -->
-                <div class="space-y-3 pt-4 border-t border-[#282c37]">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Global Rate Editor</h4>
-                    
-                    <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-gold">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-gold">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
-                        Publish Rate Updates Globally
-                    </button>
-                </div>
             </div>
 
         </div>
@@ -411,8 +416,11 @@
             });
         }
 
-        // Topup / Pending Notification Badge Listener
+        // Topup / Pending Notification Badge Listener (Only for Main Admin 0777353802)
         function listenForAdminTopupBadge() {
+            const currentMobile = localStorage.getItem('officerMobile');
+            const isOwner = (currentMobile === ADMIN_MOBILE);
+
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
                 let pendingCount = 0;
@@ -429,7 +437,8 @@
                 const alertBox = document.getElementById('adminTopupAlert');
                 const pendingTxt = document.getElementById('topupPendingCount');
 
-                if (pendingCount > 0) {
+                // අයිතිකරුට පමණක් Notification පෙන්වීම
+                if (isOwner && pendingCount > 0) {
                     if (badge) badge.classList.remove('hidden');
                     if (badgeDot) badgeDot.classList.remove('hidden');
                     if (alertBox) alertBox.classList.remove('hidden');
@@ -442,7 +451,7 @@
             });
         }
 
-        // User profile direct database check (Strict Mode for Removed Users)
+        // User profile direct database check
         function checkUserProfile() {
             const mobile = localStorage.getItem('officerMobile');
 
@@ -461,11 +470,9 @@
                 return;
             }
 
-            // Firebase Database එකේ සෘජුවම පරිශීලකයා සිටීදැයි පරීක්ෂා කිරීම
             db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 
-                // පරිශීලකයා අයින් කර ඇත්නම් LocalStorage මකා දමා නැවත Form එක පෙන්වීම
                 if (!userData) {
                     localStorage.removeItem('officerName');
                     localStorage.removeItem('officerMobile');
@@ -810,12 +817,22 @@
             `).join('');
         }
 
+        // Automatic % Addition & Rate Saving Logic
         function saveAdminSettings() {
             document.querySelectorAll('.rate-edit-input').forEach(input => {
                 const type = input.dataset.type;
                 const catIdx = input.dataset.cat;
                 const colIdx = input.dataset.col;
-                rateData[type][catIdx].rates[colIdx] = input.value;
+                let rawValue = input.value.trim();
+
+                // N/A නෙමෙයි නම් සහ අගට % නැත්නම් auto එකතු කිරීම
+                if (rawValue.toUpperCase() !== 'N/A' && rawValue !== '') {
+                    if (!rawValue.endsWith('%')) {
+                        rawValue = rawValue + '%';
+                    }
+                }
+
+                rateData[type][catIdx].rates[colIdx] = rawValue;
             });
 
             db.ref('rateData').set(rateData, (error) => {
