@@ -2,389 +2,338 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lease Ledger - Soft Gold & Obsidian</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#121418">
-
-    <!-- Tailwind CSS & Font Awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lease Ledger - Advanced EMI & Rate Sheet</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- jsPDF, AutoTable & Chart.js -->
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase App & Database (Compat Scripts) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Firebase JS SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        darkBg: '#0b0c0e',
+                        cardBg: '#121418',
+                        borderBg: '#282c37'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { 
-            user-select: none; 
-            -webkit-user-select: none; 
-            background: #121418; 
-            color: #d1d5db;
-        }
-        .text-gold { color: #D4AF37; }
-        .bg-gold { background-color: #D4AF37; }
-        .border-gold { border-color: #D4AF37; }
-        
-        .clean-card {
-            background: #1a1d24; 
-            border: 1px solid #282c37;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #121418; }
-        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
-        input { color-scheme: dark; }
+        body { background-color: #0b0c0e; color: #f1f5f9; font-family: sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0c0e; }
+        ::-webkit-scrollbar-thumb { background: #282c37; border-radius: 3px; }
     </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Header Banner -->
-    <div class="bg-[#0b0c0e] text-slate-500 text-center py-1.5 text-[10px] font-bold tracking-wider uppercase border-b border-[#282c37]">
-        <i class="fa-solid fa-code text-xs mr-1 text-gold"></i> Designed by Lakmal Maduranga
-    </div>
-
-    <!-- Navigation Header -->
-    <header class="bg-[#1a1d24]/90 text-slate-200 shadow-md sticky top-0 z-40 border-b border-[#282c37] backdrop-blur-md">
+    <!-- Header / Navbar -->
+    <header class="bg-[#121418] border-b border-[#282c37] sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/30">
-                    <i class="fa-solid fa-calculator text-gold text-sm"></i>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gold/20 border border-gold/40 flex items-center justify-center text-gold font-bold">
+                    <i class="fa-solid fa-calculator"></i>
                 </div>
-                <span class="font-bold text-lg tracking-wide text-slate-200">Lease<span class="text-gold font-extrabold">Ledger</span></span>
+                <div>
+                    <h1 class="text-base font-bold text-gold leading-tight">Lease Ledger</h1>
+                    <p class="text-[10px] text-slate-400 font-semibold">Official EMI & Rate Calculator</p>
+                </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <button onclick="togglePage()" class="bg-[#222630] hover:bg-[#282c37] text-slate-300 font-bold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-table text-gold"></i> <span id="navBtnText" class="font-bold">Rate Sheet</span>
+
+            <div class="flex items-center gap-2">
+                <!-- Navigation Toggle Button -->
+                <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-[#D4AF37] fa-arrows-rotate text-gold"></i>
+                    <span id="navBtnText">Rate Sheet</span>
                 </button>
-                <button onclick="openAdminModal()" class="relative bg-[#222630] hover:bg-[#282c37] text-slate-400 p-2 rounded-lg text-xs border border-[#282c37] transition hover:text-gold" title="Admin Panel">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <!-- Admin Notification Badge -->
-                    <span id="navPendingBadge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full animate-ping"></span>
-                    <span id="navPendingBadgeDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full border-2 border-[#121418]"></span>
+
+                <!-- Profile Modal Trigger -->
+                <button onclick="openProfileModal()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 p-1.5 rounded-lg text-xs font-bold transition" title="User Profile">
+                    <i class="fa-solid fa-user-gear text-slate-400"></i>
+                </button>
+
+                <!-- Admin Button with Pending Badge -->
+                <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Admin</span>
+                    <span id="navPendingBadge" class="hidden absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">!</span>
+                    <span id="navPendingBadgeDot" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full bg-rose-500 animate-ping"></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Body -->
-    <main class="max-w-7xl mx-auto p-4 flex-grow w-full space-y-5">
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
 
-        <!-- PAGE 1: Rate Sheet -->
-        <section id="ratePage" class="hidden space-y-5">
-            <div class="clean-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div>
-                    <h1 class="text-base font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-gold"></i> INTEREST RATE MATRIX
-                    </h1>
-                    <p class="text-slate-400 text-xs font-semibold">Synchronized Financial Rates</p>
-                </div>
-                <button onclick="showPage('calcPage')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 uppercase tracking-wider">
-                    Open Calculator <i class="fa-solid fa-arrow-right"></i>
-                </button>
+        <!-- Topup Alert for Admin -->
+        <div id="adminTopupAlert" class="hidden mb-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-bell text-amber-400 text-sm"></i>
+                <span class="text-xs font-bold text-amber-200">නුවූ පරිශීලක ඉල්ලීම් <span id="topupPendingCount" class="underline font-extrabold text-gold">0</span> ක් ඇත.</span>
             </div>
+            <button onclick="openAdminModal()" class="bg-gold text-slate-950 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Approve Now</button>
+        </div>
 
-            <!-- Unregistered Rates Table -->
-            <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
-                <div class="bg-[#121418] text-gold px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
-                    <i class="fa-solid fa-car"></i> 1. UNREGISTERED VEHICLES & EQUIPMENT
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-[#0b0c0e] text-slate-400 font-bold text-[10px] tracking-wider uppercase">
-                            <tr>
-                                <th class="p-3">Category / Equipment</th>
-                                <th class="p-3">12-24M</th>
-                                <th class="p-3">25-36M</th>
-                                <th class="p-3">37-48M</th>
-                                <th class="p-3">49-60M</th>
-                                <th class="p-3">61-72M</th>
-                                <th class="p-3">73-84M</th>
-                            </tr>
-                        </thead>
-                        <tbody id="unregTable" class="divide-y divide-[#282c37]"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Registered Rates Table -->
-            <div class="clean-card rounded-xl overflow-hidden border border-[#282c37]">
-                <div class="bg-[#121418] text-gold px-4 py-2.5 font-bold flex items-center gap-2 text-xs border-b border-[#282c37] uppercase tracking-wider">
-                    <i class="fa-solid fa-car-side"></i> 2. REGISTERED VEHICLES & EQUIPMENT
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-[#0b0c0e] text-slate-400 font-bold text-[10px] tracking-wider uppercase">
-                            <tr>
-                                <th class="p-3">Category / Equipment</th>
-                                <th class="p-3">12-24M</th>
-                                <th class="p-3">25-36M</th>
-                                <th class="p-3">37-48M</th>
-                                <th class="p-3">49-60M</th>
-                                <th class="p-3">61-72M</th>
-                            </tr>
-                        </thead>
-                        <tbody id="regTable" class="divide-y divide-[#282c37]"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 2: Calculator Page -->
-        <section id="calcPage" class="space-y-5">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- 1. CALCULATOR PAGE -->
+        <div id="calcPage" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Inputs Section -->
-                <div class="clean-card p-5 rounded-xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-[#282c37] pb-3">
-                        <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-gold"></i> FACILITY PARAMETERS
-                        </h2>
-                        <button onclick="openProfileModal()" class="text-xs text-gold font-bold hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-user-gear"></i> Profile
-                        </button>
-                    </div>
+                <!-- Input Panel -->
+                <div class="lg:col-span-5 bg-[#121418] border border-[#282c37] rounded-2xl p-5 space-y-4">
+                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider border-b border-[#282c37] pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> Facility Parameters
+                    </h2>
 
-                    <!-- Officer Details Banner -->
-                    <div class="grid grid-cols-2 gap-2 bg-[#121418] p-2.5 rounded-lg border border-[#282c37]">
+                    <div class="space-y-3">
                         <div>
-                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">OFFICER NAME</label>
-                            <input type="text" id="officerNameDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
+                            <label class="text-xs font-bold text-slate-300 block mb-1">Financed Amount (Rs.)</label>
+                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">MOBILE NO.</label>
-                            <input type="text" id="officerMobileDisplay" readonly class="w-full text-xs font-bold text-slate-200 bg-transparent outline-none">
-                        </div>
-                    </div>
 
-                    <!-- Inputs -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">FINANCED AMOUNT (RS.)</label>
-                        <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-gold text-xs">
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">RATE (% P.A.)</label>
-                            <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-slate-200 text-xs">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-slate-300 block mb-1">Annual Rate (%)</label>
+                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-300 block mb-1">Tenure (Months)</label>
+                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-1">TENURE (MONTHS)</label>
-                            <input type="number" id="tenureMonths" placeholder="e.g. 48" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg focus:border-[#D4AF37] outline-none font-bold text-slate-200 text-xs">
-                        </div>
-                    </div>
 
-                    <!-- Balloon Inputs -->
-                    <div class="pt-2 border-t border-[#282c37]">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                                <i class="fa-solid fa-cubes text-gold"></i> BALLOON PAYMENTS
-                            </label>
-                            <button onclick="addBalloonField()" class="text-xs bg-[#222630] hover:bg-[#282c37] text-gold font-bold px-2 py-0.5 rounded border border-[#282c37] transition flex items-center gap-1">
-                                <i class="fa-solid fa-plus text-[10px]"></i> Add
+                        <!-- Balloon Options -->
+                        <div class="pt-2 border-t border-[#282c37]">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-slate-300">Balloon Payments (Optional)</label>
+                                <button onclick="addBalloonField()" class="text-xs bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 px-2 py-0.5 rounded-lg font-bold transition">+ Add</button>
+                            </div>
+                            <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                        </div>
+
+                        <!-- Officer Info Displays -->
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#282c37]">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400">Officer Name</label>
+                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-slate-300 font-bold outline-none cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400">Contact No</label>
+                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-slate-300 font-bold outline-none cursor-not-allowed">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-gold/10">
+                                Calculate Schedule
+                            </button>
+                            <button onclick="sharePDFDirectly()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-4 rounded-xl font-bold transition text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-share-nodes text-gold"></i> Share PDF
                             </button>
                         </div>
-                        <div id="balloonContainer" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
                     </div>
-
-                    <button onclick="calculateMultiBalloonSchedule()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-lg transition flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-calculator"></i> CALCULATE SCHEDULE
-                    </button>
                 </div>
 
-                <!-- Schedule Preview Section -->
-                <div class="lg:col-span-2 clean-card p-5 rounded-xl space-y-4 flex flex-col justify-between">
-                    <div class="space-y-3">
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-[#282c37] pb-3 gap-2">
-                            <div>
-                                <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">REPAYMENT SUMMARY</h2>
-                                <p id="summaryText" class="text-xs text-gold font-bold">Regular Monthly Rental: Rs. 0.00</p>
-                            </div>
-                            <button onclick="sharePDFDirectly()" class="bg-[#222630] hover:bg-[#282c37] text-slate-200 font-bold px-3 py-1.5 rounded-lg text-xs border border-[#282c37] transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-share-nodes text-gold"></i> PDF Report
-                            </button>
-                        </div>
+                <!-- Schedule & Results Display -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4">
+                        <div id="summaryText" class="text-sm font-bold text-gold">Regular Monthly Rental: Rs. 0.00</div>
+                    </div>
 
-                        <!-- Schedule Table -->
-                        <div class="overflow-y-auto max-h-[420px] border border-[#282c37] rounded-lg bg-[#121418]/60">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-[#0b0c0e] text-slate-400 sticky top-0 z-10 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
+                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl overflow-hidden">
+                        <div class="max-h-[480px] overflow-y-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                     <tr>
-                                        <th class="p-3">#</th>
-                                        <th class="p-3">Due Date</th>
-                                        <th class="p-3">Principal</th>
-                                        <th class="p-3">Interest</th>
-                                        <th class="p-3">Total Rental</th>
-                                        <th class="p-3">Balance</th>
+                                        <th class="p-2.5">#</th>
+                                        <th class="p-2.5">Due Date</th>
+                                        <th class="p-2.5">Principal</th>
+                                        <th class="p-2.5">Interest</th>
+                                        <th class="p-2.5">Total Due</th>
+                                        <th class="p-2.5">Balance</th>
                                     </tr>
                                 </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-[#282c37] text-slate-300">
+                                <tbody id="scheduleTable" class="divide-y divide-[#282c37]/50">
                                     <tr>
-                                        <td colspan="6" class="text-center py-12 text-slate-500 font-bold">Enter values & click Calculate</td>
+                                        <td colspan="6" class="p-8 text-center text-slate-500 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
-        </section>
+        </div>
 
-        <!-- PAGE 3: Admin Modal Dashboard -->
-        <div id="adminModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="clean-card rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-[#282c37]">
-                
-                <!-- Modal Header -->
-                <div class="bg-[#121418] p-3.5 flex justify-between items-center border-b border-[#282c37]">
-                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider">
-                        <i class="fa-solid fa-user-shield text-gold"></i> Admin Management Center
-                    </h3>
-                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-                
-                <!-- Auth View -->
-                <div id="adminAuth" class="p-8 text-center space-y-4">
-                    <i class="fa-solid fa-shield-halved text-4xl text-gold"></i>
-                    <h4 class="font-bold text-slate-300 text-xs uppercase tracking-wider">Security Clearance Required</h4>
-                    <input type="password" id="adminPass" class="bg-[#121418] border border-[#282c37] px-3 py-2 rounded-lg text-center text-xs outline-none focus:border-[#D4AF37] w-48 text-slate-100 font-bold" placeholder="••••••••">
-                    <div>
-                        <button onclick="verifyAdmin()" class="bg-gold hover:bg-[#c49f27] text-slate-950 px-5 py-2 rounded-lg font-bold text-xs transition uppercase tracking-wider">Unlock</button>
+        <!-- 2. RATE SHEET PAGE -->
+        <div id="ratePage" class="hidden space-y-6">
+            <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-5 space-y-6">
+                <div>
+                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
+                    <div class="overflow-x-auto border border-[#282c37] rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-[#1a1d24] text-slate-400 font-bold border-b border-[#282c37]">
+                                <tr>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">1 Year</th>
+                                    <th class="p-3">2 Years</th>
+                                    <th class="p-3">3 Years</th>
+                                    <th class="p-3">4 Years</th>
+                                    <th class="p-3">5 Years</th>
+                                    <th class="p-3">6 Years</th>
+                                </tr>
+                            </thead>
+                            <tbody id="unregTable" class="divide-y divide-[#282c37]"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Main Admin Content (Side Scrollable & Topup Banner Added) -->
-                <div id="adminContent" class="p-5 overflow-y-auto space-y-5 hidden">
-                    
-                    <!-- Dynamic Top-up Alert Banner -->
-                    <div id="adminTopupAlert" class="hidden bg-amber-500/10 border border-amber-500/40 p-3 rounded-lg flex items-center justify-between">
-                        <div class="flex items-center gap-2 text-amber-300 text-xs font-bold">
-                            <i class="fa-solid fa-bell animate-bounce text-amber-400"></i>
-                            <span>Pending Approvals: <span id="topupPendingCount" class="text-gold font-extrabold">0</span> Request(s) waiting for access permission!</span>
-                        </div>
+                <div>
+                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
+                    <div class="overflow-x-auto border border-[#282c37] rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-[#1a1d24] text-slate-400 font-bold border-b border-[#282c37]">
+                                <tr>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">1 Year</th>
+                                    <th class="p-3">2 Years</th>
+                                    <th class="p-3">3 Years</th>
+                                    <th class="p-3">4 Years</th>
+                                    <th class="p-3">5 Years</th>
+                                </tr>
+                            </thead>
+                            <tbody id="regTable" class="divide-y divide-[#282c37]"></tbody>
+                        </table>
                     </div>
-
-                    <!-- 1. App Analytics & Overall Usage -->
-                    <div class="bg-[#121418] p-3.5 rounded-lg border border-[#282c37] space-y-3">
-                        <h4 class="font-bold text-slate-300 text-xs flex items-center gap-2 border-b border-[#282c37] pb-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-chart-line text-gold"></i> Overall App Usage & Summary
-                        </h4>
-                        <div class="grid grid-cols-3 gap-3 text-center">
-                            <div class="bg-[#0b0c0e] p-2.5 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Active Logins</p>
-                                <p id="statTotalLogins" class="text-lg font-extrabold text-gold">0</p>
-                            </div>
-                            <div class="bg-[#0b0c0e] p-2.5 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Officers</p>
-                                <p id="statTotalUsers" class="text-lg font-extrabold text-slate-200">0</p>
-                            </div>
-                            <div class="bg-[#0b0c0e] p-2.5 rounded-lg border border-[#282c37]">
-                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Pending Approvals</p>
-                                <p id="statPendingUsers" class="text-lg font-extrabold text-amber-400">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Rates Editor Section -->
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-slate-300 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-pen-to-square text-gold"></i> Global Rates Configuration
-                        </h4>
-                        
-                        <div class="overflow-x-auto">
-                            <h5 class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Edit Unregistered Rates</h5>
-                            <div id="unregRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40 min-w-[500px]"></div>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <h5 class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Edit Registered Rates</h5>
-                            <div id="regRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40 min-w-[450px]"></div>
-                        </div>
-
-                        <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
-                            Save Rate Changes Globally
-                        </button>
-                    </div>
-
-                    <!-- 3. User Authorization & Management Table (Side Scroll Supported) -->
-                    <div>
-                        <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
-                            <span><i class="fa-solid fa-users text-gold mr-1"></i> Officer Access Authorization List</span>
-                        </h4>
-                        <div class="border border-[#282c37] rounded-lg bg-[#121418]/60 overflow-x-auto">
-                            <table class="w-full text-left text-xs text-slate-300 min-w-[480px]">
-                                <thead class="bg-[#0b0c0e] text-slate-400 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
-                                    <tr>
-                                        <th class="p-2.5">Name</th>
-                                        <th class="p-2.5">Mobile</th>
-                                        <th class="p-2.5 text-center">Status</th>
-                                        <th class="p-2.5 text-center">Logins</th>
-                                        <th class="p-2.5 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userLogsTable" class="divide-y divide-[#282c37]"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
 
-        <!-- Profile Modal -->
-        <div id="profileModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
-            <div class="clean-card rounded-xl max-w-sm w-full p-5 space-y-4 border border-[#282c37]">
-                <div class="text-center space-y-1">
-                    <div class="w-10 h-10 bg-[#222630] text-gold rounded-full flex items-center justify-center mx-auto text-lg border border-[#282c37]">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Officer Verification</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">First-time registration requires Admin approval.</p>
-                </div>
-
-                <div id="profileFormInputs" class="space-y-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
-                        <input type="text" id="setupName" placeholder="Ex: Lakmal" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-bold text-slate-200 text-xs outline-none focus:border-[#D4AF37]">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
-                        <input type="text" id="setupMobile" placeholder="Ex: 0777353802" class="w-full px-3 py-2 bg-[#121418] border border-[#282c37] rounded-lg font-bold text-slate-200 text-xs outline-none focus:border-[#D4AF37]">
-                    </div>
-                    <button onclick="submitForApproval()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition">
-                        Submit For Approval
-                    </button>
-                </div>
-
-                <div id="pendingStatusMsg" class="hidden text-center space-y-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                    <i class="fa-solid fa-clock-rotate-left text-amber-400 text-2xl animate-spin"></i>
-                    <p class="text-xs text-amber-200 font-bold uppercase tracking-wider">Approval Pending</p>
-                    <p class="text-[10px] text-slate-400 font-bold">ඔබගේ ගිණුම සක්‍රිය කිරීමට Admin වෙත යොමු කර ඇත. Approval ලැබුණු පසු මෙතැනින් ඇතුළු විය හැක.</p>
-                    <button onclick="checkUserProfile()" class="w-full bg-[#222630] hover:bg-[#282c37] text-gold border border-[#282c37] text-[10px] font-bold py-2 rounded-lg transition uppercase tracking-wider">
-                        Re-check Status
-                    </button>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <footer class="bg-[#0b0c0e] text-slate-500 py-3 text-center text-[10px] border-t border-[#282c37] tracking-wider font-bold">
-        <p>Designed by <span class="text-slate-300 font-bold">Lakmal Maduranga</span> | Lease Ledger</p>
-    </footer>
+    <!-- Hidden Canvas for PDF Chart Generation -->
+    <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
 
-    <!-- Hidden Canvas for PDF Chart -->
-    <div style="position: absolute; left: -9999px; top: -9999px;">
-        <canvas id="pdfChartCanvas" width="220" height="220"></canvas>
+    <!-- Profile & User Setup Modal -->
+    <div id="profileModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-[#121418] border border-[#282c37] rounded-2xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-gold border-b border-[#282c37] pb-2">User Registration / Status</h3>
+            
+            <div id="profileFormInputs" class="space-y-3">
+                <p class="text-xs text-slate-400">ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කර Admin අනුමැතිය සඳහා යොමු කරන්න.</p>
+                <div>
+                    <label class="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
+                    <input type="text" id="setupName" placeholder="e.g. Lakmal Premathilaka" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-300 block mb-1">Mobile Number</label>
+                    <input type="text" id="setupMobile" placeholder="e.g. 0777353802" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                </div>
+                <button onclick="submitForApproval()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
+                    Submit Details
+                </button>
+            </div>
+
+            <div id="pendingStatusMsg" class="hidden space-y-3 text-center py-4">
+                <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <h4 class="text-sm font-bold text-slate-200">අනුමැතිය අපේක්ෂාවෙන්...</h4>
+                <p class="text-xs text-slate-400">ඔබගේ තොරතුරු Admin වෙත යොමු කර ඇත. අනුමැතිය ලැබුණු පසු ඇප් එක භාවිතා කළ හැක.</p>
+            </div>
+        </div>
     </div>
 
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-[#121418] border border-[#282c37] rounded-2xl max-w-4xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-[#282c37] pb-2">
+                <h3 class="text-base font-bold text-gold">Admin Management Dashboard</h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Admin Authentication -->
+            <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
+                <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
+                <input type="password" id="adminPass" placeholder="Password" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Control</button>
+            </div>
+
+            <!-- Admin Dashboard Content -->
+            <div id="adminContent" class="hidden space-y-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                        <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
+                        <div id="statTotalUsers" class="text-lg font-bold text-gold">0</div>
+                    </div>
+                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                        <div class="text-[10px] text-slate-400 font-bold">PENDING APPROVALS</div>
+                        <div id="statPendingUsers" class="text-lg font-bold text-amber-400">0</div>
+                    </div>
+                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                        <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
+                        <div id="statTotalLogins" class="text-lg font-bold text-emerald-400">0</div>
+                    </div>
+                </div>
+
+                <!-- Live User Logs Table -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">User Approvals & Logs</h4>
+                    <div class="overflow-x-auto border border-[#282c37] rounded-xl max-h-48">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
+                                <tr>
+                                    <th class="p-2.5">Name</th>
+                                    <th class="p-2.5">Mobile</th>
+                                    <th class="p-2.5 text-center">Status</th>
+                                    <th class="p-2.5 text-center">Logins</th>
+                                    <th class="p-2.5 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userLogsTable" class="divide-y divide-[#282c37]"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rate Editor -->
+                <div class="space-y-3 pt-4 border-t border-[#282c37]">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Global Rate Editor</h4>
+                    
+                    <div class="space-y-2">
+                        <h5 class="text-[11px] font-bold text-gold">Unregistered Rates</h5>
+                        <div id="unregRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h5 class="text-[11px] font-bold text-gold">Registered Rates</h5>
+                        <div id="regRateEditor" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
+                        Publish Rate Updates Globally
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         const ADMIN_MOBILE = "0777353802";
         const ADMIN_NAME = "Lakmal";
@@ -432,6 +381,7 @@
             checkUserProfile();
             listenToDatabaseUpdates();
             listenForAdminTopupBadge();
+            startLiveUserLogsListener();
         };
 
         function ensureAdminApproved() {
@@ -461,13 +411,16 @@
             });
         }
 
+        // Topup / Pending Notification Badge Listener
         function listenForAdminTopupBadge() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
                 let pendingCount = 0;
                 if (data) {
                     for (let k in data) {
-                        if (data[k].status === 'pending') pendingCount++;
+                        if (data[k].status === 'pending') {
+                            pendingCount++;
+                        }
                     }
                 }
                 
@@ -489,39 +442,58 @@
             });
         }
 
+        // User profile direct database check (Strict Mode for Removed Users)
         function checkUserProfile() {
             const mobile = localStorage.getItem('officerMobile');
 
             if (!mobile) {
-                document.getElementById('profileModal').classList.remove('hidden');
-                document.getElementById('profileFormInputs').classList.remove('hidden');
-                document.getElementById('pendingStatusMsg').classList.add('hidden');
-            } else {
-                const userKey = mobile.replace(/[^0-9]/g, "");
+                showRegistrationForm();
+                return;
+            }
+
+            const userKey = mobile.replace(/[^0-9]/g, "");
+            
+            if (userKey === ADMIN_MOBILE) {
+                document.getElementById('profileModal').classList.add('hidden');
+                document.getElementById('officerNameDisplay').value = ADMIN_NAME;
+                document.getElementById('officerMobileDisplay').value = ADMIN_MOBILE;
+                trackLoginCount(userKey);
+                return;
+            }
+
+            // Firebase Database එකේ සෘජුවම පරිශීලකයා සිටීදැයි පරීක්ෂා කිරීම
+            db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
+                const userData = snapshot.val();
                 
-                if (userKey === ADMIN_MOBILE) {
-                    document.getElementById('profileModal').classList.add('hidden');
-                    document.getElementById('officerNameDisplay').value = ADMIN_NAME;
-                    document.getElementById('officerMobileDisplay').value = ADMIN_MOBILE;
-                    trackLoginCount(userKey);
+                // පරිශීලකයා අයින් කර ඇත්නම් LocalStorage මකා දමා නැවත Form එක පෙන්වීම
+                if (!userData) {
+                    localStorage.removeItem('officerName');
+                    localStorage.removeItem('officerMobile');
+                    showRegistrationForm();
                     return;
                 }
 
-                db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
-                    const userData = snapshot.val();
-                    
-                    if (userData && userData.status === 'approved') {
-                        document.getElementById('profileModal').classList.add('hidden');
-                        document.getElementById('officerNameDisplay').value = userData.name;
-                        document.getElementById('officerMobileDisplay').value = userData.mobile;
-                        trackLoginCount(userKey);
-                    } else {
-                        document.getElementById('profileModal').classList.remove('hidden');
-                        document.getElementById('profileFormInputs').classList.add('hidden');
-                        document.getElementById('pendingStatusMsg').classList.remove('hidden');
-                    }
-                });
-            }
+                if (userData.status === 'approved') {
+                    document.getElementById('profileModal').classList.add('hidden');
+                    document.getElementById('officerNameDisplay').value = userData.name;
+                    document.getElementById('officerMobileDisplay').value = userData.mobile;
+                    trackLoginCount(userKey);
+                } else {
+                    document.getElementById('profileModal').classList.remove('hidden');
+                    document.getElementById('profileFormInputs').classList.add('hidden');
+                    document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                }
+            }).catch(() => {
+                showRegistrationForm();
+            });
+        }
+
+        function showRegistrationForm() {
+            document.getElementById('profileModal').classList.remove('hidden');
+            document.getElementById('profileFormInputs').classList.remove('hidden');
+            document.getElementById('pendingStatusMsg').classList.add('hidden');
+            document.getElementById('setupName').value = '';
+            document.getElementById('setupMobile').value = '';
         }
 
         function submitForApproval() {
@@ -565,8 +537,6 @@
         }
 
         function openProfileModal() {
-            document.getElementById('setupName').value = localStorage.getItem('officerName') || '';
-            document.getElementById('setupMobile').value = localStorage.getItem('officerMobile') || '';
             checkUserProfile();
         }
 
@@ -729,7 +699,6 @@
             if (document.getElementById('adminPass').value === 'Lakmal@93') {
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
-                loadAdminUserLogs();
                 renderRateEditor();
                 listenForAdminTopupBadge();
             } else {
@@ -737,10 +706,12 @@
             }
         }
 
-        function loadAdminUserLogs() {
+        function startLiveUserLogsListener() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
                 const tbody = document.getElementById('userLogsTable');
+                if (!tbody) return;
+
                 if (!data) {
                     tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500 font-bold">No logs recorded yet.</td></tr>`;
                     document.getElementById('statTotalLogins').innerText = '0';
@@ -1004,7 +975,6 @@
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
                 theme: 'plain',
                 headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [212, 175, 55], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
