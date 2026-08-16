@@ -240,11 +240,18 @@
         <!-- PAGE 3: Admin Modal Dashboard -->
         <div id="adminModal" class="fixed inset-0 bg-[#0b0c0e]/85 backdrop-blur-sm flex items-center justify-center z-50 hidden p-3">
             <div class="clean-card rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-[#282c37]">
+                
+                <!-- Modal Header -->
                 <div class="bg-[#121418] p-3.5 flex justify-between items-center border-b border-[#282c37]">
-                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider"><i class="fa-solid fa-user-shield text-gold"></i> Admin Management Center</h3>
-                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    <h3 class="font-bold text-xs text-slate-200 flex items-center gap-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-user-shield text-gold"></i> Admin Management Center
+                    </h3>
+                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
                 </div>
                 
+                <!-- Auth View -->
                 <div id="adminAuth" class="p-8 text-center space-y-4">
                     <i class="fa-solid fa-shield-halved text-4xl text-gold"></i>
                     <h4 class="font-bold text-slate-300 text-xs uppercase tracking-wider">Security Clearance Required</h4>
@@ -254,17 +261,18 @@
                     </div>
                 </div>
 
+                <!-- Main Admin Content (Side Scrollable & Topup Banner Added) -->
                 <div id="adminContent" class="p-5 overflow-y-auto space-y-5 hidden">
                     
-                    <!-- Top-up Notice for Lakmal -->
-                    <div id="adminTopupAlert" class="hidden bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg flex items-center justify-between">
+                    <!-- Dynamic Top-up Alert Banner -->
+                    <div id="adminTopupAlert" class="hidden bg-amber-500/10 border border-amber-500/40 p-3 rounded-lg flex items-center justify-between">
                         <div class="flex items-center gap-2 text-amber-300 text-xs font-bold">
                             <i class="fa-solid fa-bell animate-bounce text-amber-400"></i>
-                            <span>You have <span id="topupPendingCount">0</span> pending officer access approvals waiting!</span>
+                            <span>Pending Approvals: <span id="topupPendingCount" class="text-gold font-extrabold">0</span> Request(s) waiting for access permission!</span>
                         </div>
                     </div>
 
-                    <!-- 1. App Analytics & Overall Usage (Top Section) -->
+                    <!-- 1. App Analytics & Overall Usage -->
                     <div class="bg-[#121418] p-3.5 rounded-lg border border-[#282c37] space-y-3">
                         <h4 class="font-bold text-slate-300 text-xs flex items-center gap-2 border-b border-[#282c37] pb-2 uppercase tracking-wider">
                             <i class="fa-solid fa-chart-line text-gold"></i> Overall App Usage & Summary
@@ -285,20 +293,20 @@
                         </div>
                     </div>
 
-                    <!-- 2. Rates Editor Section (Middle Section) -->
+                    <!-- 2. Rates Editor Section -->
                     <div class="space-y-4">
                         <h4 class="font-bold text-slate-300 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-pen-to-square text-gold"></i> Global Rates Configuration
                         </h4>
                         
-                        <div>
+                        <div class="overflow-x-auto">
                             <h5 class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Edit Unregistered Rates</h5>
-                            <div id="unregRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
+                            <div id="unregRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40 min-w-[500px]"></div>
                         </div>
 
-                        <div>
+                        <div class="overflow-x-auto">
                             <h5 class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Edit Registered Rates</h5>
-                            <div id="regRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40"></div>
+                            <div id="regRateEditor" class="space-y-2 border border-[#282c37] p-2 rounded-lg bg-[#121418]/40 min-w-[450px]"></div>
                         </div>
 
                         <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2 rounded-lg transition text-xs uppercase tracking-wider">
@@ -306,14 +314,13 @@
                         </button>
                     </div>
 
-                    <!-- 3. Officer Access Authorization & User List (Bottom Section - Full Visible List) -->
+                    <!-- 3. User Authorization & Management Table (Side Scroll Supported) -->
                     <div>
                         <h4 class="font-bold text-slate-300 mb-2 border-b border-[#282c37] pb-1.5 text-xs uppercase tracking-wider flex items-center justify-between">
-                            <span><i class="fa-solid fa-users text-gold mr-1"></i> Officer Access & Authorization List</span>
-                            <span class="text-[9px] text-slate-400 font-bold">Approve / Remove Officers</span>
+                            <span><i class="fa-solid fa-users text-gold mr-1"></i> Officer Access Authorization List</span>
                         </h4>
-                        <div class="border border-[#282c37] rounded-lg bg-[#121418]/60 overflow-hidden">
-                            <table class="w-full text-left text-xs text-slate-300">
+                        <div class="border border-[#282c37] rounded-lg bg-[#121418]/60 overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300 min-w-[480px]">
                                 <thead class="bg-[#0b0c0e] text-slate-400 text-[10px] uppercase font-bold tracking-wider border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-2.5">Name</th>
@@ -455,33 +462,31 @@
         }
 
         function listenForAdminTopupBadge() {
-            const currentMobile = localStorage.getItem('officerMobile');
-            if (currentMobile === ADMIN_MOBILE) {
-                db.ref('userLogs').on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    let pendingCount = 0;
-                    if (data) {
-                        for (let k in data) {
-                            if (data[k].status === 'pending') pendingCount++;
-                        }
+            db.ref('userLogs').on('value', (snapshot) => {
+                const data = snapshot.val();
+                let pendingCount = 0;
+                if (data) {
+                    for (let k in data) {
+                        if (data[k].status === 'pending') pendingCount++;
                     }
-                    const badge = document.getElementById('navPendingBadge');
-                    const badgeDot = document.getElementById('navPendingBadgeDot');
-                    const alertBox = document.getElementById('adminTopupAlert');
-                    const pendingTxt = document.getElementById('topupPendingCount');
+                }
+                
+                const badge = document.getElementById('navPendingBadge');
+                const badgeDot = document.getElementById('navPendingBadgeDot');
+                const alertBox = document.getElementById('adminTopupAlert');
+                const pendingTxt = document.getElementById('topupPendingCount');
 
-                    if (pendingCount > 0) {
-                        badge.classList.remove('hidden');
-                        badgeDot.classList.remove('hidden');
-                        alertBox.classList.remove('hidden');
-                        pendingTxt.innerText = pendingCount;
-                    } else {
-                        badge.classList.add('hidden');
-                        badgeDot.classList.add('hidden');
-                        alertBox.classList.add('hidden');
-                    }
-                });
-            }
+                if (pendingCount > 0) {
+                    if (badge) badge.classList.remove('hidden');
+                    if (badgeDot) badgeDot.classList.remove('hidden');
+                    if (alertBox) alertBox.classList.remove('hidden');
+                    if (pendingTxt) pendingTxt.innerText = pendingCount;
+                } else {
+                    if (badge) badge.classList.add('hidden');
+                    if (badgeDot) badgeDot.classList.add('hidden');
+                    if (alertBox) alertBox.classList.add('hidden');
+                }
+            });
         }
 
         function checkUserProfile() {
@@ -726,6 +731,7 @@
                 document.getElementById('adminContent').classList.remove('hidden');
                 loadAdminUserLogs();
                 renderRateEditor();
+                listenForAdminTopupBadge();
             } else {
                 alert('Access Denied');
             }
