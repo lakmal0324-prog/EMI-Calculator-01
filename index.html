@@ -56,7 +56,11 @@
                         <h1 class="text-base font-extrabold text-gold tracking-wide leading-none">EMI MASTER</h1>
                         <span class="bg-gold text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Official EMI & Rate Calculator</p>
+                    <!-- Creator Highlighted Tagline -->
+                    <p class="text-[10px] text-amber-400 font-bold mt-0.5 tracking-wide flex items-center gap-1">
+                        <span>by</span>
+                        <span class="bg-gold/20 text-gold px-1.5 py-0.2 rounded border border-gold/30 font-extrabold">Lakmal Maduranga</span>
+                    </p>
                 </div>
             </div>
 
@@ -244,7 +248,7 @@
                 <p class="text-xs text-slate-400">ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කර Admin අනුමැතිය සඳහා යොමු කරන්න.</p>
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Lakmal Premathilaka" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <input type="text" id="setupName" placeholder="e.g. Lakmal Maduranga" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Mobile Number</label>
@@ -348,7 +352,7 @@
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         const ADMIN_MOBILE = "0777353802";
-        const ADMIN_NAME = "Lakmal";
+        const ADMIN_NAME = "Lakmal Maduranga";
 
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
@@ -855,12 +859,19 @@
         }
 
         async function sharePDFDirectly() {
-            if (calculatedSchedule.length === 0) return alert("Calculate schedule first.");
+            // Auto calculate if schedule is empty
+            if (calculatedSchedule.length === 0) {
+                calculateMultiBalloonSchedule();
+            }
+
+            if (calculatedSchedule.length === 0) {
+                return alert("කරුණාකර Financed Amount, Rate, සහ Tenure ඇතුළත් කර Calculate කරන්න.");
+            }
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            const officerName = localStorage.getItem('officerName') || "Lakmal";
+            const officerName = localStorage.getItem('officerName') || "Lakmal Maduranga";
             const officerMobile = localStorage.getItem('officerMobile') || "0777353802";
 
             const canvas = document.getElementById('pdfChartCanvas');
@@ -887,76 +898,88 @@
 
             const chartImgData = canvas.toDataURL('image/png');
 
+            // Header Background
             doc.setFillColor(18, 20, 24);
-            doc.rect(0, 0, 210, 26, 'F');
+            doc.rect(0, 0, 210, 28, 'F');
 
+            // Header Title
             doc.setTextColor(212, 175, 55);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
-            doc.text("EMI Master Pro", 12, 13);
+            doc.text("EMI Master Pro", 12, 12);
 
+            // Highlight Creator Name Top Banner
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(209, 213, 219);
-            doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 19);
+            doc.setTextColor(251, 191, 36);
+            doc.text("DEVELOPED BY LAKMAL MADURANGA", 12, 17);
+
+            doc.setFontSize(7.5);
+            doc.setTextColor(148, 163, 184);
+            doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 22);
 
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
             doc.setTextColor(255, 255, 255);
-            doc.text(`Generated: ${nowStr}  ·  ${summaryMetrics.N} Months  ·  ${summaryMetrics.R}% p.a.`, 198, 16, { align: 'right' });
+            doc.setFontSize(8);
+            doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
+            doc.text(`Tenure: ${summaryMetrics.N} Months  |  Rate: ${summaryMetrics.R}% p.a.`, 198, 18, { align: 'right' });
 
+            // Gold Separator Line
             doc.setFillColor(212, 175, 55);
-            doc.rect(0, 26, 210, 1.5, 'F');
+            doc.rect(0, 28, 210, 1.5, 'F');
 
+            // Summary Metrics Cards
             doc.setFillColor(26, 29, 36);
-            doc.roundedRect(12, 32, 88, 16, 2, 2, 'F');
+            doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
             doc.setTextColor(212, 175, 55);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.text("FINANCED AMOUNT", 16, 37);
+            doc.text("FINANCED AMOUNT", 16, 39);
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 44);
+            doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 46);
 
             doc.setFillColor(212, 175, 55);
-            doc.roundedRect(104, 32, 94, 16, 2, 2, 'F');
+            doc.roundedRect(104, 34, 94, 16, 2, 2, 'F');
             doc.setTextColor(18, 20, 24);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.text("REGULAR MONTHLY RENTAL", 108, 37);
+            doc.text("REGULAR MONTHLY RENTAL", 108, 39);
             doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 44);
+            doc.text(`Rs. ${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 46);
 
             doc.setFillColor(241, 245, 249);
-            doc.roundedRect(12, 51, 88, 16, 2, 2, 'F');
+            doc.roundedRect(12, 53, 88, 16, 2, 2, 'F');
             doc.setTextColor(71, 85, 105);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL INTEREST", 16, 56);
+            doc.text("TOTAL INTEREST", 16, 58);
             doc.setTextColor(18, 20, 24);
             doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 63);
+            doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 65);
 
             doc.setFillColor(241, 245, 249);
-            doc.roundedRect(104, 51, 94, 16, 2, 2, 'F');
+            doc.roundedRect(104, 53, 94, 16, 2, 2, 'F');
             doc.setTextColor(71, 85, 105);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL PAYABLE", 108, 56);
+            doc.text("TOTAL PAYABLE", 108, 58);
             doc.setTextColor(18, 20, 24);
             doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 63);
+            doc.text(`Rs. ${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 65);
 
-            let startTableY = 70;
+            let startTableY = 72;
             if (summaryMetrics.balloonDesc) {
                 doc.setFillColor(241, 245, 249);
-                doc.roundedRect(12, 69, 186, 7, 1.5, 1.5, 'F');
+                doc.roundedRect(12, 71, 186, 7, 1.5, 1.5, 'F');
                 doc.setTextColor(71, 85, 105);
                 doc.setFontSize(7);
                 doc.setFont('helvetica', 'bold');
-                doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 73.5);
-                startTableY = 79;
+                doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 75.5);
+                startTableY = 81;
             }
 
+            // Chart & Prepared By Section
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
             doc.setFillColor(212, 175, 55);
@@ -1001,6 +1024,7 @@
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
+                body: tableBody,
                 theme: 'plain',
                 headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [212, 175, 55], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
@@ -1028,7 +1052,7 @@
                     doc.setFontSize(7);
                     doc.setTextColor(100, 116, 139);
                     doc.setFont('helvetica', 'bold');
-                    doc.text(`Prepared by ${officerName} (${officerMobile})`, 105, 290, { align: 'center' });
+                    doc.text(`EMI Master Pro  |  Prepared by ${officerName} (${officerMobile})`, 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                 }
             });
