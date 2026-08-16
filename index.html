@@ -66,33 +66,34 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <!-- Navigation Toggle Button -->
-                <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-arrows-rotate text-gold"></i>
-                    <span id="navBtnText">Rate Sheet</span>
-                </button>
+            <!-- Right Side Controls & Compact Live Status Badge Below Admin -->
+            <div class="flex flex-col items-end gap-1">
+                <div class="flex items-center gap-2">
+                    <!-- Navigation Toggle Button -->
+                    <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrows-rotate text-gold"></i>
+                        <span id="navBtnText">Rate Sheet</span>
+                    </button>
 
-                <!-- Profile Modal Trigger -->
-                <button onclick="openProfileModal()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 p-1.5 rounded-lg text-xs font-bold transition" title="User Profile">
-                    <i class="fa-solid fa-user-gear text-slate-400"></i>
-                </button>
+                    <!-- Profile Modal Trigger -->
+                    <button onclick="openProfileModal()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 p-1.5 rounded-lg text-xs font-bold transition" title="User Profile">
+                        <i class="fa-solid fa-user-gear text-slate-400"></i>
+                    </button>
 
-                <!-- Admin Button with Pending Badge -->
-                <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Admin</span>
-                    <span id="navPendingBadge" class="hidden absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">!</span>
-                    <span id="navPendingBadgeDot" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full bg-rose-500 animate-ping"></span>
-                </button>
-            </div>
-        </div>
+                    <!-- Admin Button with Pending Badge -->
+                    <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Admin</span>
+                        <span id="navPendingBadge" class="hidden absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">!</span>
+                        <span id="navPendingBadgeDot" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full bg-rose-500 animate-ping"></span>
+                    </button>
+                </div>
 
-        <!-- Real-time Network Status Bar for All Users -->
-        <div class="bg-[#0b0c0e]/80 border-t border-[#282c37]/50 py-1 px-4 text-center">
-            <div id="mainNetStatus" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Online</span>
+                <!-- Real-time Compact Network Status Badge Right Under Admin Button -->
+                <div id="mainNetStatus" class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Online</span>
+                </div>
             </div>
         </div>
     </header>
@@ -459,11 +460,10 @@
             }
         }
 
-        /* Real-Time Online / Offline Presence Handler & Main Page Badge Toggle */
+        /* Real-Time Online / Offline Presence Handler & Compact Top Right Badge Toggle */
         function setupPresenceSystem() {
             const mobile = localStorage.getItem('officerMobile');
             const connectedRef = db.ref('.info/connected');
-            const mainBadge = document.getElementById('mainNetStatus');
 
             if (mobile) {
                 const userKey = mobile.replace(/[^0-9]/g, "");
@@ -499,11 +499,11 @@
             if (!mainBadge) return;
 
             if (isOnline && navigator.onLine) {
-                mainBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                mainBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>Online</span>`;
+                mainBadge.className = "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                mainBadge.innerHTML = `<span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span><span>Online</span>`;
             } else {
-                mainBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                mainBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span><span>Offline</span>`;
+                mainBadge.className = "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                mainBadge.innerHTML = `<span class="w-1 h-1 rounded-full bg-rose-500"></span><span>Offline</span>`;
             }
         }
 
