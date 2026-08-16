@@ -13,6 +13,7 @@
     <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
     <!-- Firebase App & Database (Compat Scripts) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -56,7 +57,6 @@
                         <h1 class="text-base font-extrabold text-gold tracking-wide leading-none">EMI MASTER</h1>
                         <span class="bg-gold text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
                     </div>
-                    <!-- Creator Soft Subtle Highlighted Tagline -->
                     <p class="text-[10px] text-slate-400 font-medium mt-0.5 tracking-wide flex items-center gap-1">
                         <span>by</span>
                         <span class="bg-[#1f242d] text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/20 font-semibold shadow-inner">
@@ -66,21 +66,18 @@
                 </div>
             </div>
 
-            <!-- Right Side Controls & Compact Live Status Badge Below Admin -->
+            <!-- Right Side Controls & Status -->
             <div class="flex flex-col items-end gap-1">
                 <div class="flex items-center gap-2">
-                    <!-- Navigation Toggle Button -->
                     <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-arrows-rotate text-gold"></i>
                         <span id="navBtnText">Rate Sheet</span>
                     </button>
 
-                    <!-- Profile Modal Trigger -->
                     <button onclick="openProfileModal()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 p-1.5 rounded-lg text-xs font-bold transition" title="User Profile">
                         <i class="fa-solid fa-user-gear text-slate-400"></i>
                     </button>
 
-                    <!-- Admin Button with Pending Badge -->
                     <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>Admin</span>
@@ -89,7 +86,6 @@
                     </button>
                 </div>
 
-                <!-- Real-time Compact Network Status Badge Right Under Admin Button -->
                 <div id="mainNetStatus" class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>Online</span>
@@ -101,7 +97,6 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
 
-        <!-- Topup Alert for Owner Admin Only -->
         <div id="adminTopupAlert" class="hidden mb-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-2.5">
                 <i class="fa-solid fa-bell text-amber-400 text-sm"></i>
@@ -110,17 +105,32 @@
             <button onclick="openAdminModal()" class="bg-gold text-slate-950 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Approve Now</button>
         </div>
 
-        <!-- 1. CALCULATOR PAGE -->
+        <!-- CALCULATOR PAGE -->
         <div id="calcPage" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Input Panel -->
                 <div class="lg:col-span-5 bg-[#121418] border border-[#282c37] rounded-2xl p-5 space-y-4">
                     <h2 class="text-sm font-bold text-gold uppercase tracking-wider border-b border-[#282c37] pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders"></i> Facility Parameters
+                        <i class="fa-solid fa-sliders"></i> Facility Overview
                     </h2>
 
                     <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3 bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 block mb-1">Vehicle Type</label>
+                                <select id="regTypeSelect" onchange="populateCategoryDropdown(); fetchAutoRate();" class="w-full p-2 bg-[#121418] border border-[#282c37] rounded-lg text-xs font-bold text-gold outline-none">
+                                    <option value="unregistered">Unregistered</option>
+                                    <option value="registered">Registered</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 block mb-1">Category</label>
+                                <select id="categorySelect" onchange="fetchAutoRate()" class="w-full p-2 bg-[#121418] border border-[#282c37] rounded-lg text-xs font-bold text-slate-200 outline-none">
+                                </select>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="text-xs font-bold text-slate-300 block mb-1">Financed Amount (Rs.)</label>
                             <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
@@ -128,12 +138,12 @@
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-xs font-bold text-slate-300 block mb-1">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                                <label class="text-xs font-bold text-slate-300 block mb-1">Tenure (Months)</label>
+                                <input type="number" id="tenureMonths" oninput="fetchAutoRate()" placeholder="e.g. 60" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                             </div>
                             <div>
-                                <label class="text-xs font-bold text-slate-300 block mb-1">Tenure (Months)</label>
-                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                                <label class="text-xs font-bold text-slate-300 block mb-1">Annual Rate (%)</label>
+                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-amber-300 outline-none focus:border-gold">
                             </div>
                         </div>
 
@@ -146,7 +156,7 @@
                             <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
                         </div>
 
-                        <!-- Officer Info Displays (Auto-filled dynamically based on logged in user) -->
+                        <!-- Officer Info -->
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#282c37]">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-400">Officer Name</label>
@@ -169,15 +179,13 @@
                     </div>
                 </div>
 
-                <!-- Schedule & Summary Results Display -->
+                <!-- Schedule Results -->
                 <div class="lg:col-span-7 space-y-4">
-                    <!-- Expanded Summary Card -->
                     <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4 space-y-3 shadow-md">
                         <div id="summaryText" class="text-base font-extrabold text-gold border-b border-[#282c37]/60 pb-2">
                             Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. 0.00</span>
                         </div>
                         
-                        <!-- Interest & Total Payable breakdown -->
                         <div class="grid grid-cols-2 gap-4 text-xs pt-1">
                             <div class="bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
                                 <span class="text-slate-400 block font-semibold text-[11px]">Total Interest</span>
@@ -190,7 +198,6 @@
                         </div>
                     </div>
 
-                    <!-- Amortization Table -->
                     <div class="bg-[#121418] border border-[#282c37] rounded-2xl overflow-hidden">
                         <div class="max-h-[460px] overflow-y-auto">
                             <table class="w-full text-left border-collapse text-xs">
@@ -217,7 +224,7 @@
             </div>
         </div>
 
-        <!-- 2. RATE SHEET PAGE -->
+        <!-- RATE SHEET PAGE -->
         <div id="ratePage" class="hidden space-y-6">
             <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-gold text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl shadow-gold/15 transition duration-200 flex items-center justify-center gap-3 text-base border border-gold/40 active:scale-[0.99]">
                 <i class="fa-solid fa-calculator text-xl"></i>
@@ -269,7 +276,6 @@
 
     </main>
 
-    <!-- Hidden Canvas for PDF Chart Generation -->
     <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
 
     <!-- Profile & User Setup Modal -->
@@ -310,16 +316,13 @@
                 <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Admin Authentication -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
                 <input type="password" id="adminPass" placeholder="Password" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                 <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Dashboard</button>
             </div>
 
-            <!-- Admin Dashboard Content -->
             <div id="adminContent" class="hidden space-y-6">
-                <!-- Stats Overview with Live Active Users Count -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
                         <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
@@ -342,7 +345,6 @@
                     </div>
                 </div>
 
-                <!-- 1. Global Rate Editor (Accessible by Password Admin) -->
                 <div class="space-y-3 pt-2">
                     <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
@@ -363,20 +365,17 @@
                     </button>
                 </div>
 
-                <!-- 2. Strict Owner-Only User Management Section -->
                 <div id="ownerUserManagementSection" class="space-y-2 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> User Approvals, Presence & Login History
                     </h4>
                     
-                    <!-- Restricted Notice for Non-Owner Admin -->
                     <div id="nonOwnerLockNotice" class="hidden p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-center space-y-1">
                         <i class="fa-solid fa-lock text-rose-400 text-lg mb-1 block"></i>
                         <h5 class="text-xs font-bold text-rose-300">Access Restricted</h5>
                         <p class="text-[11px] text-slate-400">User Details, Approvals සහ Access Removal සිදු කළ හැක්කේ Main Owner (Lakmal - 0777353802) හට පමණි.</p>
                     </div>
 
-                    <!-- User Table (Only rendered for Lakmal) -->
                     <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-56">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
@@ -400,17 +399,21 @@
         </div>
     </div>
 
-    <!-- MAIN JAVASCRIPT LOGIC -->
+    <!-- MAIN JAVASCRIPT LOGIC WITH FIREBASE INTEGRATION -->
     <script>
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
 
+        // Your provided Firebase Credentials connected here
         const firebaseConfig = {
+            apiKey: "AIzaSyA86NUK-UXZJxCkPUUjVPNV4Cjm20XpWAo",
             authDomain: "emi-calculator-9e048.firebaseapp.com",
             databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
             projectId: "emi-calculator-9e048",
-            storageBucket: "emi-calculator-9e048.appspot.com",
-            messagingSenderId: "181063869117"
+            storageBucket: "emi-calculator-9e048.firebasestorage.app",
+            messagingSenderId: "181063869117",
+            appId: "1:181063869117:web:e75cf8af947f7c0aa80dd4",
+            measurementId: "G-G3ZE9WP5SD"
         };
 
         if (!firebase.apps.length) {
@@ -450,7 +453,39 @@
             listenToDatabaseUpdates();
             listenForAdminTopupBadge();
             startLiveUserLogsListener();
+            populateCategoryDropdown();
         };
+
+        function populateCategoryDropdown() {
+            const regType = document.getElementById('regTypeSelect').value;
+            const categorySelect = document.getElementById('categorySelect');
+            const list = rateData[regType] || [];
+
+            categorySelect.innerHTML = list.map((item, index) => `<option value="${index}">${item.category}</option>`).join('');
+        }
+
+        function fetchAutoRate() {
+            const regType = document.getElementById('regTypeSelect').value;
+            const catIndex = parseInt(document.getElementById('categorySelect').value);
+            const months = parseInt(document.getElementById('tenureMonths').value);
+
+            if (isNaN(months) || months <= 0) return;
+
+            const years = Math.ceil(months / 12);
+            const yearIdx = years - 1;
+
+            const categoryList = rateData[regType];
+            if (categoryList && categoryList[catIndex]) {
+                const ratesArr = categoryList[catIndex].rates;
+                if (yearIdx >= 0 && yearIdx < ratesArr.length) {
+                    let fetchedRate = ratesArr[yearIdx];
+                    if (fetchedRate && fetchedRate !== "N/A") {
+                        let cleanRate = fetchedRate.replace('%', '').trim();
+                        document.getElementById('annualRate').value = cleanRate;
+                    }
+                }
+            }
+        }
 
         function ensureOwnerInDatabase() {
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
@@ -462,7 +497,6 @@
             });
         }
 
-        /* Presence Handler per Device LocalStorage */
         function setupPresenceSystem() {
             const mobile = localStorage.getItem('officerMobile');
             const connectedRef = db.ref('.info/connected');
@@ -515,6 +549,8 @@
                 if (data) {
                     rateData = data;
                     renderRates();
+                    populateCategoryDropdown();
+                    fetchAutoRate();
                 } else {
                     renderRates();
                 }
@@ -554,7 +590,6 @@
             });
         }
 
-        /* User Profile & Registration Check Specific to Device */
         function checkUserProfile() {
             const mobile = localStorage.getItem('officerMobile');
             const name = localStorage.getItem('officerName');
@@ -578,7 +613,6 @@
 
                 if (userData.status === 'approved') {
                     document.getElementById('profileModal').classList.add('hidden');
-                    // Display User's Own Details in Calculator Interface
                     document.getElementById('officerNameDisplay').value = userData.name;
                     document.getElementById('officerMobileDisplay').value = userData.mobile;
                     trackLoginCount(userKey);
@@ -736,7 +770,6 @@
                 balloonDesc: balloonTxtArr.join(', ')
             };
 
-            // Update UI Summary Elements
             document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -807,7 +840,6 @@
                 
                 renderRateEditor();
                 
-                // Enforce Owner Privilege Lock
                 const activeMobile = localStorage.getItem('officerMobile');
                 const isOwner = (activeMobile === OWNER_MOBILE);
 
@@ -827,7 +859,6 @@
             }
         }
 
-        /* User Logs Table Renderer with Strict Owner Check for Approvals/Deletions */
         function startLiveUserLogsListener() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -1001,7 +1032,6 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            // Fetches logged-in user's details directly from LocalStorage
             const officerName = localStorage.getItem('officerName') || "Authorized Officer";
             const officerMobile = localStorage.getItem('officerMobile') || "N/A";
 
@@ -1029,17 +1059,14 @@
 
             const chartImgData = canvas.toDataURL('image/png');
 
-            // Header Background
             doc.setFillColor(18, 20, 24);
             doc.rect(0, 0, 210, 28, 'F');
 
-            // Header Title
             doc.setTextColor(212, 175, 55);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
-            // Creator Branding
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(251, 191, 36);
@@ -1055,11 +1082,9 @@
             doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
             doc.text(`Tenure: ${summaryMetrics.N} Months  |  Rate: ${summaryMetrics.R}% p.a.`, 198, 18, { align: 'right' });
 
-            // Gold Separator Line
             doc.setFillColor(212, 175, 55);
             doc.rect(0, 28, 210, 1.5, 'F');
 
-            // Summary Metrics Cards
             doc.setFillColor(26, 29, 36);
             doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
             doc.setTextColor(212, 175, 55);
@@ -1110,7 +1135,6 @@
                 startTableY = 81;
             }
 
-            // Chart & Logged-in Officer Contact Section
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
             doc.setFillColor(212, 175, 55);
@@ -1132,7 +1156,6 @@
             doc.setFont('helvetica', 'bold');
             doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
 
-            // Print exact dynamic officer name & mobile in PDF
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(9.5);
             doc.setFont('helvetica', 'bold');
