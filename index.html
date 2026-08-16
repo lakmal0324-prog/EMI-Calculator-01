@@ -56,10 +56,12 @@
                         <h1 class="text-base font-extrabold text-gold tracking-wide leading-none">EMI MASTER</h1>
                         <span class="bg-gold text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
                     </div>
-                    <!-- Creator Highlighted Tagline -->
-                    <p class="text-[10px] text-amber-400 font-bold mt-0.5 tracking-wide flex items-center gap-1">
+                    <!-- Creator Soft Subtle Highlighted Tagline -->
+                    <p class="text-[10px] text-slate-400 font-medium mt-0.5 tracking-wide flex items-center gap-1">
                         <span>by</span>
-                        <span class="bg-gold/20 text-gold px-1.5 py-0.2 rounded border border-gold/30 font-extrabold">Lakmal Maduranga</span>
+                        <span class="bg-[#1f242d] text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/20 font-semibold shadow-inner">
+                            Lakmal Maduranga
+                        </span>
                     </p>
                 </div>
             </div>
@@ -67,7 +69,7 @@
             <div class="flex items-center gap-2">
                 <!-- Navigation Toggle Button -->
                 <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-[#D4AF37] fa-arrows-rotate text-gold"></i>
+                    <i class="fa-solid fa-arrows-rotate text-gold"></i>
                     <span id="navBtnText">Rate Sheet</span>
                 </button>
 
@@ -76,7 +78,7 @@
                     <i class="fa-solid fa-user-gear text-slate-400"></i>
                 </button>
 
-                <!-- Admin Button with Pending Badge (Only for Owner) -->
+                <!-- Admin Button with Pending Badge -->
                 <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>Admin</span>
@@ -158,14 +160,30 @@
                     </div>
                 </div>
 
-                <!-- Schedule & Results Display -->
+                <!-- Schedule & Summary Results Display -->
                 <div class="lg:col-span-7 space-y-4">
-                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4">
-                        <div id="summaryText" class="text-sm font-bold text-gold">Regular Monthly Rental: Rs. 0.00</div>
+                    <!-- Expanded Summary Card -->
+                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4 space-y-3 shadow-md">
+                        <div id="summaryText" class="text-base font-extrabold text-gold border-b border-[#282c37]/60 pb-2">
+                            Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. 0.00</span>
+                        </div>
+                        
+                        <!-- Interest & Total Payable breakdown -->
+                        <div class="grid grid-cols-2 gap-4 text-xs pt-1">
+                            <div class="bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
+                                <span class="text-slate-400 block font-semibold text-[11px]">Total Interest</span>
+                                <span id="summaryInterest" class="text-amber-400 font-bold font-mono text-sm">Rs. 0.00</span>
+                            </div>
+                            <div class="bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
+                                <span class="text-slate-400 block font-semibold text-[11px]">Total Payable</span>
+                                <span id="summaryPayable" class="text-emerald-400 font-bold font-mono text-sm">Rs. 0.00</span>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Amortization Table -->
                     <div class="bg-[#121418] border border-[#282c37] rounded-2xl overflow-hidden">
-                        <div class="max-h-[480px] overflow-y-auto">
+                        <div class="max-h-[460px] overflow-y-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                     <tr>
@@ -647,7 +665,10 @@
                 balloonDesc: balloonTxtArr.join(', ')
             };
 
-            document.getElementById('summaryText').innerText = `Regular Monthly Rental: Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            // Update UI Summary Elements
+            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
+            document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
@@ -859,7 +880,6 @@
         }
 
         async function sharePDFDirectly() {
-            // Auto calculate if schedule is empty
             if (calculatedSchedule.length === 0) {
                 calculateMultiBalloonSchedule();
             }
@@ -908,7 +928,7 @@
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
-            // Highlight Creator Name Top Banner
+            // Developer Ownership Banner Top
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(251, 191, 36);
@@ -979,7 +999,7 @@
                 startTableY = 81;
             }
 
-            // Chart & Prepared By Section
+            // Chart & Officer Contact Section
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
             doc.setFillColor(212, 175, 55);
@@ -999,7 +1019,7 @@
             doc.setTextColor(212, 175, 55);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.text("PREPARED BY", 120, startTableY + 8);
+            doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
 
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(9.5);
@@ -1010,7 +1030,6 @@
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
-            doc.text(`EMI Master Pro Representative`, 120, startTableY + 26);
 
             const tableBody = calculatedSchedule.map(s => [
                 s.month,
@@ -1052,7 +1071,8 @@
                     doc.setFontSize(7);
                     doc.setTextColor(100, 116, 139);
                     doc.setFont('helvetica', 'bold');
-                    doc.text(`EMI Master Pro  |  Prepared by ${officerName} (${officerMobile})`, 105, 290, { align: 'center' });
+                    // Footer updated to credit Lakmal Maduranga as Creator
+                    doc.text("EMI Master Pro | Created & Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                 }
             });
@@ -1065,7 +1085,7 @@
                     await navigator.share({
                         files: [file],
                         title: 'Lease Repayment Schedule',
-                        text: `Lease Repayment Schedule (Prepared by ${officerName})`
+                        text: `Lease Repayment Schedule (Created by Lakmal Maduranga)`
                     });
                 } catch (err) { console.log('Share canceled', err); }
             } else {
