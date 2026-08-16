@@ -146,15 +146,15 @@
                             <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
                         </div>
 
-                        <!-- Officer Info Displays -->
+                        <!-- Officer Info Displays (Auto-filled dynamically based on logged in user) -->
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#282c37]">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-400">Officer Name</label>
-                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-slate-300 font-bold outline-none cursor-not-allowed">
+                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-amber-300 font-bold outline-none cursor-not-allowed">
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-slate-400">Contact No</label>
-                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-slate-300 font-bold outline-none cursor-not-allowed">
+                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-amber-300 font-bold outline-none cursor-not-allowed">
                             </div>
                         </div>
 
@@ -219,8 +219,6 @@
 
         <!-- 2. RATE SHEET PAGE -->
         <div id="ratePage" class="hidden space-y-6">
-            
-            <!-- Large Prominent Button to go back to Calculator -->
             <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-gold text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl shadow-gold/15 transition duration-200 flex items-center justify-center gap-3 text-base border border-gold/40 active:scale-[0.99]">
                 <i class="fa-solid fa-calculator text-xl"></i>
                 <span class="tracking-wide uppercase">Go to Calculator</span>
@@ -277,17 +275,17 @@
     <!-- Profile & User Setup Modal -->
     <div id="profileModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
         <div class="bg-[#121418] border border-[#282c37] rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 class="text-base font-bold text-gold border-b border-[#282c37] pb-2">User Registration / Status</h3>
+            <h3 class="text-base font-bold text-gold border-b border-[#282c37] pb-2">User Registration / Account Status</h3>
             
             <div id="profileFormInputs" class="space-y-3">
                 <p class="text-xs text-slate-400">ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කර Admin අනුමැතිය සඳහා යොමු කරන්න.</p>
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Lakmal Maduranga" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <input type="text" id="setupName" placeholder="e.g. Perera" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Mobile Number</label>
-                    <input type="text" id="setupMobile" placeholder="e.g. 0777353802" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <input type="text" id="setupMobile" placeholder="e.g. 0712345678" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                 </div>
                 <button onclick="submitForApproval()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
                     Submit Details
@@ -299,7 +297,7 @@
                     <i class="fa-solid fa-clock"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-200">අනුමැතිය අපේක්ෂාවෙන්...</h4>
-                <p class="text-xs text-slate-400">ඔබගේ තොරතුරු Admin වෙත යොමු කර ඇත. අනුමැතිය ලැබුණු පසු ඇප් එක භාවිතා කළ හැක.</p>
+                <p class="text-xs text-slate-400">ඔබගේ තොරතුරු Main Admin (Lakmal) වෙත යොමු කර ඇත. අනුමැතිය ලැබුණු පසු ඇප් එක භාවිතා කළ හැක.</p>
             </div>
         </div>
     </div>
@@ -316,7 +314,7 @@
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
                 <input type="password" id="adminPass" placeholder="Password" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
-                <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Control</button>
+                <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Dashboard</button>
             </div>
 
             <!-- Admin Dashboard Content -->
@@ -344,7 +342,7 @@
                     </div>
                 </div>
 
-                <!-- 1. Global Rate Editor -->
+                <!-- 1. Global Rate Editor (Accessible by Password Admin) -->
                 <div class="space-y-3 pt-2">
                     <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
@@ -365,12 +363,21 @@
                     </button>
                 </div>
 
-                <!-- 2. Live User Logs & Details Table with Last Logged In Time -->
-                <div class="space-y-2 pt-4 border-t border-[#282c37]">
+                <!-- 2. Strict Owner-Only User Management Section -->
+                <div id="ownerUserManagementSection" class="space-y-2 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> User Approvals, Presence & Login History
                     </h4>
-                    <div class="overflow-x-auto border border-[#282c37] rounded-xl max-h-56">
+                    
+                    <!-- Restricted Notice for Non-Owner Admin -->
+                    <div id="nonOwnerLockNotice" class="hidden p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-center space-y-1">
+                        <i class="fa-solid fa-lock text-rose-400 text-lg mb-1 block"></i>
+                        <h5 class="text-xs font-bold text-rose-300">Access Restricted</h5>
+                        <p class="text-[11px] text-slate-400">User Details, Approvals සහ Access Removal සිදු කළ හැක්කේ Main Owner (Lakmal - 0777353802) හට පමණි.</p>
+                    </div>
+
+                    <!-- User Table (Only rendered for Lakmal) -->
+                    <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-56">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                 <tr>
@@ -395,8 +402,8 @@
 
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
-        const ADMIN_MOBILE = "0777353802";
-        const ADMIN_NAME = "Lakmal Maduranga";
+        const OWNER_MOBILE = "0777353802";
+        const OWNER_NAME = "Lakmal Maduranga";
 
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
@@ -437,7 +444,7 @@
         let rateData = defaultRateData;
 
         window.onload = function() {
-            ensureAdminApproved();
+            ensureOwnerInDatabase();
             checkUserProfile();
             setupPresenceSystem();
             listenToDatabaseUpdates();
@@ -445,22 +452,17 @@
             startLiveUserLogsListener();
         };
 
-        function ensureAdminApproved() {
-            const adminKey = ADMIN_MOBILE.replace(/[^0-9]/g, "");
-            db.ref('userLogs/' + adminKey).update({
-                name: ADMIN_NAME,
-                mobile: ADMIN_MOBILE,
+        function ensureOwnerInDatabase() {
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+            db.ref('userLogs/' + ownerKey).update({
+                name: OWNER_NAME,
+                mobile: OWNER_MOBILE,
                 status: 'approved',
-                role: 'admin'
+                role: 'owner'
             });
-
-            if (!localStorage.getItem('officerMobile')) {
-                localStorage.setItem('officerName', ADMIN_NAME);
-                localStorage.setItem('officerMobile', ADMIN_MOBILE);
-            }
         }
 
-        /* Real-Time Online / Offline Presence Handler & Compact Top Right Badge Toggle */
+        /* Presence Handler per Device LocalStorage */
         function setupPresenceSystem() {
             const mobile = localStorage.getItem('officerMobile');
             const connectedRef = db.ref('.info/connected');
@@ -521,7 +523,7 @@
 
         function listenForAdminTopupBadge() {
             const currentMobile = localStorage.getItem('officerMobile');
-            const isOwner = (currentMobile === ADMIN_MOBILE);
+            const isOwner = (currentMobile === OWNER_MOBILE);
 
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -552,23 +554,17 @@
             });
         }
 
+        /* User Profile & Registration Check Specific to Device */
         function checkUserProfile() {
             const mobile = localStorage.getItem('officerMobile');
+            const name = localStorage.getItem('officerName');
 
-            if (!mobile) {
+            if (!mobile || !name) {
                 showRegistrationForm();
                 return;
             }
 
             const userKey = mobile.replace(/[^0-9]/g, "");
-            
-            if (userKey === ADMIN_MOBILE) {
-                document.getElementById('profileModal').classList.add('hidden');
-                document.getElementById('officerNameDisplay').value = ADMIN_NAME;
-                document.getElementById('officerMobileDisplay').value = ADMIN_MOBILE;
-                trackLoginCount(userKey);
-                return;
-            }
 
             db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
                 const userData = snapshot.val();
@@ -582,6 +578,7 @@
 
                 if (userData.status === 'approved') {
                     document.getElementById('profileModal').classList.add('hidden');
+                    // Display User's Own Details in Calculator Interface
                     document.getElementById('officerNameDisplay').value = userData.name;
                     document.getElementById('officerMobileDisplay').value = userData.mobile;
                     trackLoginCount(userKey);
@@ -604,41 +601,36 @@
         }
 
         function submitForApproval() {
-            const name = document.getElementById('setupName').value;
-            const mobile = document.getElementById('setupMobile').value;
-            if (!name || !mobile) return alert("Please enter Name & Mobile.");
+            const name = document.getElementById('setupName').value.trim();
+            const mobile = document.getElementById('setupMobile').value.trim();
+            if (!name || !mobile) return alert("Please enter Name & Mobile Number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            const isSystemAdmin = (userKey === ADMIN_MOBILE);
+            const isOwnerUser = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
 
             db.ref('userLogs/' + userKey).set({
                 name: name,
                 mobile: mobile,
-                status: isSystemAdmin ? 'approved' : 'pending',
+                status: isOwnerUser ? 'approved' : 'pending',
                 loginCount: 1,
                 isOnline: true,
                 lastActive: nowStr,
-                lastLoggedIn: nowStr
+                lastLoggedIn: nowStr,
+                role: isOwnerUser ? 'owner' : 'user'
             }, (error) => {
                 if (!error) {
                     localStorage.setItem('officerName', name);
                     localStorage.setItem('officerMobile', mobile);
                     setupPresenceSystem();
-                    if (isSystemAdmin) {
-                        checkUserProfile();
-                    } else {
-                        document.getElementById('profileFormInputs').classList.add('hidden');
-                        document.getElementById('pendingStatusMsg').classList.remove('hidden');
-                    }
+                    checkUserProfile();
                 } else {
                     alert("Error submitting details: " + error.message);
                 }
             });
         }
 
-        /* Updates both loginCount and lastLoggedIn date-time */
         function trackLoginCount(userKey) {
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             db.ref('userLogs/' + userKey).update({
@@ -812,14 +804,30 @@
             if (document.getElementById('adminPass').value === 'Lakmal@93') {
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
+                
                 renderRateEditor();
-                listenForAdminTopupBadge();
+                
+                // Enforce Owner Privilege Lock
+                const activeMobile = localStorage.getItem('officerMobile');
+                const isOwner = (activeMobile === OWNER_MOBILE);
+
+                const lockNotice = document.getElementById('nonOwnerLockNotice');
+                const tableContainer = document.getElementById('ownerTableContainer');
+
+                if (isOwner) {
+                    lockNotice.classList.add('hidden');
+                    tableContainer.classList.remove('hidden');
+                } else {
+                    lockNotice.classList.remove('hidden');
+                    tableContainer.classList.add('hidden');
+                }
+
             } else {
-                alert('Access Denied');
+                alert('Access Denied: Incorrect Password');
             }
         }
 
-        /* User Logs Table Renderer with Last Logged In Time Column */
+        /* User Logs Table Renderer with Strict Owner Check for Approvals/Deletions */
         function startLiveUserLogsListener() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -841,6 +849,9 @@
                 let activeNow = 0;
                 let pendingUsers = 0;
 
+                const loggedMobile = localStorage.getItem('officerMobile');
+                const isOwner = (loggedMobile === OWNER_MOBILE);
+
                 for (let key in data) {
                     const u = data[key];
                     totalUsers++;
@@ -852,14 +863,14 @@
                     const isApproved = u.status === 'approved';
                     if (!isApproved) pendingUsers++;
 
-                    const isOwner = (key === ADMIN_MOBILE.replace(/[^0-9]/g, ""));
+                    const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                     const lastLogin = u.lastLoggedIn || u.lastActive || 'N/A';
 
                     html += `
                         <tr class="hover:bg-[#222630]/30">
                             <td class="p-2.5 font-bold text-slate-200 flex items-center gap-1.5">
                                 ${u.name || 'Unknown'}
-                                ${isOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
+                                ${isTargetOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Main Owner</span>' : ''}
                             </td>
                             <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile || 'N/A'}</td>
                             <td class="p-2.5 text-center">
@@ -875,8 +886,8 @@
                             </td>
                             <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
                             <td class="p-2.5 text-right space-x-1">
-                                ${!isApproved ? `<button onclick="approveUser('${key}')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : ''}
-                                ${!isOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider border border-rose-500/30 transition" title="Remove User"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                ${isOwner && !isApproved ? `<button onclick="approveUser('${key}')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : ''}
+                                ${isOwner && !isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider border border-rose-500/30 transition" title="Remove Access"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                             </td>
                         </tr>
                     `;
@@ -890,6 +901,9 @@
         }
 
         function approveUser(userKey) {
+            const currentMobile = localStorage.getItem('officerMobile');
+            if (currentMobile !== OWNER_MOBILE) return alert("Access Denied: Only Main Owner (Lakmal) can approve users.");
+
             db.ref('userLogs/' + userKey).update({
                 status: 'approved'
             }, (error) => {
@@ -898,7 +912,10 @@
         }
 
         function removeUser(userKey, userName) {
-            const confirmDelete = confirm(`Are you sure you want to remove user "${userName}" (${userKey}) from the app?`);
+            const currentMobile = localStorage.getItem('officerMobile');
+            if (currentMobile !== OWNER_MOBILE) return alert("Access Denied: Only Main Owner (Lakmal) can remove users.");
+
+            const confirmDelete = confirm(`Are you sure you want to remove user "${userName}" (${userKey})?`);
             if (confirmDelete) {
                 db.ref('userLogs/' + userKey).remove((error) => {
                     if (!error) {
@@ -984,8 +1001,9 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            const officerName = localStorage.getItem('officerName') || "Lakmal Maduranga";
-            const officerMobile = localStorage.getItem('officerMobile') || "0777353802";
+            // Fetches logged-in user's details directly from LocalStorage
+            const officerName = localStorage.getItem('officerName') || "Authorized Officer";
+            const officerMobile = localStorage.getItem('officerMobile') || "N/A";
 
             const canvas = document.getElementById('pdfChartCanvas');
             const ctx = canvas.getContext('2d');
@@ -1021,7 +1039,7 @@
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
-            // Developer Ownership Banner Top
+            // Creator Branding
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(251, 191, 36);
@@ -1092,7 +1110,7 @@
                 startTableY = 81;
             }
 
-            // Chart & Officer Contact Section
+            // Chart & Logged-in Officer Contact Section
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
             doc.setFillColor(212, 175, 55);
@@ -1114,6 +1132,7 @@
             doc.setFont('helvetica', 'bold');
             doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
 
+            // Print exact dynamic officer name & mobile in PDF
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(9.5);
             doc.setFont('helvetica', 'bold');
@@ -1177,7 +1196,7 @@
                     await navigator.share({
                         files: [file],
                         title: 'Lease Repayment Schedule',
-                        text: `Lease Repayment Schedule (Created by Lakmal Maduranga)`
+                        text: `Lease Repayment Schedule (Prepared by ${officerName})`
                     });
                 } catch (err) { console.log('Share canceled', err); }
             } else {
