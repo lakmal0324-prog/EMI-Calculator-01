@@ -40,7 +40,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between relative">
 
-    <!-- Top User Login Pop-up Notification -->
+    <!-- Top Toast Notification -->
     <div id="loginToastNotification" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-[90%] bg-[#121418]/95 border border-gold/40 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md transition-all duration-300 transform -translate-y-5">
         <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -69,10 +69,35 @@
                     <i class="fa-solid fa-user-lock"></i>
                 </div>
                 <h2 class="text-lg font-bold text-gold">Welcome to EMI Master</h2>
-                <p class="text-xs text-slate-400">ඇප් එක භාවිතා කිරීම සඳහා කරුණාකර ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.</p>
+                <p class="text-xs text-slate-400">ඇප් එක භාවිතා කිරීම සඳහා Log In වන්න හෝ Register වන්න.</p>
             </div>
 
-            <div class="space-y-3 pt-2">
+            <!-- Choice Buttons (If details exist or general choice) -->
+            <div id="authChoiceView" class="space-y-2.5 pt-2">
+                <button onclick="showLoginForm()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-[#0b0c0e] fa-right-to-bracket"></i>
+                    <span>Log In</span>
+                </button>
+                <button onclick="showRegisterForm()" class="w-full bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-gold"></i>
+                    <span>New Register</span>
+                </button>
+            </div>
+
+            <!-- Login Form (Existing Mobile) -->
+            <div id="loginFormView" class="hidden space-y-3 pt-2">
+                <div>
+                    <label class="text-xs font-bold text-slate-300 block mb-1">Registered Mobile Number</label>
+                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="resetAuthView()" class="w-1/3 bg-[#1a1d24] hover:bg-[#222630] text-slate-300 font-bold py-2.5 rounded-xl transition text-xs">Back</button>
+                    <button onclick="performUserLogin()" class="w-2/3 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-xs shadow-lg">Login Now</button>
+                </div>
+            </div>
+
+            <!-- Registration Form (New User) -->
+            <div id="registerFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Your Full Name</label>
                     <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
@@ -81,10 +106,10 @@
                     <label class="text-xs font-bold text-slate-300 block mb-1">Mobile Number</label>
                     <input type="text" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
                 </div>
-                <button onclick="submitUserRegistration()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-gold/10 flex items-center justify-center gap-2">
-                    <span>Continue to App</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="resetAuthView()" class="w-1/3 bg-[#1a1d24] hover:bg-[#222630] text-slate-300 font-bold py-2.5 rounded-xl transition text-xs">Back</button>
+                    <button onclick="submitUserRegistration()" class="w-2/3 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-xs shadow-lg">Register & Continue</button>
+                </div>
             </div>
         </div>
     </div>
@@ -92,7 +117,7 @@
     <!-- Header / Navbar -->
     <header class="bg-[#121418] border-b border-[#282c37] sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <!-- Modern Logo & Title -->
+            <!-- Logo & Title -->
             <div class="flex items-center gap-2.5">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-gold/20 flex items-center justify-center">
                     <div class="w-full h-full bg-[#0b0c0e] rounded-[11px] flex items-center justify-center relative overflow-hidden">
@@ -114,7 +139,7 @@
                 </div>
             </div>
 
-            <!-- Controls & Live Status -->
+            <!-- Controls -->
             <div class="flex flex-col items-end gap-1">
                 <div class="flex items-center gap-2">
                     <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
@@ -122,12 +147,12 @@
                         <span id="navBtnText">Rate Sheet</span>
                     </button>
 
-                    <!-- Admin Button with Dynamic Notification -->
+                    <!-- Admin Button with Pending Approvals Red Badge -->
                     <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>Admin</span>
                         
-                        <!-- Notification Badge -->
+                        <!-- Notification Badge (Shows ONLY when pending approvals exist) -->
                         <span id="adminNotificationBadge" class="hidden absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-extrabold text-white shadow-lg border border-[#0b0c0e]">0</span>
                         <span id="adminNotificationPing" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-rose-500 animate-ping opacity-75"></span>
                     </button>
@@ -180,7 +205,7 @@
                             <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
                         </div>
 
-                        <!-- Officer Info Displays -->
+                        <!-- Officer Info -->
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#282c37]">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-400">Officer Name</label>
@@ -203,7 +228,7 @@
                     </div>
                 </div>
 
-                <!-- Schedule & Summary Results -->
+                <!-- Schedule & Results -->
                 <div class="lg:col-span-7 space-y-4">
                     <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4 space-y-3 shadow-md">
                         <div id="summaryText" class="text-base font-extrabold text-gold border-b border-[#282c37]/60 pb-2">
@@ -251,7 +276,7 @@
 
         <!-- Rate Sheet Page -->
         <div id="ratePage" class="hidden space-y-6">
-            <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-gold text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl shadow-gold/15 transition duration-200 flex items-center justify-center gap-3 text-base border border-gold/40 active:scale-[0.99]">
+            <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-gold text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl transition duration-200 flex items-center justify-center gap-3 text-base border border-gold/40">
                 <i class="fa-solid fa-calculator text-xl"></i>
                 <span class="tracking-wide uppercase">Go to Calculator</span>
                 <i class="fa-solid fa-arrow-right text-lg"></i>
@@ -316,53 +341,13 @@
                 <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Dashboard</button>
             </div>
 
-            <!-- Admin Dashboard Content -->
+            <!-- Admin Dashboard Content (TOP: Rate Editor | BOTTOM: User Management) -->
             <div id="adminContent" class="hidden space-y-6">
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
-                        <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
-                        <div id="statTotalUsers" class="text-lg font-bold text-gold">0</div>
-                    </div>
-                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-emerald-500/30 text-center relative overflow-hidden">
-                        <div class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            ACTIVE NOW
-                        </div>
-                        <div id="statActiveNow" class="text-lg font-bold text-emerald-400">0</div>
-                    </div>
-                    <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
-                        <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
-                        <div id="statTotalLogins" class="text-lg font-bold text-indigo-400">0</div>
-                    </div>
-                </div>
-
-                <!-- User Management Section -->
-                <div id="ownerUserManagementSection" class="space-y-2 pt-2 border-t border-[#282c37]">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-users"></i> User Logins & Live History
-                    </h4>
-
-                    <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-56">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
-                                <tr>
-                                    <th class="p-2.5">Name</th>
-                                    <th class="p-2.5">Mobile</th>
-                                    <th class="p-2.5 text-center">Live Online</th>
-                                    <th class="p-2.5 text-center">Last Active</th>
-                                    <th class="p-2.5 text-center">Logins</th>
-                                    <th class="p-2.5 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userLogsTable" class="divide-y divide-[#282c37]"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Global Rate Editor -->
-                <div class="space-y-3 pt-4 border-t border-[#282c37]">
-                    <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
+                
+                <!-- TOP SECTION: Global Rate Editor -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Top Section)
                     </h4>
                     
                     <div class="space-y-2">
@@ -378,6 +363,51 @@
                     <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md">
                         Publish Rate Updates Globally
                     </button>
+                </div>
+
+                <!-- BOTTOM SECTION: User Management & Stats -->
+                <div class="space-y-4 pt-4 border-t border-[#282c37]">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-users"></i> User Management & Live Logins (Bottom Section)
+                    </h4>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                            <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
+                            <div id="statTotalUsers" class="text-lg font-bold text-gold">0</div>
+                        </div>
+                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-rose-500/30 text-center">
+                            <div class="text-[10px] text-rose-400 font-bold">PENDING APPROVALS</div>
+                            <div id="statPendingApprovals" class="text-lg font-bold text-rose-400">0</div>
+                        </div>
+                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-emerald-500/30 text-center">
+                            <div class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                ACTIVE NOW
+                            </div>
+                            <div id="statActiveNow" class="text-lg font-bold text-emerald-400">0</div>
+                        </div>
+                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                            <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
+                            <div id="statTotalLogins" class="text-lg font-bold text-indigo-400">0</div>
+                        </div>
+                    </div>
+
+                    <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-60">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
+                                <tr>
+                                    <th class="p-2.5">Name</th>
+                                    <th class="p-2.5">Mobile</th>
+                                    <th class="p-2.5 text-center">Approval Status</th>
+                                    <th class="p-2.5 text-center">Live Online</th>
+                                    <th class="p-2.5 text-center">Logins</th>
+                                    <th class="p-2.5 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userLogsTable" class="divide-y divide-[#282c37]"></tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
@@ -434,7 +464,7 @@
         window.onload = function() {
             checkUserSession();
             listenToDatabaseUpdates();
-            listenForUserNotifications();
+            listenForPendingApprovalsBadge();
         };
 
         function checkUserSession() {
@@ -443,6 +473,7 @@
 
             if (!mobile || !name) {
                 document.getElementById('loginOverlay').classList.remove('hidden');
+                resetAuthView();
             } else {
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('officerNameDisplay').value = name;
@@ -452,33 +483,75 @@
             }
         }
 
+        function showLoginForm() {
+            document.getElementById('authChoiceView').classList.add('hidden');
+            document.getElementById('registerFormView').classList.add('hidden');
+            document.getElementById('loginFormView').classList.remove('hidden');
+            const savedMobile = localStorage.getItem('officerMobile') || '';
+            if (savedMobile) document.getElementById('loginMobileInput').value = savedMobile;
+        }
+
+        function showRegisterForm() {
+            document.getElementById('authChoiceView').classList.add('hidden');
+            document.getElementById('loginFormView').classList.add('hidden');
+            document.getElementById('registerFormView').classList.remove('hidden');
+        }
+
+        function resetAuthView() {
+            document.getElementById('authChoiceView').classList.remove('hidden');
+            document.getElementById('loginFormView').classList.add('hidden');
+            document.getElementById('registerFormView').classList.add('hidden');
+        }
+
+        function performUserLogin() {
+            const mobile = document.getElementById('loginMobileInput').value.trim();
+            if (!mobile) return alert("කරුණාකර දුරකථන අංකය ඇතුළත් කරන්න.");
+
+            const userKey = mobile.replace(/[^0-9]/g, "");
+            db.ref('userLogs/' + userKey).once('value', (snap) => {
+                const u = snap.val();
+                if (u && u.name) {
+                    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    db.ref('userLogs/' + userKey).update({
+                        loginCount: (u.loginCount || 1) + 1,
+                        isOnline: true,
+                        lastActive: nowStr
+                    });
+
+                    localStorage.setItem('officerName', u.name);
+                    localStorage.setItem('officerMobile', u.mobile);
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('officerNameDisplay').value = u.name;
+                    document.getElementById('officerMobileDisplay').value = u.mobile;
+                    setupPresenceSystem(u.mobile, u.name);
+                    showLoginToast(u.name, u.mobile);
+                } else {
+                    alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. කරුණාකර 'New Register' හරහා ලියාපදිංචි වන්න.");
+                }
+            });
+        }
+
         function submitUserRegistration() {
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
 
-            if (!name || !mobile) {
-                alert("කරුණාකර ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.");
-                return;
-            }
+            if (!name || !mobile) return alert("කරුණාකර ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
 
-            db.ref('userLogs/' + userKey).transaction((currentData) => {
-                let count = (currentData && currentData.loginCount) ? currentData.loginCount + 1 : 1;
-                return {
-                    name: name,
-                    mobile: mobile,
-                    status: 'approved',
-                    loginCount: count,
-                    isOnline: true,
-                    lastActive: nowStr,
-                    lastLoggedIn: nowStr,
-                    role: isOwner ? 'owner' : 'user'
-                };
-            }, (error, committed) => {
-                if (committed) {
+            db.ref('userLogs/' + userKey).set({
+                name: name,
+                mobile: mobile,
+                status: isOwner ? 'approved' : 'pending',
+                loginCount: 1,
+                isOnline: true,
+                lastActive: nowStr,
+                lastLoggedIn: nowStr,
+                role: isOwner ? 'owner' : 'user'
+            }, (error) => {
+                if (!error) {
                     localStorage.setItem('officerName', name);
                     localStorage.setItem('officerMobile', mobile);
                     document.getElementById('loginOverlay').classList.add('hidden');
@@ -487,7 +560,7 @@
                     setupPresenceSystem(mobile, name);
                     showLoginToast(name, mobile);
                 } else {
-                    alert("Error saving registration details: " + error);
+                    alert("Registration failed: " + error.message);
                 }
             });
         }
@@ -506,9 +579,7 @@
             }, 10);
 
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                hideLoginToast();
-            }, 4500);
+            toastTimeout = setTimeout(() => { hideLoginToast(); }, 4500);
         }
 
         function hideLoginToast() {
@@ -516,9 +587,7 @@
             if (!toast) return;
             toast.classList.remove('translate-y-0');
             toast.classList.add('-translate-y-5');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { toast.classList.add('hidden'); }, 300);
         }
 
         function setupPresenceSystem(mobile, name) {
@@ -532,11 +601,7 @@
                     userStatusRef.child('lastActive').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    userStatusRef.update({
-                        isOnline: true,
-                        lastActive: nowStr
-                    });
-
+                    userStatusRef.update({ isOnline: true, lastActive: nowStr });
                     updateMainBadge(true);
                 } else {
                     updateMainBadge(false);
@@ -560,24 +625,20 @@
         function listenToDatabaseUpdates() {
             db.ref('rateData').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    rateData = data;
-                    renderRates();
-                } else {
-                    renderRates();
-                }
+                if (data) { rateData = data; renderRates(); } else { renderRates(); }
             });
         }
 
-        function listenForUserNotifications() {
+        // RED BADGE VISIBLE ONLY IF PENDING APPROVALS EXIST
+        function listenForPendingApprovalsBadge() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
-                let userCount = 0;
+                let pendingCount = 0;
 
                 if (data) {
                     for (let k in data) {
-                        if (data[k].name && data[k].mobile) {
-                            userCount++;
+                        if (data[k].status === 'pending') {
+                            pendingCount++;
                         }
                     }
                 }
@@ -585,8 +646,8 @@
                 const badge = document.getElementById('adminNotificationBadge');
                 const ping = document.getElementById('adminNotificationPing');
 
-                if (userCount > 0) {
-                    badge.innerText = userCount;
+                if (pendingCount > 0) {
+                    badge.innerText = pendingCount;
                     badge.classList.remove('hidden');
                     ping.classList.remove('hidden');
                 } else {
@@ -627,6 +688,7 @@
                     document.getElementById('statTotalLogins').innerText = '0';
                     document.getElementById('statTotalUsers').innerText = '0';
                     document.getElementById('statActiveNow').innerText = '0';
+                    document.getElementById('statPendingApprovals').innerText = '0';
                     return;
                 }
 
@@ -634,6 +696,7 @@
                 let totalLogins = 0;
                 let totalUsers = 0;
                 let activeNow = 0;
+                let pendingCount = 0;
 
                 for (let key in data) {
                     const u = data[key];
@@ -641,29 +704,31 @@
 
                     totalUsers++;
                     totalLogins += (u.loginCount || 1);
-
-                    const isOnline = (u.isOnline === true);
-                    if (isOnline) activeNow++;
+                    if (u.status === 'pending') pendingCount++;
+                    if (u.isOnline === true) activeNow++;
 
                     const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
-                    const lastActive = u.lastActive || 'N/A';
+                    const statusText = u.status === 'approved' 
+                        ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Approved</span>`
+                        : `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Pending</span>`;
 
                     html += `
                         <tr class="hover:bg-[#222630]/30">
                             <td class="p-2.5 font-bold text-slate-200 flex items-center gap-1.5">
                                 ${u.name}
-                                ${isTargetOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Main Owner</span>' : ''}
+                                ${isTargetOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
                             </td>
                             <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile}</td>
+                            <td class="p-2.5 text-center">${statusText}</td>
                             <td class="p-2.5 text-center">
-                                ${isOnline 
+                                ${u.isOnline 
                                     ? '<span class="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border border-emerald-500/30"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Online</span>' 
                                     : '<span class="inline-flex items-center gap-1 bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border border-slate-700">Offline</span>'}
                             </td>
-                            <td class="p-2.5 text-center text-slate-300 font-mono text-[11px] font-bold">${lastActive}</td>
                             <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 1}</span></td>
                             <td class="p-2.5 text-right space-x-1">
-                                ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider border border-rose-500/30 transition" title="Remove User"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                ${u.status === 'pending' ? `<button onclick="approveUser('${key}')" class="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-emerald-500/30" title="Approve"><i class="fa-solid fa-check"></i></button>` : ''}
+                                ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-rose-500/30" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                             </td>
                         </tr>
                     `;
@@ -672,18 +737,17 @@
                 document.getElementById('statTotalLogins').innerText = totalLogins;
                 document.getElementById('statTotalUsers').innerText = totalUsers;
                 document.getElementById('statActiveNow').innerText = activeNow;
+                document.getElementById('statPendingApprovals').innerText = pendingCount;
             });
+        }
+
+        function approveUser(userKey) {
+            db.ref('userLogs/' + userKey).update({ status: 'approved' });
         }
 
         function removeUser(userKey, userName) {
             if (confirm(`Are you sure you want to remove user "${userName}"?`)) {
-                db.ref('userLogs/' + userKey).remove((error) => {
-                    if (!error) {
-                        alert(`User "${userName}" removed successfully.`);
-                    } else {
-                        alert("Error removing user: " + error.message);
-                    }
-                });
+                db.ref('userLogs/' + userKey).remove();
             }
         }
 
