@@ -1,1033 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMI Master Pro - Advanced EMI & Rate Sheet</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- jsPDF & AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- Firebase App & Database (Compat Scripts) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primaryBlue: '#4F46E5',
-                        lightBg: '#F8FAFC',
-                        cardBg: '#FFFFFF',
-                        borderBg: '#E2E8F0'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background-color: #F8FAFC; color: #1E293B; font-family: sans-serif; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #F8FAFC; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMI Calculator with Admin Panel</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+    input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+    button:hover { background-color: #0056b3; }
+    .hidden { display: none; }
+    .error { color: red; margin-top: 10px; font-size: 14px; }
+    .success { color: green; margin-top: 10px; font-size: 14px; }
+    .user-list { text-align: left; margin-top: 15px; max-height: 200px; overflow-y: auto; }
+    .user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
+    .approve-btn { width: auto; padding: 5px 10px; margin: 0; background-color: #28a745; }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 shadow-md shadow-indigo-200 flex items-center justify-center text-white">
-                    <i class="fa-solid fa-calculator text-base"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-1.5">
-                        <h1 class="text-base font-extrabold text-slate-900 tracking-wide leading-none">EMI MASTER</h1>
-                        <span class="bg-indigo-100 text-indigo-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
-                    </div>
-                    <!-- App Owner Credit below EMI Master -->
-                    <p class="text-[9px] text-slate-400 font-bold mt-0.5 tracking-wider">
-                        Developed by <span class="text-indigo-600 font-extrabold">Lakmal Maduranga</span>
-                    </p>
-                </div>
-            </div>
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-card" class="card">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email Address">
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p>ගිණුමක් නැද්ද? <a href="#" onclick="showScreen('register-card')">Register වෙන්න</a></p>
+    <div id="login-msg"></div>
+  </div>
 
-            <div class="flex items-center gap-2">
-                <button onclick="togglePage()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-arrows-rotate text-indigo-600"></i>
-                    <span id="navBtnText">Rate Sheet</span>
-                </button>
+  <!-- 2. REGISTER SCREEN -->
+  <div id="register-card" class="card hidden">
+    <h2>Register</h2>
+    <input type="text" id="reg-name" placeholder="Full Name">
+    <input type="email" id="reg-email" placeholder="Email Address">
+    <input type="password" id="reg-password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p>ගිණුමක් තියෙනවා නම් <a href="#" onclick="showScreen('login-card')">Login වෙන්න</a></p>
+    <div id="reg-msg"></div>
+  </div>
 
-                <button onclick="openProfileModal()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 p-2 rounded-xl text-xs font-bold transition shadow-sm" title="User Profile">
-                    <i class="fa-solid fa-user-gear text-slate-600"></i>
-                </button>
+  <!-- 3. PENDING APPROVAL SCREEN -->
+  <div id="pending-card" class="card hidden">
+    <h2>Approval Pending</h2>
+    <p>ඔබගේ Registration එක සාර්ථකයි. Admin අනුමත (Approve) කරන තෙක් App එක භාවිතා කිරීමට නොහැක.</p>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-                <button onclick="openAdminModal()" class="relative bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-shield-halved text-amber-600"></i>
-                    <span>Admin</span>
-                    <span id="navPendingBadge" class="hidden absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">!</span>
-                </button>
-            </div>
-        </div>
-    </header>
+  <!-- 4. MAIN EMI CALCULATOR (FOR APPROVED USERS) -->
+  <div id="app-card" class="card hidden">
+    <h2>EMI Calculator</h2>
+    <p id="welcome-msg"></p>
+    
+    <label style="text-align:left; display:block;">Loan Amount (රු.):</label>
+    <input type="number" id="loan-amount" placeholder="500000">
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+    <label style="text-align:left; display:block;">Interest Rate Policy:</label>
+    <select id="rate-select">
+      <option value="12">Personal Loan (12%)</option>
+      <option value="15">Housing Loan (15%)</option>
+      <option value="18">Microfinance (18%)</option>
+    </select>
 
-        <div id="adminTopupAlert" class="hidden mb-4 bg-amber-50 border border-amber-200 p-3 rounded-2xl flex items-center justify-between shadow-sm">
-            <div class="flex items-center gap-2.5">
-                <i class="fa-solid fa-bell text-amber-600 text-sm"></i>
-                <span class="text-xs font-bold text-amber-900">නව පරිශීලක ඉල්ලීම් <span id="topupPendingCount" class="underline font-extrabold text-amber-700">0</span> ක් ඇත.</span>
-            </div>
-            <button onclick="openAdminModal()" class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider shadow-sm">Approve Now</button>
-        </div>
+    <label style="text-align:left; display:block;">Tenure (Months):</label>
+    <input type="number" id="months" placeholder="12">
 
-        <!-- 1. CALCULATOR PAGE -->
-        <div id="calcPage" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <div class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm">
-                    <h2 class="text-xs font-bold text-indigo-900 uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-600"></i> Facility Parameters
-                    </h2>
+    <button onclick="calculateEMI()">Calculate EMI</button>
 
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">Financed Amount (Rs.)</label>
-                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white transition">
-                        </div>
+    <div id="emi-result" style="margin-top: 15px; font-weight: bold; font-size: 18px; color: #007bff;"></div>
+    
+    <button onclick="logout()" style="background-color: #dc3545; margin-top: 20px;">Logout</button>
+  </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white transition">
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">Tenure (Months)</label>
-                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white transition">
-                            </div>
-                        </div>
+  <!-- 5. ADMIN PANEL (FOR APPROVING USERS) -->
+  <div id="admin-card" class="card hidden">
+    <h2>Admin Dashboard</h2>
+    <p>Approve නොකළ Users ලාගේ ලැයිස්තුව:</p>
+    <div id="pending-users" class="user-list"></div>
+    <button onclick="logout()" style="background-color: #dc3545; margin-top: 20px;">Logout</button>
+  </div>
 
-                        <div class="pt-2 border-t border-slate-100">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-xs font-bold text-slate-700">Balloon Payments (Optional)</label>
-                                <button onclick="addBalloonField()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-xl font-bold transition">+ Add</button>
-                            </div>
-                            <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                        </div>
+  <!-- FIREBASE ENGINE & LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Officer Name</label>
-                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs text-indigo-700 font-bold outline-none cursor-not-allowed">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Contact No</label>
-                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs text-indigo-700 font-bold outline-none cursor-not-allowed">
-                            </div>
-                        </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA86NUK-UXZJxCkPUUjVPNV4Cjm20XpWAo",
+      authDomain: "emi-calculator-9e048.firebaseapp.com",
+      databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
+      projectId: "emi-calculator-9e048",
+      storageBucket: "emi-calculator-9e048.firebasestorage.app",
+      messagingSenderId: "181063869117",
+      appId: "1:181063869117:web:e75cf8af947f7c0aa80dd4",
+      measurementId: "G-G3ZE9WP5SD"
+    };
 
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl transition text-sm shadow-md shadow-indigo-100">
-                                Calculate Schedule
-                            </button>
-                            <button onclick="sharePDFDirectly()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 rounded-2xl font-bold transition text-xs flex items-center gap-1.5 shadow-sm">
-                                <i class="fa-solid fa-share-nodes text-indigo-600"></i> PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
 
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="bg-white border border-slate-200 rounded-3xl p-5 space-y-3 shadow-sm">
-                        <div id="summaryText" class="text-base font-extrabold text-indigo-950 border-b border-slate-100 pb-3">
-                            Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. 0.00</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4 text-xs pt-1">
-                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                                <span class="text-slate-500 block font-semibold text-[11px]">Total Interest</span>
-                                <span id="summaryInterest" class="text-amber-600 font-bold font-mono text-sm">Rs. 0.00</span>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                                <span class="text-slate-500 block font-semibold text-[11px]">Total Payable</span>
-                                <span id="summaryPayable" class="text-emerald-600 font-bold font-mono text-sm">Rs. 0.00</span>
-                            </div>
-                        </div>
-                    </div>
+    // Navigation Switcher
+    window.showScreen = (id) => {
+      ['login-card', 'register-card', 'pending-card', 'app-card', 'admin-card'].forEach(card => {
+        document.getElementById(card).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+    };
 
-                    <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
-                        <div class="max-h-[460px] overflow-y-auto">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead class="bg-slate-100 text-slate-600 sticky top-0 font-bold border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">#</th>
-                                        <th class="p-3">Due Date</th>
-                                        <th class="p-3">Principal</th>
-                                        <th class="p-3">Interest</th>
-                                        <th class="p-3">Total Due</th>
-                                        <th class="p-3">Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-slate-100">
-                                    <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-400 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- 2. RATE SHEET PAGE -->
-        <div id="ratePage" class="hidden space-y-6">
-            <button onclick="showPage('calcPage')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-6 rounded-2xl shadow-md transition duration-200 flex items-center justify-center gap-3 text-base">
-                <i class="fa-solid fa-calculator text-xl"></i>
-                <span class="tracking-wide uppercase">Go to Calculator</span>
-                <i class="fa-solid fa-arrow-right text-lg"></i>
-            </button>
-
-            <div class="bg-white border border-slate-200 rounded-3xl p-5 space-y-6 shadow-sm">
-                <div>
-                    <h2 class="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
-                                    <th class="p-3">6 Years</th>
-                                </tr>
-                            </thead>
-                            <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
-                                </tr>
-                            </thead>
-                            <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Developed by Footer -->
-    <footer class="py-4 text-center text-xs text-slate-400 font-medium border-t border-slate-200 bg-white">
-        Developed by <span class="text-indigo-600 font-bold">Lakmal Maduranga</span>
-    </footer>
-
-    <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
-
-    <!-- Profile Modal (One-Tap Login & Registration) -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <h3 class="text-base font-bold text-indigo-950 border-b border-slate-100 pb-2 flex justify-between items-center">
-                <span>User Account</span>
-                <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </h3>
-            
-            <!-- ALREADY REGISTERED (One Tap Login View) -->
-            <div id="existingUserView" class="hidden space-y-4 py-2">
-                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-2 text-center">
-                    <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto text-lg shadow-md">
-                        <i class="fa-solid fa-user-check"></i>
-                    </div>
-                    <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider">Welcome Back, Logged in User!</h4>
-                    <div class="bg-white p-3 rounded-xl border border-indigo-100 text-left space-y-1">
-                        <div class="text-[11px] text-slate-500 font-bold">Saved Name: <span id="savedUiName" class="text-indigo-700 font-extrabold"></span></div>
-                        <div class="text-[11px] text-slate-500 font-bold">Saved Mobile: <span id="savedUiMobile" class="text-indigo-700 font-extrabold"></span></div>
-                    </div>
-                </div>
-                <button onclick="executeOneTapLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i> One Tap Login
-                </button>
-                <button onclick="switchToNewRegistration()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-xl transition text-xs">
-                    Change Details / Register New Account
-                </button>
-            </div>
-
-            <!-- NEW USER REGISTRATION VIEW -->
-            <div id="newUserView" class="hidden space-y-3">
-                <div class="p-3 bg-amber-50 border border-amber-100 rounded-2xl text-xs font-bold text-amber-800">
-                    ✨ New User! Please register your name and mobile number. Admin approval is required to access.
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Ruwan Silva" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-700 block mb-1">Mobile Number</label>
-                    <input type="text" id="setupMobile" placeholder="e.g. 0712345678" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
-                </div>
-                <button onclick="handleNewUserRegistration()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">
-                    Register Now (Send for Approval)
-                </button>
-            </div>
-
-            <!-- PENDING STATUS VIEW -->
-            <div id="pendingStatusMsg" class="hidden space-y-3 text-center py-4">
-                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
-                <h4 class="text-sm font-bold text-slate-800">අනුමැතිය අපේක්ෂාවෙන්...</h4>
-                <p class="text-xs text-slate-500">ඔබගේ ගිණුම Main Admin අනුමැතිය (Approval) සඳහා යොමු කර ඇත. Admin විසින් අනුමත කළ පසු පමණක් ඔබට ඇප් එකට පිවිසිය හැක.</p>
-                <button onclick="switchToNewRegistration()" class="text-xs text-indigo-600 font-bold underline pt-2 block mx-auto">Change Details / Try Again</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel Modal -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-5xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-xl">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                <h3 class="text-base font-bold text-indigo-950">Admin Management Dashboard</h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
-                <label class="text-xs font-bold text-slate-700 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
-                <button onclick="verifyAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
-            </div>
-
-            <div id="adminContent" class="hidden space-y-6">
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-center">
-                        <div class="text-[10px] text-slate-500 font-bold">TOTAL USERS</div>
-                        <div id="statTotalUsers" class="text-lg font-bold text-indigo-600">0</div>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-emerald-200 text-center">
-                        <div class="text-[10px] text-emerald-600 font-bold">ACTIVE NOW</div>
-                        <div id="statActiveNow" class="text-lg font-bold text-emerald-600">0</div>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-center">
-                        <div class="text-[10px] text-slate-500 font-bold">PENDING APPROVALS</div>
-                        <div id="statPendingUsers" class="text-lg font-bold text-amber-600">0</div>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-center">
-                        <div class="text-[10px] text-slate-500 font-bold">TOTAL LOGINS</div>
-                        <div id="statTotalLogins" class="text-lg font-bold text-indigo-600">0</div>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2">
-                    <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
-                    </h4>
-                    <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-slate-700">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-                    <div class="space-y-2 pt-2 border-t border-slate-100">
-                        <h5 class="text-[11px] font-bold text-slate-700">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-                    <button onclick="saveAdminSettings()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">
-                        Publish Rate Updates Globally
-                    </button>
-                </div>
-
-                <!-- Strict Security Layer for Owner (0777353802) Only -->
-                <div id="ownerUserManagementSection" class="space-y-2 pt-4 border-t border-slate-200">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-users"></i> User Approvals & Management (Owner Only)
-                    </h4>
-                    <div id="nonOwnerLockNotice" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-2xl text-center space-y-1">
-                        <i class="fa-solid fa-lock text-rose-500 text-lg mb-1 block"></i>
-                        <h5 class="text-xs font-bold text-rose-800">Access Restricted</h5>
-                        <p class="text-[11px] text-slate-500">මෙම පාලන පැනලය ප්‍රධාන හිමිකරුට (Lakmal - 0777353802) පමණක් සීමා කර ඇත.</p>
-                    </div>
-
-                    <div id="ownerTableContainer" class="overflow-x-auto border border-slate-200 rounded-2xl max-h-56">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-100 text-slate-600 sticky top-0 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-2.5">Name</th>
-                                    <th class="p-2.5">Mobile</th>
-                                    <th class="p-2.5 text-center">Live Online</th>
-                                    <th class="p-2.5 text-center">Last Logged In</th>
-                                    <th class="p-2.5 text-center">App Status</th>
-                                    <th class="p-2.5 text-center">Logins</th>
-                                    <th class="p-2.5 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userLogsTable" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const OWNER_MOBILE = "0777353802";
-        const OWNER_NAME = "Lakmal Maduranga";
-
-        const firebaseConfig = {
-            authDomain: "emi-calculator-9e048.firebaseapp.com",
-            databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
-            projectId: "emi-calculator-9e048",
-            storageBucket: "emi-calculator-9e048.appspot.com",
-            messagingSenderId: "181063869117"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
-
-        let calculatedSchedule = [];
-        let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
-
-        let defaultRateData = {
-            unregistered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["13.50%", "13.50%", "14.00%", "14.50%", "15.00%", "16.00%"] },
-                { category: "Vans", rates: ["14.00%", "14.50%", "15.00%", "15.50%", "N/A", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.25%", "16.75%", "17.25%", "17.75%", "N/A", "N/A"] },
-                { category: "Tractors & Agribusiness", rates: ["20.25%", "20.50%", "20.75%", "21.00%", "N/A", "N/A"] },
-                { category: "Heavy Machinery & Construction", rates: ["17.00%", "17.50%", "18.00%", "18.50%", "N/A", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.25%", "23.25%", "24.25%", "25.25%", "N/A", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.25%", "25.25%", "N/A", "N/A", "N/A"] }
-            ],
-            registered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
-                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
-                { category: "Machinery & Agriculture", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
-            ]
-        };
-
-        let rateData = defaultRateData;
-
-        window.onload = function() {
-            ensureOwnerInDatabase();
-            checkUserProfile();
-            setupPresenceSystem();
-            listenToDatabaseUpdates();
-            listenForAdminTopupBadge();
-            startLiveUserLogsListener();
-        };
-
-        function ensureOwnerInDatabase() {
-            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
-            db.ref('userLogs/' + ownerKey).update({
-                name: OWNER_NAME,
-                mobile: OWNER_MOBILE,
-                status: 'approved',
-                role: 'owner'
-            });
+    // Auth State Observer - Logic Enforcement
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Admin Check (Special Admin Email)
+        if (user.email === "admin@emicalc.com") {
+          showScreen('admin-card');
+          loadPendingUsers();
+          return;
         }
 
-        function setupPresenceSystem() {
-            const mobile = localStorage.getItem('officerMobile');
-            const connectedRef = db.ref('.info/connected');
+        const userRef = ref(db, 'users/' + user.uid);
+        const snapshot = await get(userRef);
 
-            if (mobile) {
-                const userKey = mobile.replace(/[^0-9]/g, "");
-                const userStatusRef = db.ref('userLogs/' + userKey);
-
-                connectedRef.on('value', (snap) => {
-                    if (snap.val() === true) {
-                        userStatusRef.child('isOnline').onDisconnect().set(false);
-                        userStatusRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
-
-                        userStatusRef.update({
-                            isOnline: true,
-                            lastSeen: firebase.database.ServerValue.TIMESTAMP
-                        });
-                    }
-                });
-            }
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          if (userData.isApproved === true) {
+            showScreen('app-card');
+            document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + userData.name;
+          } else {
+            showScreen('pending-card');
+          }
         }
+      } else {
+        showScreen('login-card');
+      }
+    });
 
-        function listenToDatabaseUpdates() {
-            db.ref('rateData').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    rateData = data;
-                    renderRates();
-                } else {
-                    renderRates();
-                }
-            });
-        }
+    // Register User
+    window.register = async () => {
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const msg = document.getElementById('reg-msg');
 
-        function listenForAdminTopupBadge() {
-            const currentMobile = localStorage.getItem('officerMobile');
-            const isOwner = (currentMobile === OWNER_MOBILE);
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-            db.ref('userLogs').on('value', (snapshot) => {
-                const data = snapshot.val();
-                let pendingCount = 0;
-                if (data) {
-                    for (let k in data) {
-                        if (data[k].status === 'pending') {
-                            pendingCount++;
-                        }
-                    }
-                }
-                
-                const badge = document.getElementById('navPendingBadge');
-                const alertBox = document.getElementById('adminTopupAlert');
-                const pendingTxt = document.getElementById('topupPendingCount');
+        await set(ref(db, 'users/' + user.uid), {
+          name: name,
+          email: email,
+          isApproved: false
+        });
 
-                if (isOwner && pendingCount > 0) {
-                    if (badge) badge.classList.remove('hidden');
-                    if (alertBox) alertBox.classList.remove('hidden');
-                    if (pendingTxt) pendingTxt.innerText = pendingCount;
-                } else {
-                    if (badge) badge.classList.add('hidden');
-                    if (alertBox) alertBox.classList.add('hidden');
-                }
-            });
-        }
+        msg.className = "success";
+        msg.innerText = "ලියාපදිංචිය සාර්ථකයි! Admin අනුමත කරන තෙක් රැඳී සිටින්න.";
+      } catch (error) {
+        msg.className = "error";
+        msg.innerText = error.message;
+      }
+    };
 
-        function checkUserProfile() {
-            const mobile = localStorage.getItem('officerMobile');
-            const name = localStorage.getItem('officerName');
+    // Login User
+    window.login = async () => {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const msg = document.getElementById('login-msg');
 
-            if (!mobile || !name) {
-                showNewRegistrationView();
-                return;
-            }
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        msg.className = "error";
+        msg.innerText = error.message;
+      }
+    };
 
-            const userKey = mobile.replace(/[^0-9]/g, "");
+    // Logout
+    window.logout = () => signOut(auth);
 
-            db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                
-                if (!userData) {
-                    showNewRegistrationView();
-                    return;
-                }
+    // Calculate EMI Logic
+    window.calculateEMI = () => {
+      const p = parseFloat(document.getElementById('loan-amount').value);
+      const r = parseFloat(document.getElementById('rate-select').value) / 12 / 100;
+      const n = parseFloat(document.getElementById('months').value);
 
-                if (userData.status === 'approved') {
-                    document.getElementById('officerNameDisplay').value = userData.name;
-                    document.getElementById('officerMobileDisplay').value = userData.mobile;
-                    document.getElementById('officerNameHeader').innerText = userData.name;
-                    trackLoginCount(userKey);
-                } else {
-                    document.getElementById('profileModal').classList.remove('hidden');
-                    document.getElementById('existingUserView').classList.add('hidden');
-                    document.getElementById('newUserView').classList.add('hidden');
-                    document.getElementById('pendingStatusMsg').classList.remove('hidden');
-                }
-            }).catch(() => {
-                showNewRegistrationView();
-            });
-        }
+      if(!p || !r || !n) {
+        alert("කරුණාකර හිස්තැන් පුරවන්න!");
+        return;
+      }
 
-        function openProfileModal() {
-            const mobile = localStorage.getItem('officerMobile');
-            const name = localStorage.getItem('officerName');
+      const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      document.getElementById('emi-result').innerText = `මසකට ගෙවිය යුතු මුදල: රු. ${emi.toFixed(2)}`;
+    };
 
-            if (mobile && name) {
-                const userKey = mobile.replace(/[^0-9]/g, "");
-                db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData && userData.status === 'approved') {
-                        document.getElementById('savedUiName').innerText = name;
-                        document.getElementById('savedUiMobile').innerText = mobile;
-                        
-                        document.getElementById('profileModal').classList.remove('hidden');
-                        document.getElementById('existingUserView').classList.remove('hidden');
-                        document.getElementById('newUserView').classList.add('hidden');
-                        document.getElementById('pendingStatusMsg').classList.add('hidden');
-                    } else {
-                        showNewRegistrationView();
-                    }
-                });
-            } else {
-                showNewRegistrationView();
-            }
-        }
+    // Admin Panel - Load Pending Users
+    async function loadPendingUsers() {
+      const usersRef = ref(db, 'users');
+      const snapshot = await get(usersRef);
+      const container = document.getElementById('pending-users');
+      container.innerHTML = "";
 
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function showNewRegistrationView() {
-            document.getElementById('profileModal').classList.remove('hidden');
-            document.getElementById('existingUserView').classList.add('hidden');
-            document.getElementById('newUserView').classList.remove('hidden');
-            document.getElementById('pendingStatusMsg').classList.add('hidden');
-        }
-
-        function switchToNewRegistration() {
-            showNewRegistrationView();
-        }
-
-        function executeOneTapLogin() {
-            const name = localStorage.getItem('officerName');
-            const mobile = localStorage.getItem('officerMobile');
-            if (!mobile || !name) {
-                showNewRegistrationView();
-                return;
-            }
-
-            const userKey = mobile.replace(/[^0-9]/g, "");
-
-            db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                if (!userData || userData.status !== 'approved') {
-                    alert("❌ ඔබේ ගිණුම තවමත් Admin විසින් අනුමත කර නැත. කරුණාකර රැඳී සිටින්න.");
-                    document.getElementById('existingUserView').classList.add('hidden');
-                    document.getElementById('pendingStatusMsg').classList.remove('hidden');
-                    return;
-                }
-
-                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-                db.ref('userLogs/' + userKey).update({
-                    isOnline: true,
-                    lastLoggedIn: nowStr,
-                    lastActive: nowStr,
-                    loginCount: firebase.database.ServerValue.increment(1)
-                }, (error) => {
-                    if (!error) {
-                        document.getElementById('officerNameDisplay').value = name;
-                        document.getElementById('officerMobileDisplay').value = mobile;
-                        document.getElementById('officerNameHeader').innerText = name;
-                        closeProfileModal();
-                        alert("✅ Logged in successfully!");
-                        setupPresenceSystem();
-                    } else {
-                        alert("Login error: " + error.message);
-                    }
-                });
-            });
-        }
-
-        function handleNewUserRegistration() {
-            const name = document.getElementById('setupName').value.trim();
-            const mobile = document.getElementById('setupMobile').value.trim();
-            if (!name || !mobile) return alert("Please enter Name & Mobile Number.");
-
-            const userKey = mobile.replace(/[^0-9]/g, "");
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const isOwnerUser = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
-
-            db.ref('userLogs/' + userKey).once('value').then((snapshot) => {
-                const existingData = snapshot.val();
-                const currentStatus = isOwnerUser ? 'approved' : (existingData ? (existingData.status || 'pending') : 'pending');
-
-                db.ref('userLogs/' + userKey).set({
-                    name: name,
-                    mobile: mobile,
-                    status: currentStatus, 
-                    loginCount: existingData ? (existingData.loginCount || 1) : 1,
-                    isOnline: isOwnerUser,
-                    lastActive: nowStr,
-                    lastLoggedIn: nowStr,
-                    role: isOwnerUser ? 'owner' : 'user'
-                }, (error) => {
-                    if (!error) {
-                        localStorage.setItem('officerName', name);
-                        localStorage.setItem('officerMobile', mobile);
-
-                        closeProfileModal();
-                        
-                        if (isOwnerUser || currentStatus === 'approved') {
-                            document.getElementById('officerNameDisplay').value = name;
-                            document.getElementById('officerMobileDisplay').value = mobile;
-                            document.getElementById('officerNameHeader').innerText = name;
-                            alert("✅ Registration & Login Successful!");
-                            setupPresenceSystem();
-                        } else {
-                            alert("⏳ ගිණුම සාර්ථකව ලියාපදිංචි විය! Admin අනුමැතිය ලැබුණු පසු ඔබට ලොග් විය හැක.");
-                            checkUserProfile();
-                        }
-                    } else {
-                        alert("Error: " + error.message);
-                    }
-                });
-            });
-        }
-
-        function trackLoginCount(userKey) {
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            db.ref('userLogs/' + userKey).update({
-                lastActive: nowStr
-            });
-        }
-
-        function addBalloonField(defaultMonth = '', defaultAmount = '') {
-            const container = document.getElementById('balloonContainer');
-            const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-1.5 rounded-xl border border-slate-200";
-            div.innerHTML = `
-                <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1.5 bg-white border border-slate-200 rounded-lg text-xs text-center font-bold text-slate-800 outline-none">
-                </div>
-                <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-indigo-600 outline-none">
-                </div>
-                <button onclick="this.parentElement.remove()" class="text-rose-500 p-1 hover:text-rose-700"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        for (let uid in data) {
+          if (!data[uid].isApproved) {
+            container.innerHTML += `
+              <div class="user-item">
+                <span>${data[uid].name} (${data[uid].email})</span>
+                <button class="approve-btn" onclick="approveUser('${uid}')">Approve</button>
+              </div>
             `;
-            container.appendChild(div);
+          }
         }
+      }
+    }
 
-        function getBalloonConfig() {
-            const map = {};
-            document.querySelectorAll('.balloon-row').forEach(row => {
-                const m = parseInt(row.querySelector('.b-month').value);
-                const a = parseFloat(row.querySelector('.b-amount').value);
-                if (m > 0 && a > 0) map[m] = a;
-            });
-            return map;
-        }
-
-        function calculateMultiBalloonSchedule() {
-            const P = parseFloat(document.getElementById('facilityAmount').value);
-            const annualRate = parseFloat(document.getElementById('annualRate').value);
-            const N = parseInt(document.getElementById('tenureMonths').value);
-            const balloonMap = getBalloonConfig();
-
-            if (!P || P <= 0 || !annualRate || annualRate <= 0 || !N || N <= 0) {
-                alert("කරුණාකර Financed Amount, Rate, සහ Tenure හිස්තැන් පුරවන්න.");
-                return;
-            }
-
-            const r = (annualRate / 100) / 12;
-            let sumPvBalloons = 0;
-            let annuityFactorMinusBalloons = 0;
-            let balloonTxtArr = [];
-
-            for (let k = 1; k <= N; k++) {
-                if (balloonMap[k]) {
-                    sumPvBalloons += balloonMap[k] * Math.pow(1 + r, -k);
-                    balloonTxtArr.push(`Month #${k}: Rs. ${parseFloat(balloonMap[k]).toLocaleString('en-US')}`);
-                } else {
-                    annuityFactorMinusBalloons += Math.pow(1 + r, -k);
-                }
-            }
-
-            const regularEMI = (P - sumPvBalloons) / annuityFactorMinusBalloons;
-
-            let balance = P;
-            calculatedSchedule = [];
-            let totalInterest = 0;
-            let totalPayable = 0;
-            const startDate = new Date();
-
-            for (let i = 1; i <= N; i++) {
-                let interest = balance * r;
-                let currentTotalDue = balloonMap[i] ? balloonMap[i] : regularEMI;
-                let principal = currentTotalDue - interest;
-
-                balance = balance - principal;
-                if (balance < 0 || i === N) balance = 0;
-
-                totalInterest += interest;
-                totalPayable += currentTotalDue;
-
-                let dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + i, startDate.getDate());
-                let dateStr = dueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-
-                calculatedSchedule.push({
-                    month: i,
-                    dueDate: dateStr,
-                    principal: principal,
-                    interest: interest,
-                    totalDue: currentTotalDue,
-                    balance: balance,
-                    isBalloon: !!balloonMap[i]
-                });
-            }
-
-            summaryMetrics = {
-                P: P,
-                R: annualRate,
-                N: N,
-                regularEMI: regularEMI,
-                totalInterest: totalInterest,
-                totalPayable: totalPayable,
-                balloonDesc: balloonTxtArr.join(', ')
-            };
-
-            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
-            document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            const tbody = document.getElementById('scheduleTable');
-            tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-indigo-50 font-bold text-indigo-900' : 'hover:bg-slate-50'}">
-                    <td class="p-3 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-indigo-600 text-white px-1.5 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
-                    <td class="p-3 text-slate-500 font-bold">${s.dueDate}</td>
-                    <td class="p-3 font-mono font-bold text-slate-700">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-500 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono ${s.isBalloon ? 'text-indigo-600 font-extrabold' : 'text-slate-800 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-500 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderRates() {
-            const unregTbody = document.getElementById('unregTable');
-            const regTbody = document.getElementById('regTable');
-
-            if(unregTbody) {
-                unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-slate-600'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-
-            if(regTbody) {
-                regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-slate-600'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-        }
-
-        function togglePage() {
-            const isCalc = !document.getElementById('calcPage').classList.contains('hidden');
-            showPage(isCalc ? 'ratePage' : 'calcPage');
-        }
-
-        function showPage(pageId) {
-            document.getElementById('ratePage').classList.add('hidden');
-            document.getElementById('calcPage').classList.add('hidden');
-            document.getElementById(pageId).classList.remove('hidden');
-
-            const btnText = document.getElementById('navBtnText');
-            btnText.innerText = (pageId === 'calcPage') ? "Rate Sheet" : "Calculator";
-        }
-
-        function openAdminModal() {
-            document.getElementById('adminAuth').classList.remove('hidden');
-            document.getElementById('adminContent').classList.add('hidden');
-            document.getElementById('adminPass').value = '';
-            document.getElementById('adminModal').classList.remove('hidden');
-        }
-
-        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
-
-        function verifyAdmin() {
-            if (document.getElementById('adminPass').value === 'Lakmal@93') {
-                document.getElementById('adminAuth').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                renderRateEditor();
-                
-                const activeMobile = localStorage.getItem('officerMobile');
-                const isOwner = (activeMobile === OWNER_MOBILE);
-                document.getElementById('nonOwnerLockNotice').classList.toggle('hidden', isOwner);
-                document.getElementById('ownerTableContainer').classList.toggle('hidden', !isOwner);
-            } else {
-                alert('Access Denied: Incorrect Password');
-            }
-        }
-
-        function startLiveUserLogsListener() {
-            db.ref('userLogs').on('value', (snapshot) => {
-                const data = snapshot.val();
-                const tbody = document.getElementById('userLogsTable');
-                if (!tbody) return;
-
-                if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-slate-400 font-bold">No logs recorded yet.</td></tr>`;
-                    return;
-                }
-
-                let html = '';
-                let totalLogins = 0, totalUsers = 0, activeNow = 0, pendingUsers = 0;
-                const loggedMobile = localStorage.getItem('officerMobile');
-                const isOwner = (loggedMobile === OWNER_MOBILE);
-
-                for (let key in data) {
-                    const u = data[key];
-                    totalUsers++;
-                    totalLogins += (u.loginCount || 0);
-                    if (u.isOnline) activeNow++;
-                    if (u.status === 'pending') pendingUsers++;
-
-                    const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
-                    html += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-2.5 font-bold text-slate-800 flex items-center gap-1.5">
-                                ${u.name || 'Unknown'}
-                                ${isTargetOwner ? '<span class="text-[8px] bg-indigo-100 text-indigo-700 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
-                            </td>
-                            <td class="p-2.5 text-slate-500 font-mono font-bold">${u.mobile || 'N/A'}</td>
-                            <td class="p-2.5 text-center">
-                                ${u.isOnline ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase">Online</span>' : '<span class="bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase">Offline</span>'}
-                            </td>
-                            <td class="p-2.5 text-center text-slate-600 font-mono text-[11px] font-bold">${u.lastLoggedIn || 'N/A'}</td>
-                            <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${u.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${u.status || 'pending'}</span></td>
-                            <td class="p-2.5 text-center"><span class="bg-slate-100 text-indigo-600 font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
-                            <td class="p-2.5 text-right space-x-1">
-                                ${isOwner && u.status !== 'approved' ? `<button onclick="approveUser('${key}')" class="bg-indigo-600 text-white font-bold px-2 py-1 rounded text-[10px] uppercase">Approve</button>` : ''}
-                                ${isOwner && !isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-100 text-rose-600 font-bold px-2 py-1 rounded text-[10px] uppercase"><i class="fa-solid fa-trash-can"></i></button>` : ''}
-                            </td>
-                        </tr>
-                    `;
-                }
-                tbody.innerHTML = html;
-                document.getElementById('statTotalLogins').innerText = totalLogins;
-                document.getElementById('statTotalUsers').innerText = totalUsers;
-                document.getElementById('statActiveNow').innerText = activeNow;
-                document.getElementById('statPendingUsers').innerText = pendingUsers;
-            });
-        }
-
-        function approveUser(userKey) {
-            db.ref('userLogs/' + userKey).update({ status: 'approved' }, (error) => {
-                if (!error) alert("User approved successfully!");
-            });
-        }
-
-        function removeUser(userKey, userName) {
-            if (confirm(`Remove user "${userName}"?`)) {
-                db.ref('userLogs/' + userKey).remove();
-            }
-        }
-
-        function renderRateEditor() {
-            const unregContainer = document.getElementById('unregRateEditor');
-            const regContainer = document.getElementById('regRateEditor');
-            const unregPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs", "6 Yrs"];
-            const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
-
-            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-indigo-900 block">${item.category}</label>
-                    <div class="grid grid-cols-6 gap-1.5">
-                        ${item.rates.map((r, col) => `
-                            <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded text-[10px] text-center font-bold text-slate-800 outline-none focus:border-indigo-600">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-indigo-900 block">${item.category}</label>
-                    <div class="grid grid-cols-5 gap-1.5">
-                        ${item.rates.map((r, col) => `
-                            <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded text-[10px] text-center font-bold text-slate-800 outline-none focus:border-indigo-600">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function saveAdminSettings() {
-            document.querySelectorAll('.rate-edit-input').forEach(input => {
-                const type = input.dataset.type;
-                const catIdx = input.dataset.cat;
-                const colIdx = input.dataset.col;
-                let rawValue = input.value.trim();
-                if (rawValue.toUpperCase() !== 'N/A' && rawValue !== '' && !rawValue.endsWith('%')) {
-                    rawValue += '%';
-                }
-                rateData[type][catIdx].rates[colIdx] = rawValue;
-            });
-
-            db.ref('rateData').set(rateData, (error) => {
-                if (!error) {
-                    closeAdminModal();
-                    alert("Rate changes published globally!");
-                }
-            });
-        }
-
-        async function sharePDFDirectly() {
-            if (calculatedSchedule.length === 0) calculateMultiBalloonSchedule();
-            if (calculatedSchedule.length === 0) return alert("කරුණාකර Financed Amount, Rate, සහ Tenure ඇතුළත් කර Calculate කරන්න.");
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const officerName = localStorage.getItem('officerName') || "Authorized Officer";
-            const officerMobile = localStorage.getItem('officerMobile') || "N/A";
-
-            doc.setFillColor(79, 70, 229);
-            doc.rect(0, 0, 210, 28, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text("EMI Master Pro", 12, 12);
-
-            doc.setFontSize(8);
-            doc.text(`Prepared by: ${officerName} | Contact: ${officerMobile}`, 12, 20);
-
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-            doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
-
-            const tableBody = calculatedSchedule.map(s => [
-                s.month,
-                s.dueDate,
-                s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
-            ]);
-
-            doc.autoTable({
-                startY: 35,
-                head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
-                theme: 'grid',
-                headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
-                bodyStyles: { fontSize: 7, cellPadding: 1.5 },
-                margin: { left: 12, right: 12 }
-            });
-
-            const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], `Lease_Schedule.pdf`, { type: 'application/pdf' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({ files: [file], title: 'Lease Repayment Schedule' });
-                } catch (err) { console.log(err); }
-            } else {
-                doc.save(`Lease_Schedule.pdf`);
-            }
-        }
-    </script>
+    // Admin Approve Action
+    window.approveUser = async (uid) => {
+      await update(ref(db, 'users/' + uid), { isApproved: true });
+      alert("User Approved!");
+      loadPendingUsers();
+    };
+  </script>
 </body>
-</html>
+</hthereafter 
