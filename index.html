@@ -487,7 +487,7 @@
                     setupPresenceSystem(u.mobile, u.name);
                     showLoginToast(u.name, u.mobile);
                 } else {
-                    alert("ඔබගේ ගිණුම Admin අනුමත කර නොමැත. කරුණාකර Admin සම්බන්ධ කරගන්න.");
+                    alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රඳී සිටින්න.`);
                     logoutUser();
                 }
             });
@@ -539,7 +539,7 @@
                 if (u && u.name) {
                     const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                     if (u.status !== 'approved' && !isOwner) {
-                        return alert("ඔබගේ ගිණුම Admin (0777353802) විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.");
+                        return alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.`);
                     }
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -555,7 +555,7 @@
                     document.getElementById('loginOverlay').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = u.name;
                     document.getElementById('officerMobileDisplay').value = u.mobile;
-                    setupPresenceSystem(u.mobile, u.name);
+                    setupPresenceSystem(u.name, u.mobile);
                     showLoginToast(u.name, u.mobile);
                 } else {
                     alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. කරුණාකර 'New Register' හරහා ලියාපදිංචි වන්න.");
@@ -593,7 +593,7 @@
                         setupPresenceSystem(mobile, name);
                         showLoginToast(name, mobile);
                     } else {
-                        alert("ලියාපදිංචි වීම සාර්ථකයි! Admin (0777353802) විසින් Approve කළ පසු ඔබට Log විය හැක.");
+                        alert(`ලියාපදිංචි වීම සාර්ථකයි! (${mobile}) සඳහා Admin අනුමැතිය ලැබුණු පසු ඔබට Log විය හැක.`);
                         resetAuthView();
                     }
                 } else {
@@ -712,7 +712,7 @@
                 const currentKey = currentMobile.replace(/[^0-9]/g, "");
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-                // ONLY SHOW USER MANAGEMENT TO 0777353802 OWNER
+                // ONLY SHOW USER MANAGEMENT TO OWNER (0777353802)
                 const ownerSection = document.getElementById('ownerUserManagementSection');
                 if (currentKey === ownerKey) {
                     ownerSection.classList.remove('hidden');
