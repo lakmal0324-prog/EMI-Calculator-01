@@ -271,7 +271,7 @@
             <h3 class="text-base font-bold text-gold border-b border-[#282c37] pb-2">User Registration / Account Status</h3>
             
             <div id="profileFormInputs" class="space-y-3">
-                <p class="text-xs text-slate-400">ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කර Admin අනුමැතිය සඳහා යොමු කරන්න.</p>
+                <p class="text-xs text-slate-400">ඇප් එක භාවිතා කිරීම සඳහා ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.</p>
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
                     <input type="text" id="setupName" placeholder="e.g. Perera" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
@@ -290,7 +290,7 @@
                     <i class="fa-solid fa-clock"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-200">අනුමැතිය අපේක්ෂාවෙන්...</h4>
-                <p class="text-xs text-slate-400">ඔබගේ තොරතුරු Main Admin (Lakmal) වෙත යොමු කර ඇත. අනුමැතිය ලැබුණු පසු ඇප් එක භාවිතා කළ හැක.</p>
+                <p class="text-xs text-slate-400">ඔබගේ තොරතුරු Admin වෙත යොමු කර ඇත. අනුමැතිය ලැබුණු පසු ඇප් එක භාවිතා කළ හැක.</p>
             </div>
         </div>
     </div>
@@ -360,12 +360,6 @@
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> User Approvals, Presence & Login History
                     </h4>
-                    
-                    <div id="nonOwnerLockNotice" class="hidden p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-center space-y-1">
-                        <i class="fa-solid fa-lock text-rose-400 text-lg mb-1 block"></i>
-                        <h5 class="text-xs font-bold text-rose-300">Access Restricted</h5>
-                        <p class="text-[11px] text-slate-400">User Details, Approvals සහ Access Removal සිදු කළ හැක්කේ Main Owner (Lakmal - 0777353802) හට පමණි.</p>
-                    </div>
 
                     <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-56">
                         <table class="w-full text-left text-xs border-collapse">
@@ -558,8 +552,6 @@
                 const userData = snapshot.val();
                 
                 if (!userData) {
-                    localStorage.removeItem('officerName');
-                    localStorage.removeItem('officerMobile');
                     showRegistrationForm();
                     return;
                 }
@@ -568,7 +560,6 @@
                     document.getElementById('profileModal').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = userData.name;
                     document.getElementById('officerMobileDisplay').value = userData.mobile;
-                    trackLoginCount(userKey);
                 } else {
                     document.getElementById('profileModal').classList.remove('hidden');
                     document.getElementById('profileFormInputs').classList.add('hidden');
@@ -600,7 +591,7 @@
             db.ref('userLogs/' + userKey).set({
                 name: name,
                 mobile: mobile,
-                status: isOwnerUser ? 'approved' : 'pending',
+                status: 'approved',
                 loginCount: 1,
                 isOnline: true,
                 lastActive: nowStr,
@@ -610,8 +601,10 @@
                 if (!error) {
                     localStorage.setItem('officerName', name);
                     localStorage.setItem('officerMobile', mobile);
+                    document.getElementById('profileModal').classList.add('hidden');
+                    document.getElementById('officerNameDisplay').value = name;
+                    document.getElementById('officerMobileDisplay').value = mobile;
                     setupPresenceSystem();
-                    checkUserProfile();
                 } else {
                     alert("Error submitting details: " + error.message);
                 }
@@ -627,7 +620,7 @@
             });
         }
 
-        function openProfileModal() { checkUserProfile(); }
+        function openProfileModal() { showRegistrationForm(); }
 
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
             const container = document.getElementById('balloonContainer');
@@ -792,20 +785,7 @@
                 document.getElementById('adminContent').classList.remove('hidden');
                 
                 renderRateEditor();
-                
-                const activeMobile = localStorage.getItem('officerMobile');
-                const isOwner = (activeMobile === OWNER_MOBILE);
-
-                const lockNotice = document.getElementById('nonOwnerLockNotice');
-                const tableContainer = document.getElementById('ownerTableContainer');
-
-                if (isOwner) {
-                    lockNotice.classList.add('hidden');
-                    tableContainer.classList.remove('hidden');
-                } else {
-                    lockNotice.classList.remove('hidden');
-                    tableContainer.classList.add('hidden');
-                }
+                document.getElementById('ownerTableContainer').classList.remove('hidden');
 
             } else {
                 alert('Access Denied: Incorrect Password');
@@ -833,11 +813,10 @@
                 let activeNow = 0;
                 let pendingUsers = 0;
 
-                const loggedMobile = localStorage.getItem('officerMobile');
-                const isOwner = (loggedMobile === OWNER_MOBILE);
-
                 for (let key in data) {
                     const u = data[key];
+                    if (!u.name || !u.mobile) continue; // Filter out blank / corrupt entries
+
                     totalUsers++;
                     totalLogins += (u.loginCount || 0);
 
@@ -853,10 +832,10 @@
                     html += `
                         <tr class="hover:bg-[#222630]/30">
                             <td class="p-2.5 font-bold text-slate-200 flex items-center gap-1.5">
-                                ${u.name || 'Unknown'}
+                                ${u.name}
                                 ${isTargetOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Main Owner</span>' : ''}
                             </td>
-                            <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile || 'N/A'}</td>
+                            <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile}</td>
                             <td class="p-2.5 text-center">
                                 ${isOnline 
                                     ? '<span class="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border border-emerald-500/30"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Online</span>' 
@@ -865,13 +844,12 @@
                             <td class="p-2.5 text-center text-slate-300 font-mono text-[11px] font-bold">${lastLogin}</td>
                             <td class="p-2.5 text-center">
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${isApproved ? 'bg-emerald-500/10 text-emerald-300' : 'bg-amber-500/20 text-amber-400'}">
-                                    ${u.status || 'pending'}
+                                    ${u.status || 'approved'}
                                 </span>
                             </td>
-                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0}</span></td>
+                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 1}</span></td>
                             <td class="p-2.5 text-right space-x-1">
-                                ${isOwner && !isApproved ? `<button onclick="approveUser('${key}')" class="bg-gold hover:bg-[#c49f27] text-slate-950 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider">Approve</button>` : ''}
-                                ${isOwner && !isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider border border-rose-500/30 transition" title="Remove Access"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase tracking-wider border border-rose-500/30 transition" title="Remove Access"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                             </td>
                         </tr>
                     `;
@@ -884,22 +862,8 @@
             });
         }
 
-        function approveUser(userKey) {
-            const currentMobile = localStorage.getItem('officerMobile');
-            if (currentMobile !== OWNER_MOBILE) return alert("Access Denied: Only Main Owner (Lakmal) can approve users.");
-
-            db.ref('userLogs/' + userKey).update({
-                status: 'approved'
-            }, (error) => {
-                if (!error) alert("User access approved successfully!");
-            });
-        }
-
         function removeUser(userKey, userName) {
-            const currentMobile = localStorage.getItem('officerMobile');
-            if (currentMobile !== OWNER_MOBILE) return alert("Access Denied: Only Main Owner (Lakmal) can remove users.");
-
-            const confirmDelete = confirm(`Are you sure you want to remove user "${userName}" (${userKey})?`);
+            const confirmDelete = confirm(`Are you sure you want to remove user "${userName}"?`);
             if (confirmDelete) {
                 db.ref('userLogs/' + userKey).remove((error) => {
                     if (!error) {
