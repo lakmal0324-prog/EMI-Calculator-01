@@ -243,14 +243,38 @@
 
     <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
 
-    <!-- Profile Modal (Login / Register Messages) -->
+    <!-- Profile Modal (One-Tap Login & Registration) -->
     <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <h3 id="modalTitleText" class="text-base font-bold text-indigo-950 border-b border-slate-100 pb-2">User Registration / Login</h3>
+            <h3 class="text-base font-bold text-indigo-950 border-b border-slate-100 pb-2 flex justify-between items-center">
+                <span>User Account</span>
+                <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </h3>
             
-            <div id="profileFormInputs" class="space-y-3">
-                <div id="authDynamicMessage" class="p-3 bg-indigo-50 border border-indigo-100 rounded-2xl text-xs font-bold text-indigo-800">
-                    <!-- Dynamic message inserted via JS -->
+            <!-- ALREADY REGISTERED (One Tap Login View) -->
+            <div id="existingUserView" class="hidden space-y-4 py-2">
+                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-2 text-center">
+                    <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto text-lg shadow-md">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider">Welcome Back, Logged in User!</h4>
+                    <div class="bg-white p-3 rounded-xl border border-indigo-100 text-left space-y-1">
+                        <div class="text-[11px] text-slate-500 font-bold">Saved Name: <span id="savedUiName" class="text-indigo-700 font-extrabold"></span></div>
+                        <div class="text-[11px] text-slate-500 font-bold">Saved Mobile: <span id="savedUiMobile" class="text-indigo-700 font-extrabold"></span></div>
+                    </div>
+                </div>
+                <button onclick="executeOneTapLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> One Tap Login
+                </button>
+                <button onclick="switchToNewRegistration()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-xl transition text-xs">
+                    Change Details / Register New Account
+                </button>
+            </div>
+
+            <!-- NEW USER REGISTRATION VIEW -->
+            <div id="newUserView" class="hidden space-y-3">
+                <div class="p-3 bg-amber-50 border border-amber-100 rounded-2xl text-xs font-bold text-amber-800">
+                    ✨ New User! Please register your name and mobile number to continue.
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
@@ -260,18 +284,19 @@
                     <label class="text-xs font-bold text-slate-700 block mb-1">Mobile Number</label>
                     <input type="text" id="setupMobile" placeholder="e.g. 0777353802" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
                 </div>
-                <button onclick="handleUserAuthentication()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">
-                    Continue to App
+                <button onclick="handleNewUserRegistration()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">
+                    Register Now
                 </button>
             </div>
 
+            <!-- PENDING STATUS VIEW -->
             <div id="pendingStatusMsg" class="hidden space-y-3 text-center py-4">
                 <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
                     <i class="fa-solid fa-clock"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-800">අනුමැතිය අපේක්ෂාවෙන්...</h4>
-                <p class="text-xs text-slate-500">ඔබගේ අලුත් ගිණුම Main Admin අනුමැතිය සඳහා යොමු කර ඇත. කරුණාකර රැඳී සිටින්න.</p>
-                <button onclick="showRegistrationForm()" class="text-xs text-indigo-600 font-bold underline pt-2 block mx-auto">Change Details / Try Again</button>
+                <p class="text-xs text-slate-500">ඔබගේ ගිණුම Main Admin අනුමැතිය සඳහා යොමු කර ඇත. කරුණාකර රැඳී සිටින්න.</p>
+                <button onclick="switchToNewRegistration()" class="text-xs text-indigo-600 font-bold underline pt-2 block mx-auto">Change Details / Try Again</button>
             </div>
         </div>
     </div>
@@ -490,7 +515,7 @@
             const name = localStorage.getItem('officerName');
 
             if (!mobile || !name) {
-                showRegistrationForm(false);
+                showNewRegistrationView();
                 return;
             }
 
@@ -500,42 +525,92 @@
                 const userData = snapshot.val();
                 
                 if (!userData) {
-                    showRegistrationForm(false);
+                    showNewRegistrationView();
                     return;
                 }
 
                 if (userData.status === 'approved') {
-                    document.getElementById('profileModal').classList.add('hidden');
+                    // Automatically set header values if already logged in via storage
                     document.getElementById('officerNameDisplay').value = userData.name;
                     document.getElementById('officerMobileDisplay').value = userData.mobile;
                     document.getElementById('officerNameHeader').innerText = userData.name;
                     trackLoginCount(userKey);
                 } else {
+                    // Pending state
                     document.getElementById('profileModal').classList.remove('hidden');
-                    document.getElementById('profileFormInputs').classList.add('hidden');
+                    document.getElementById('existingUserView').classList.add('hidden');
+                    document.getElementById('newUserView').classList.add('hidden');
                     document.getElementById('pendingStatusMsg').classList.remove('hidden');
                 }
             }).catch(() => {
-                showRegistrationForm(false);
+                showNewRegistrationView();
             });
         }
 
-        function showRegistrationForm(isAlreadyRegistered = false) {
-            document.getElementById('profileModal').classList.remove('hidden');
-            document.getElementById('profileFormInputs').classList.remove('hidden');
-            document.getElementById('pendingStatusMsg').classList.add('hidden');
-            
-            const msgBox = document.getElementById('authDynamicMessage');
-            const savedMobile = localStorage.getItem('officerMobile');
-            
-            if (isAlreadyRegistered || savedMobile) {
-                msgBox.innerText = "👋 Welcome Back! Please verify or log in with your details.";
+        function openProfileModal() {
+            const mobile = localStorage.getItem('officerMobile');
+            const name = localStorage.getItem('officerName');
+
+            if (mobile && name) {
+                // Show existing user card with one-tap login
+                document.getElementById('savedUiName').innerText = name;
+                document.getElementById('savedUiMobile').innerText = mobile;
+                
+                document.getElementById('profileModal').classList.remove('hidden');
+                document.getElementById('existingUserView').classList.remove('hidden');
+                document.getElementById('newUserView').classList.add('hidden');
+                document.getElementById('pendingStatusMsg').classList.add('hidden');
             } else {
-                msgBox.innerText = "✨ New User! Please register your name and mobile number to start.";
+                showNewRegistrationView();
             }
         }
 
-        function handleUserAuthentication() {
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function showNewRegistrationView() {
+            document.getElementById('profileModal').classList.remove('hidden');
+            document.getElementById('existingUserView').classList.add('hidden');
+            document.getElementById('newUserView').classList.remove('hidden');
+            document.getElementById('pendingStatusMsg').classList.add('hidden');
+        }
+
+        function switchToNewRegistration() {
+            showNewRegistrationView();
+        }
+
+        function executeOneTapLogin() {
+            const name = localStorage.getItem('officerName');
+            const mobile = localStorage.getItem('officerMobile');
+            if (!mobile || !name) {
+                showNewRegistrationView();
+                return;
+            }
+
+            const userKey = mobile.replace(/[^0-9]/g, "");
+            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            db.ref('userLogs/' + userKey).update({
+                isOnline: true,
+                lastLoggedIn: nowStr,
+                lastActive: nowStr,
+                loginCount: firebase.database.ServerValue.increment(1)
+            }, (error) => {
+                if (!error) {
+                    document.getElementById('officerNameDisplay').value = name;
+                    document.getElementById('officerMobileDisplay').value = mobile;
+                    document.getElementById('officerNameHeader').innerText = name;
+                    closeProfileModal();
+                    alert("✅ Logged in successfully!");
+                    setupPresenceSystem();
+                } else {
+                    alert("Login error: " + error.message);
+                }
+            });
+        }
+
+        function handleNewUserRegistration() {
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
             if (!name || !mobile) return alert("Please enter Name & Mobile Number.");
@@ -548,7 +623,6 @@
                 const existingData = snapshot.val();
 
                 if (existingData && existingData.status === 'approved') {
-                    // Already registered user -> Direct Login
                     db.ref('userLogs/' + userKey).update({
                         name: name,
                         isOnline: true,
@@ -556,17 +630,12 @@
                     }, () => {
                         localStorage.setItem('officerName', name);
                         localStorage.setItem('officerMobile', mobile);
-                        alert("✅ Logging in successfully!");
+                        alert("✅ Logged in successfully!");
                         setupPresenceSystem();
+                        closeProfileModal();
                         checkUserProfile();
                     });
-                } else if (existingData && existingData.status === 'pending') {
-                    // Pending user trying again
-                    localStorage.setItem('officerName', name);
-                    localStorage.setItem('officerMobile', mobile);
-                    checkUserProfile();
                 } else {
-                    // Brand new user registration
                     db.ref('userLogs/' + userKey).set({
                         name: name,
                         mobile: mobile,
@@ -582,9 +651,14 @@
                             localStorage.setItem('officerMobile', mobile);
                             if (!isOwnerUser) {
                                 alert("📝 Registration submitted! Pending admin approval.");
+                                document.getElementById('existingUserView').classList.add('hidden');
+                                document.getElementById('newUserView').classList.add('hidden');
+                                document.getElementById('pendingStatusMsg').classList.remove('hidden');
+                            } else {
+                                closeProfileModal();
+                                checkUserProfile();
                             }
                             setupPresenceSystem();
-                            checkUserProfile();
                         } else {
                             alert("Error: " + error.message);
                         }
@@ -596,15 +670,8 @@
         function trackLoginCount(userKey) {
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             db.ref('userLogs/' + userKey).update({
-                loginCount: firebase.database.ServerValue.increment(1),
-                lastActive: nowStr,
-                lastLoggedIn: nowStr
+                lastActive: nowStr
             });
-        }
-
-        function openProfileModal() { 
-            const mobile = localStorage.getItem('officerMobile');
-            showRegistrationForm(!!mobile); 
         }
 
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
@@ -770,7 +837,6 @@
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
                 
-                // Strict Security: Only OWNER_MOBILE can manage users
                 const activeMobile = localStorage.getItem('officerMobile');
                 const isOwner = (activeMobile === OWNER_MOBILE);
                 document.getElementById('nonOwnerLockNotice').classList.toggle('hidden', isOwner);
@@ -908,7 +974,6 @@
             const officerName = localStorage.getItem('officerName') || "Authorized Officer";
             const officerMobile = localStorage.getItem('officerMobile') || "N/A";
 
-            // Header Background
             doc.setFillColor(79, 70, 229);
             doc.rect(0, 0, 210, 28, 'F');
 
@@ -917,7 +982,6 @@
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
-            // Including Officer Contact Details in PDF Header as requested
             doc.setFontSize(8);
             doc.text(`Prepared by: ${officerName} | Contact: ${officerMobile}`, 12, 20);
 
