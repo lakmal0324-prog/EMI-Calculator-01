@@ -347,7 +347,7 @@
             <!-- Admin Dashboard Content -->
             <div id="adminContent" class="hidden space-y-6">
                 
-                <!-- TOP SECTION: Global Rate Editor ( accessible by anyone with admin password) -->
+                <!-- TOP SECTION: Global Rate Editor -->
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
@@ -712,7 +712,6 @@
                 const currentKey = currentMobile.replace(/[^0-9]/g, "");
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-                // ONLY SHOW USER MANAGEMENT TO OWNER (0777353802)
                 const ownerSection = document.getElementById('ownerUserManagementSection');
                 if (currentKey === ownerKey) {
                     ownerSection.classList.remove('hidden');
