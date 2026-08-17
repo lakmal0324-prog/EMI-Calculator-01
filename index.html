@@ -5,29 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EMI Master Pro</title>
 
-    <!-- Mobile App (PWA) Configurations - Link/URL Hide වෙන ලෙස Standalone ලෙස වැඩ කිරීමට -->
+    <!-- Mobile Fullscreen / Standalone Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EMI Master">
     <meta name="theme-color" content="#0b0c0e">
 
-    <!-- App Icon Config (Gold Calculator Icon Data URI) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0c0e'/><rect x='2' y='2' width='96' height='96' rx='20' fill='none' stroke='%23D4AF37' stroke-width='4'/><rect x='20' y='18' width='60' height='20' rx='6' fill='%23121418' stroke='%23D4AF37' stroke-width='2'/><circle cx='32' cy='52' r='7' fill='%23D4AF37'/><circle cx='50' cy='52' r='7' fill='%23D4AF37'/><circle cx='68' cy='52' r='7' fill='%23D4AF37'/><circle cx='32' cy='72' r='7' fill='%23D4AF37'/><circle cx='50' cy='72' r='7' fill='%23D4AF37'/><circle cx='68' cy='72' r='7' fill='%23D4AF37'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0c0e'/><rect x='2' y='2' width='96' height='96' rx='20' fill='none' stroke='%23D4AF37' stroke-width='4'/><rect x='20' y='18' width='60' height='20' rx='6' fill='%23121418' stroke='%23D4AF37' stroke-width='2'/><circle cx='32' cy='52' r='7' fill='%23D4AF37'/><circle cx='50' cy='52' r='7' fill='%23D4AF37'/><circle cx='68' cy='52' r='7' fill='%23D4AF37'/><circle cx='32' cy='72' r='7' fill='%23D4AF37'/><circle cx='50' cy='72' r='7' fill='%23D4AF37'/><circle cx='68' cy='72' r='7' fill='%23D4AF37'/></svg>">
+    <!-- High Resolution PNG Icons for iOS & Android -->
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/512/calculator.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/512/calculator.png">
 
-    <link rel="manifest" href='data:application/manifest+json,{
-      "name": "EMI Master Pro",
-      "short_name": "EMI Master",
-      "start_url": ".",
-      "display": "standalone",
-      "background_color": "#0b0c0e",
-      "theme_color": "#0b0c0e",
-      "icons": [{
-        "src": "data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230b0c0e%27/><rect x=%272%27 y=%272%27 width=%2796%27 height=%2796%27 rx=%2720%27 fill=%27none%27 stroke=%27%23D4AF37%27 stroke-width=%274%27/><rect x=%2720%27 y=%2718%27 width=%2760%27 height=%2720%27 rx=%276%27 fill=%27%23121418%27 stroke=%27%23D4AF37%27 stroke-width=%272%27/><circle cx=%2732%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2750%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2768%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2732%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2750%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2768%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/></svg>",
-        "sizes": "512x512",
-        "type": "image/svg+xml"
-      }]
-    }'>
+    <!-- Separate Web App Manifest File -->
+    <link rel="manifest" href="manifest.json">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
