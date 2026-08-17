@@ -3,88 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EMI Calculator with Admin Panel</title>
+  <title>EMI Calculator</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
-    input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+    input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
     button:hover { background-color: #0056b3; }
     .hidden { display: none; }
     .error { color: red; margin-top: 10px; font-size: 14px; }
     .success { color: green; margin-top: 10px; font-size: 14px; }
-    .user-list { text-align: left; margin-top: 15px; max-height: 200px; overflow-y: auto; }
-    .user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
-    .approve-btn { width: auto; padding: 5px 10px; margin: 0; background-color: #28a745; }
+    .user-list { text-align: left; margin-top: 15px; max-height: 250px; overflow-y: auto; }
+    .user-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 5px; }
+    .approve-btn { width: auto; padding: 6px 12px; margin: 0; background-color: #28a745; font-size: 13px; }
   </style>
 </head>
 <body>
 
-  <!-- 1. LOGIN SCREEN -->
-  <div id="login-card" class="card">
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email Address">
-    <input type="password" id="login-password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p>ගිණුමක් නැද්ද? <a href="#" onclick="showScreen('register-card')">Register වෙන්න</a></p>
-    <div id="login-msg"></div>
+  <!-- 1. LOGIN / REGISTER SCREEN -->
+  <div id="auth-card" class="card">
+    <h2>Welcome to EMI Calc</h2>
+    <p>ඇතුළු වීමට ඔබේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.</p>
+    <input type="text" id="user-name" placeholder="ඔබේ නම (Name)">
+    <input type="tel" id="user-phone" placeholder="දුරකථන අංකය (Phone Number)">
+    <button onclick="handleLoginRegister()">Enter / Register</button>
+    <div id="auth-msg"></div>
   </div>
 
-  <!-- 2. REGISTER SCREEN -->
-  <div id="register-card" class="card hidden">
-    <h2>Register</h2>
-    <input type="text" id="reg-name" placeholder="Full Name">
-    <input type="email" id="reg-email" placeholder="Email Address">
-    <input type="password" id="reg-password" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <p>ගිණුමක් තියෙනවා නම් <a href="#" onclick="showScreen('login-card')">Login වෙන්න</a></p>
-    <div id="reg-msg"></div>
-  </div>
-
-  <!-- 3. PENDING APPROVAL SCREEN -->
+  <!-- 2. PENDING APPROVAL SCREEN -->
   <div id="pending-card" class="card hidden">
-    <h2>Approval Pending</h2>
-    <p>ඔබගේ Registration එක සාර්ථකයි. Admin අනුමත (Approve) කරන තෙක් App එක භාවිතා කිරීමට නොහැක.</p>
-    <button onclick="logout()">Logout</button>
+    <h2>Approval Pending ⏳</h2>
+    <p>ඔබගේ තොරතුරු ලැබුණි. Admin අනුමත (Approve) කරන තෙක් කරුණාකර රැඳී සිටින්න.</p>
+    <button onclick="checkStatus()" style="background-color: #17a2b8;">Check Status</button>
+    <button onclick="logout()" style="background-color: #dc3545;">Exit</button>
   </div>
 
-  <!-- 4. MAIN EMI CALCULATOR (FOR APPROVED USERS) -->
+  <!-- 3. MAIN EMI CALCULATOR -->
   <div id="app-card" class="card hidden">
     <h2>EMI Calculator</h2>
-    <p id="welcome-msg"></p>
+    <p id="welcome-msg" style="font-weight: bold; color: #28a745;"></p>
     
-    <label style="text-align:left; display:block;">Loan Amount (රු.):</label>
+    <label style="text-align:left; display:block; margin-top:10px;">Loan Amount (ණය මුදල):</label>
     <input type="number" id="loan-amount" placeholder="500000">
 
-    <label style="text-align:left; display:block;">Interest Rate Policy:</label>
+    <label style="text-align:left; display:block; margin-top:10px;">Interest Rate Policy:</label>
     <select id="rate-select">
       <option value="12">Personal Loan (12%)</option>
       <option value="15">Housing Loan (15%)</option>
       <option value="18">Microfinance (18%)</option>
     </select>
 
-    <label style="text-align:left; display:block;">Tenure (Months):</label>
+    <label style="text-align:left; display:block; margin-top:10px;">Tenure (මාස ගණන):</label>
     <input type="number" id="months" placeholder="12">
 
     <button onclick="calculateEMI()">Calculate EMI</button>
 
     <div id="emi-result" style="margin-top: 15px; font-weight: bold; font-size: 18px; color: #007bff;"></div>
-    
     <button onclick="logout()" style="background-color: #dc3545; margin-top: 20px;">Logout</button>
   </div>
 
-  <!-- 5. ADMIN PANEL (FOR APPROVING USERS) -->
+  <!-- 4. ADMIN PANEL -->
   <div id="admin-card" class="card hidden">
-    <h2>Admin Dashboard</h2>
-    <p>Approve නොකළ Users ලාගේ ලැයිස්තුව:</p>
+    <h2>Admin Dashboard 👑</h2>
+    <p>Users අනුමත කරන්න:</p>
     <div id="pending-users" class="user-list"></div>
-    <button onclick="logout()" style="background-color: #dc3545; margin-top: 20px;">Logout</button>
+    <button onclick="logout()" style="background-color: #dc3545; margin-top: 20px;">Exit Admin</button>
   </div>
 
   <!-- FIREBASE ENGINE & LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -99,87 +87,98 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getDatabase(app);
 
     // Navigation Switcher
-    window.showScreen = (id) => {
-      ['login-card', 'register-card', 'pending-card', 'app-card', 'admin-card'].forEach(card => {
+    function showScreen(id) {
+      ['auth-card', 'pending-card', 'app-card', 'admin-card'].forEach(card => {
         document.getElementById(card).classList.add('hidden');
       });
       document.getElementById(id).classList.remove('hidden');
+    }
+
+    // Auto Login Check from Local Storage
+    window.onload = () => {
+      const savedPhone = localStorage.getItem('userPhone');
+      if (savedPhone) {
+        verifyUser(savedPhone);
+      }
     };
 
-    // Auth State Observer - Logic Enforcement
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Admin Check (Special Admin Email)
-        if (user.email === "admin@emicalc.com") {
-          showScreen('admin-card');
-          loadPendingUsers();
-          return;
-        }
+    // Handle Login / Registration
+    window.handleLoginRegister = async () => {
+      const name = document.getElementById('user-name').value.trim();
+      const phone = document.getElementById('user-phone').value.trim();
+      const msg = document.getElementById('auth-msg');
 
-        const userRef = ref(db, 'users/' + user.uid);
-        const snapshot = await get(userRef);
-
-        if (snapshot.exists()) {
-          const userData = snapshot.val();
-          if (userData.isApproved === true) {
-            showScreen('app-card');
-            document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + userData.name;
-          } else {
-            showScreen('pending-card');
-          }
-        }
-      } else {
-        showScreen('login-card');
+      if (!name || !phone) {
+        msg.className = "error";
+        msg.innerText = "කරුණාකර නම සහ Phone Number එක ඇතුළත් කරන්න!";
+        return;
       }
-    });
 
-    // Register User
-    window.register = async () => {
-      const name = document.getElementById('reg-name').value;
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
-      const msg = document.getElementById('reg-msg');
+      // Admin Login Check (Phone: 0000)
+      if (phone === "0000") {
+        localStorage.setItem('userPhone', '0000');
+        showScreen('admin-card');
+        loadPendingUsers();
+        return;
+      }
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+      const userRef = ref(db, 'users/' + phone);
+      const snapshot = await get(userRef);
 
-        await set(ref(db, 'users/' + user.uid), {
+      if (snapshot.exists()) {
+        // User already exists
+        localStorage.setItem('userPhone', phone);
+        verifyUser(phone);
+      } else {
+        // New User Register
+        await set(userRef, {
           name: name,
-          email: email,
+          phone: phone,
           isApproved: false
         });
-
-        msg.className = "success";
-        msg.innerText = "ලියාපදිංචිය සාර්ථකයි! Admin අනුමත කරන තෙක් රැඳී සිටින්න.";
-      } catch (error) {
-        msg.className = "error";
-        msg.innerText = error.message;
+        localStorage.setItem('userPhone', phone);
+        showScreen('pending-card');
       }
     };
 
-    // Login User
-    window.login = async () => {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      const msg = document.getElementById('login-msg');
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        msg.className = "error";
-        msg.innerText = error.message;
+    // Verify Approval Status
+    async function verifyUser(phone) {
+      if (phone === "0000") {
+        showScreen('admin-card');
+        loadPendingUsers();
+        return;
       }
+
+      const userRef = ref(db, 'users/' + phone);
+      const snapshot = await get(userRef);
+
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        if (userData.isApproved === true) {
+          showScreen('app-card');
+          document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + userData.name;
+        } else {
+          showScreen('pending-card');
+        }
+      } else {
+        showScreen('auth-card');
+      }
+    }
+
+    window.checkStatus = () => {
+      const savedPhone = localStorage.getItem('userPhone');
+      if (savedPhone) verifyUser(savedPhone);
     };
 
-    // Logout
-    window.logout = () => signOut(auth);
+    window.logout = () => {
+      localStorage.removeItem('userPhone');
+      showScreen('auth-card');
+    };
 
-    // Calculate EMI Logic
+    // Calculate EMI
     window.calculateEMI = () => {
       const p = parseFloat(document.getElementById('loan-amount').value);
       const r = parseFloat(document.getElementById('rate-select').value) / 12 / 100;
@@ -194,7 +193,7 @@
       document.getElementById('emi-result').innerText = `මසකට ගෙවිය යුතු මුදල: රු. ${emi.toFixed(2)}`;
     };
 
-    // Admin Panel - Load Pending Users
+    // Admin Panel Functions
     async function loadPendingUsers() {
       const usersRef = ref(db, 'users');
       const snapshot = await get(usersRef);
@@ -203,12 +202,12 @@
 
       if (snapshot.exists()) {
         const data = snapshot.val();
-        for (let uid in data) {
-          if (!data[uid].isApproved) {
+        for (let phone in data) {
+          if (!data[phone].isApproved) {
             container.innerHTML += `
               <div class="user-item">
-                <span>${data[uid].name} (${data[uid].email})</span>
-                <button class="approve-btn" onclick="approveUser('${uid}')">Approve</button>
+                <span><b>${data[phone].name}</b><br>${phone}</span>
+                <button class="approve-btn" onclick="approveUser('${phone}')">Approve</button>
               </div>
             `;
           }
@@ -216,12 +215,11 @@
       }
     }
 
-    // Admin Approve Action
-    window.approveUser = async (uid) => {
-      await update(ref(db, 'users/' + uid), { isApproved: true });
+    window.approveUser = async (phone) => {
+      await update(ref(db, 'users/' + phone), { isApproved: true });
       alert("User Approved!");
       loadPendingUsers();
     };
   </script>
 </body>
-</hthereafter 
+</html>
