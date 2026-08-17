@@ -965,5 +965,52 @@
             }
         }
     </script>
-</body>
+</body><!-- Admin Panel Modal -->
+<div id="adminModal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
+        <h3 class="font-black text-slate-900 mb-4">Admin Panel - User Approval</h3>
+        <table class="w-full text-left text-sm text-slate-700">
+            <thead>
+                <tr class="border-b font-bold text-slate-900">
+                    <th class="p-2">Name</th>
+                    <th class="p-2">Phone</th>
+                    <th class="p-2">Action</th>
+                </tr>
+            </thead>
+            <tbody id="adminUsersTable"></tbody>
+        </table>
+        <button onclick="document.getElementById('adminModal').classList.add('hidden')" class="mt-6 w-full bg-slate-200 py-3 rounded-2xl font-bold">Close</button>
+    </div>
+</div>
+
+<script>
+    // Admin Panel Functions
+    function openAdminModal() {
+        document.getElementById('adminModal').classList.remove('hidden');
+        const tbody = document.getElementById('adminUsersTable');
+        db.ref('users').once('value', (snap) => {
+            const users = snap.val();
+            tbody.innerHTML = Object.entries(users || {}).map(([phone, u]) => `
+                <tr class="border-b">
+                    <td class="p-2 font-bold">${u.name}</td>
+                    <td class="p-2 font-mono">${phone}</td>
+                    <td class="p-2">
+                        ${u.status === 'active' ? 
+                            '<span class="text-green-600 font-black">Approved</span>' : 
+                            `<button onclick="approveUser('${phone}')" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold">Approve</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        });
+    }
+
+    function approveUser(phone) {
+        db.ref('users/' + phone + '/status').set('active').then(() => {
+            alert("පරිශීලකයා අනුමත කරන ලදී!");
+            openAdminModal(); // Table එක refresh කරන්න
+        });
+    }
+</script>
+
 </html>
