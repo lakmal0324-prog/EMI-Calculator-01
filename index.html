@@ -1169,20 +1169,22 @@
                 }
             });
 
-            const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
+            try {
+                const pdfBlob = doc.output('blob');
+                const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         files: [file],
                         title: 'Lease Repayment Schedule',
                         text: `Lease Repayment Schedule (Prepared by ${officerName})`
                     });
-                } catch (err) { console.log('Share canceled', err); }
-            } else {
-                }⁠
-doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
+                } else {
+                    doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
+                }
+            } catch (err) {
+                console.log('Share error or canceled:', err);
+                doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
             }
         }
     </script>
