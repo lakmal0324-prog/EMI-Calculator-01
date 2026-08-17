@@ -2,8 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMI Master Pro - Advanced EMI & Rate Sheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EMI Master Pro</title>
+
+    <!-- Mobile App (PWA) Configurations - Link/URL Hide වෙන ලෙස Standalone ලෙස වැඩ කිරීමට -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b0c0e">
+
+    <!-- App Icon Config (Gold Calculator Icon Data URI) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0c0e'/><rect x='2' y='2' width='96' height='96' rx='20' fill='none' stroke='%23D4AF37' stroke-width='4'/><rect x='20' y='18' width='60' height='20' rx='6' fill='%23121418' stroke='%23D4AF37' stroke-width='2'/><circle cx='32' cy='52' r='7' fill='%23D4AF37'/><circle cx='50' cy='52' r='7' fill='%23D4AF37'/><circle cx='68' cy='52' r='7' fill='%23D4AF37'/><circle cx='32' cy='72' r='7' fill='%23D4AF37'/><circle cx='50' cy='72' r='7' fill='%23D4AF37'/><circle cx='68' cy='72' r='7' fill='%23D4AF37'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0c0e'/><rect x='2' y='2' width='96' height='96' rx='20' fill='none' stroke='%23D4AF37' stroke-width='4'/><rect x='20' y='18' width='60' height='20' rx='6' fill='%23121418' stroke='%23D4AF37' stroke-width='2'/><circle cx='32' cy='52' r='7' fill='%23D4AF37'/><circle cx='50' cy='52' r='7' fill='%23D4AF37'/><circle cx='68' cy='52' r='7' fill='%23D4AF37'/><circle cx='32' cy='72' r='7' fill='%23D4AF37'/><circle cx='50' cy='72' r='7' fill='%23D4AF37'/><circle cx='68' cy='72' r='7' fill='%23D4AF37'/></svg>">
+
+    <link rel="manifest" href='data:application/manifest+json,{
+      "name": "EMI Master Pro",
+      "short_name": "EMI Master",
+      "start_url": ".",
+      "display": "standalone",
+      "background_color": "#0b0c0e",
+      "theme_color": "#0b0c0e",
+      "icons": [{
+        "src": "data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230b0c0e%27/><rect x=%272%27 y=%272%27 width=%2796%27 height=%2796%27 rx=%2720%27 fill=%27none%27 stroke=%27%23D4AF37%27 stroke-width=%274%27/><rect x=%2720%27 y=%2718%27 width=%2760%27 height=%2720%27 rx=%276%27 fill=%27%23121418%27 stroke=%27%23D4AF37%27 stroke-width=%272%27/><circle cx=%2732%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2750%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2768%27 cy=%2752%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2732%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2750%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/><circle cx=%2768%27 cy=%2772%27 r=%277%27 fill=%27%23D4AF37%27/></svg>",
+        "sizes": "512x512",
+        "type": "image/svg+xml"
+      }]
+    }'>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -32,7 +57,7 @@
         }
     </script>
     <style>
-        body { background-color: #0b0c0e; color: #f1f5f9; font-family: sans-serif; }
+        body { background-color: #0b0c0e; color: #f1f5f9; font-family: sans-serif; user-select: none; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0b0c0e; }
         ::-webkit-scrollbar-thumb { background: #282c37; border-radius: 3px; }
@@ -52,7 +77,7 @@
                         <span class="text-xs font-black text-gold uppercase tracking-wider">User Logged In</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                     </div>
-                    <p id="toastDetails" class="text-xs font-bold text-slate-200 mt-0.5">Kasun Perera (0771234567)</p>
+                    <p id="toastDetails" class="text-xs font-bold text-slate-200 mt-0.5">User Details</p>
                 </div>
             </div>
             <button onclick="hideLoginToast()" class="text-slate-400 hover:text-white p-1">
@@ -84,7 +109,7 @@
                 </button>
             </div>
 
-            <!-- Login Form (Existing Mobile) -->
+            <!-- Login Form -->
             <div id="loginFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Registered Mobile Number</label>
@@ -96,7 +121,7 @@
                 </div>
             </div>
 
-            <!-- Registration Form (New User) -->
+            <!-- Registration Form -->
             <div id="registerFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-300 block mb-1">Your Full Name</label>
@@ -147,11 +172,10 @@
                         <span id="navBtnText">Rate Sheet</span>
                     </button>
 
-                    <!-- Admin Button with Pending Approvals Red Badge -->
+                    <!-- Admin Button -->
                     <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>Admin</span>
-                        
                         <span id="adminNotificationBadge" class="hidden absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-extrabold text-white shadow-lg border border-[#0b0c0e]">0</span>
                         <span id="adminNotificationPing" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-rose-500 animate-ping opacity-75"></span>
                     </button>
@@ -368,7 +392,7 @@
                     </button>
                 </div>
 
-                <!-- BOTTOM SECTION: User Management & Stats (ONLY ACCESSIBLE BY 0777353802 OWNER) -->
+                <!-- BOTTOM SECTION: User Management & Stats -->
                 <div id="ownerUserManagementSection" class="hidden space-y-4 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
@@ -487,7 +511,7 @@
                     setupPresenceSystem(u.mobile, u.name);
                     showLoginToast(u.name, u.mobile);
                 } else {
-                    alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රඳී සිටින්න.`);
+                    alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත.`);
                     logoutUser();
                 }
             });
@@ -539,7 +563,7 @@
                 if (u && u.name) {
                     const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                     if (u.status !== 'approved' && !isOwner) {
-                        return alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.`);
+                        return alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත.`);
                     }
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -558,7 +582,7 @@
                     setupPresenceSystem(u.name, u.mobile);
                     showLoginToast(u.name, u.mobile);
                 } else {
-                    alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. කරුණාකර 'New Register' හරහා ලියාපදිංචි වන්න.");
+                    alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. 'New Register' හරහා ලියාපදිංචි වන්න.");
                 }
             });
         }
@@ -593,7 +617,7 @@
                         setupPresenceSystem(mobile, name);
                         showLoginToast(name, mobile);
                     } else {
-                        alert(`ලියාපදිංචි වීම සාර්ථකයි! (${mobile}) සඳහා Admin අනුමැතිය ලැබුණු පසු ඔබට Log විය හැක.`);
+                        alert(`ලියාපදිංචි වීම සාර්ථකයි! (${mobile}) සඳහා Admin අනුමැතිය ලැබුණු පසු Log විය හැක.`);
                         resetAuthView();
                     }
                 } else {
