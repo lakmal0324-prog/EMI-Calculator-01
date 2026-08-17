@@ -3,1014 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMI Master Pro - Financial Suite</title>
-    
-    <!-- iOS Web App Metadata -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="EMI Master">
-    
-    <!-- Tailwind CSS & Icons -->
+    <title>EMI Master Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js & jsPDF -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Firebase Compat SDKs -->
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        lightBg: '#f8fafc',
-                        cardBg: '#ffffff',
-                        borderClr: '#e2e8f0',
-                        primaryClr: '#4f46e5',
-                        accentClr: '#06b6d4'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        body { 
-            background-color: #f1f5f9;
-            color: #1e293b; 
-            font-family: system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-        }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .app-header {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .app-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-        }
+        body { background: #f1f5f9; font-family: system-ui, sans-serif; }
+        .app-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-indigo-500 selection:text-white">
+<body class="flex flex-col min-h-screen">
 
-    <!-- 0. AUTH PAGE (LOGIN / REGISTER) -->
+    <!-- AUTH PAGE (LOGIN / REGISTER) -->
     <div id="authPage" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="app-card rounded-3xl max-w-md w-full p-8 space-y-6 shadow-2xl">
-            <div class="text-center space-y-2">
-                <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
-                    <i class="fa-solid fa-calculator text-white text-2xl"></i>
-                </div>
-                <h2 class="text-xl font-black text-slate-900 tracking-wide">EMI MASTER PRO</h2>
-                <p id="authSubtitle" class="text-xs font-bold text-slate-500">පද්ධතියට පිවිසීමට හෝ ලියාපදිංචි වන්න</p>
+        <div class="app-card rounded-3xl max-w-md w-full p-8 space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-900">EMI MASTER PRO</h2>
+                <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-1">By Lakmal Maduranga</p>
+                <p id="authSubtitle" class="text-xs font-bold text-slate-500 mt-3">පද්ධතියට පිවිසීමට ලොග් වන්න</p>
             </div>
-
             <div class="space-y-4">
                 <div id="nameFieldGroup" class="hidden">
-                    <label class="text-xs font-bold text-slate-700 block mb-1.5">පූර්ණ නම (Full Name)</label>
-                    <input type="text" id="authName" placeholder="ඔබේ නම ඇතුළත් කරන්න" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="authName" placeholder="පූර්ණ නම" class="w-full px-4 py-3 bg-slate-50 border rounded-2xl text-sm font-bold">
                 </div>
-
-                <div>
-                    <label class="text-xs font-bold text-slate-700 block mb-1.5">දුරකථන අංකය (Mobile Number)</label>
-                    <input type="text" id="authPhone" placeholder="07XXXXXXXX" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-
-                <div>
-                    <label class="text-xs font-bold text-slate-700 block mb-1.5">මුරපදය (Password)</label>
-                    <input type="password" id="authPass" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-
-                <button id="authMainBtn" onclick="handleAuthSubmit()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg shadow-indigo-600/25">
-                    පිවිසෙන්න (Login)
-                </button>
-
-                <div class="text-center pt-2">
-                    <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs font-bold text-indigo-600 hover:underline">
-                        ගිණුමක් නැද්ද? අලුතින් ලියාපදිංචි වන්න (Register)
-                    </button>
-                </div>
+                <input type="text" id="authPhone" placeholder="දුරකථන අංකය (07XXXXXXXX)" class="w-full px-4 py-3 bg-slate-50 border rounded-2xl text-sm font-bold">
+                <button onclick="handleAuthSubmit()" id="authMainBtn" class="w-full bg-indigo-600 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 transition">පිවිසෙන්න</button>
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="w-full text-xs font-bold text-indigo-600 hover:underline">අලුතින් ලියාපදිංචි වන්න</button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP WRAPPER (Hidden until login) -->
-    <div id="mainAppWrapper" class="hidden flex flex-col min-h-screen">
-        <!-- HEADER NAVIGATION BAR -->
-        <header class="app-header sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainAppWrapper" class="hidden flex flex-col min-h-screen p-4 md:p-6 justify-between">
+        <div class="max-w-4xl mx-auto w-full space-y-6">
+            <header class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
+                <div>
+                    <h1 class="text-xl font-black text-slate-900">EMI Master Pro</h1>
+                    <p class="text-[10px] font-bold text-indigo-600">By Lakmal Maduranga</p>
+                    <p class="text-xs text-slate-500 font-bold mt-1" id="loggedInUserInfo">User: -</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openRateSheetModal()" class="bg-emerald-600 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-emerald-700 transition"><i class="fa-solid fa-table mr-1"></i> Rate Sheet</button>
+                    <button onclick="openAdminModal()" id="adminPanelBtn" class="hidden bg-amber-500 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-amber-600 transition"><i class="fa-solid fa-user-shield mr-1"></i> Admin Panel</button>
+                    <button onclick="logoutUser()" class="bg-rose-500 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-rose-600 transition"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </header>
+
+            <!-- EMI CALCULATOR SECTION -->
+            <div class="app-card p-6 rounded-3xl space-y-4">
+                <h3 class="font-black text-slate-800 text-lg">EMI Calculator & Schedule</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">Loan Amount (Rs.)</label>
+                        <input type="number" id="loanAmount" class="w-full mt-1 p-3 bg-slate-50 border rounded-xl text-sm font-bold" placeholder="100000">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">Interest Rate (%)</label>
+                        <input type="number" id="interestRate" class="w-full mt-1 p-3 bg-slate-50 border rounded-xl text-sm font-bold" placeholder="12">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">Period (Months)</label>
+                        <input type="number" id="loanPeriod" class="w-full mt-1 p-3 bg-slate-50 border rounded-xl text-sm font-bold" placeholder="12">
+                    </div>
+                </div>
+                <button onclick="calculateEMI()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">Calculate & Generate Schedule</button>
                 
-                <div class="flex items-center space-x-3.5 cursor-pointer" onclick="window.location.reload()">
-                    <div class="w-11 h-11 rounded-2xl bg-indigo-600 shadow-md flex items-center justify-center">
-                        <i class="fa-solid fa-calculator text-white text-lg"></i>
+                <!-- Result & Actions Box -->
+                <div id="resultBox" class="hidden p-4 bg-indigo-50 rounded-2xl border border-indigo-100 space-y-3">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-sm font-bold text-indigo-900" id="emiResultText"></p>
+                        <button onclick="generatePDF()" class="mt-2 md:mt-0 bg-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition"><i class="fa-solid fa-file-pdf mr-1"></i> Download PDF Report</button>
                     </div>
 
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black tracking-wider text-slate-900">EMI MASTER</span>
-                            <span class="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase">PRO</span>
-                        </div>
-                        <p class="text-[10px] text-slate-500 font-semibold">
-                            Officer: <span id="headerOfficerName" class="text-indigo-600 font-bold">Lakmal Maduranga</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Controls & Status Badge -->
-                <div class="flex items-center gap-2.5">
-                    <button onclick="togglePage()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                        <i class="fa-solid fa-arrows-rotate text-indigo-600"></i>
-                        <span id="navBtnText">Rate Sheet</span>
-                    </button>
-
-                    <button onclick="openAdminModal()" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved text-amber-600"></i>
-                        <span>Admin</span>
-                    </button>
-
-                    <button onclick="logoutUser()" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 p-2 rounded-xl text-xs font-bold transition" title="Logout">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-
-            </div>
-        </header>
-
-        <!-- MAIN CONTENT -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-            <!-- 1. CALCULATOR PAGE -->
-            <div id="calcPage" class="space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    <!-- Input Panel -->
-                    <div class="lg:col-span-5 app-card rounded-3xl p-6 space-y-4">
-                        <h2 class="text-xs font-black text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-indigo-600"></i> Facility Parameters
-                        </h2>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Financed Amount (Rs.)</label>
-                                <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Annual Rate (%)</label>
-                                    <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Tenure (Months)</label>
-                                    <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                                </div>
-                            </div>
-
-                            <!-- Balloon Options -->
-                            <div class="pt-2 border-t border-slate-100">
-                                <div class="flex justify-between items-center mb-2">
-                                    <label class="text-xs font-bold text-slate-700">Balloon Payments (Optional)</label>
-                                    <button onclick="addBalloonField()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 px-2.5 py-1 rounded-xl font-bold transition">+ Add</button>
-                                </div>
-                                <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                            </div>
-
-                            <!-- Officer Info Displays -->
-                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Officer Name</label>
-                                    <input type="text" id="officerNameDisplay" readonly value="Lakmal Maduranga" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs text-slate-700 font-bold outline-none cursor-not-allowed">
-                                </div>
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Contact No</label>
-                                    <input type="text" id="officerMobileDisplay" readonly value="0777353802" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs text-slate-700 font-bold outline-none cursor-not-allowed">
-                                </div>
-                            </div>
-
-                            <div class="flex gap-2 pt-2">
-                                <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg shadow-indigo-600/20">
-                                    Calculate Schedule
-                                </button>
-                                <button onclick="sharePDFDirectly()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 rounded-2xl font-bold transition text-xs flex items-center gap-1.5">
-                                    <i class="fa-solid fa-share-nodes text-indigo-600"></i> PDF
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Schedule & Summary -->
-                    <div class="lg:col-span-7 space-y-4">
-                        <div class="app-card rounded-3xl p-5 space-y-3">
-                            <div id="summaryText" class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-2">
-                                Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. 0.00</span>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-4 text-xs pt-1">
-                                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span class="text-slate-500 block font-semibold text-[11px]">Total Interest</span>
-                                    <span id="summaryInterest" class="text-amber-600 font-bold font-mono text-sm">Rs. 0.00</span>
-                                </div>
-                                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span class="text-slate-500 block font-semibold text-[11px]">Total Payable</span>
-                                    <span id="summaryPayable" class="text-indigo-600 font-bold font-mono text-sm">Rs. 0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Amortization Table -->
-                        <div class="app-card rounded-3xl overflow-hidden shadow-sm">
-                            <div class="max-h-[460px] overflow-y-auto">
-                                <table class="w-full text-left border-collapse text-xs">
-                                    <thead class="bg-slate-100 text-slate-700 sticky top-0 font-bold border-b border-slate-200">
-                                        <tr>
-                                            <th class="p-3">#</th>
-                                            <th class="p-3">Due Date</th>
-                                            <th class="p-3">Principal</th>
-                                            <th class="p-3">Interest</th>
-                                            <th class="p-3">Total Due</th>
-                                            <th class="p-3">Balance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="scheduleTable" class="divide-y divide-slate-100">
-                                        <tr>
-                                            <td colspan="6" class="p-8 text-center text-slate-400 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 2. RATE SHEET PAGE -->
-            <div id="ratePage" class="hidden space-y-6">
-                <button onclick="showPage('calcPage')" class="w-full bg-white border border-slate-200 text-slate-800 font-black py-4 px-6 rounded-3xl shadow-sm transition hover:bg-slate-50 flex items-center justify-center gap-3 text-base">
-                    <i class="fa-solid fa-calculator text-xl text-indigo-600"></i>
-                    <span class="tracking-wide uppercase">Go to Calculator</span>
-                    <i class="fa-solid fa-arrow-right text-lg"></i>
-                </button>
-
-                <div class="app-card rounded-3xl p-6 space-y-6 shadow-sm">
-                    <div>
-                        <h2 class="text-xs font-black text-indigo-600 uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
-                        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Category</th>
-                                        <th class="p-3">1 Year</th>
-                                        <th class="p-3">2 Years</th>
-                                        <th class="p-3">3 Years</th>
-                                        <th class="p-3">4 Years</th>
-                                        <th class="p-3">5 Years</th>
-                                        <th class="p-3">6 Years</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h2 class="text-xs font-black text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
-                        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Category</th>
-                                        <th class="p-3">1 Year</th>
-                                        <th class="p-3">2 Years</th>
-                                        <th class="p-3">3 Years</th>
-                                        <th class="p-3">4 Years</th>
-                                        <th class="p-3">5 Years</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
-    </div>
-
-    <!-- ADMIN MODAL -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="app-card rounded-3xl max-w-4xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-indigo-600"></i> Admin Dashboard & User Management
-                </h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <div id="adminAuth" class="space-y-4 max-w-sm mx-auto py-6">
-                <label class="text-xs font-bold text-slate-700 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
-                <button onclick="verifyAdmin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-2xl transition text-sm shadow-lg">Access Dashboard</button>
-            </div>
-
-            <div id="adminContent" class="hidden space-y-6">
-                <!-- Registered Users Section -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-users"></i> Registered Users / Officers Database
-                    </h4>
-                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Name</th>
-                                    <th class="p-3">Phone Number</th>
-                                    <th class="p-3">Joined Date</th>
+                    <!-- Amortization Schedule Table Preview -->
+                    <div class="mt-4 max-h-60 overflow-y-auto bg-white rounded-xl border border-slate-200">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 sticky top-0">
+                                <tr class="text-slate-700">
+                                    <th class="p-2 font-bold">Month</th>
+                                    <th class="p-2 font-bold">Principal</th>
+                                    <th class="p-2 font-bold">Interest</th>
+                                    <th class="p-2 font-bold">Balance</th>
                                 </tr>
                             </thead>
-                            <tbody id="adminUsersTable" class="divide-y divide-slate-100">
-                                <tr><td colspan="3" class="p-4 text-center text-slate-400">Loading users...</td></tr>
-                            </tbody>
+                            <tbody id="scheduleTableBody"></tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- Rate Editor -->
-                <div class="space-y-3 pt-4 border-t border-slate-200">
-                    <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
-                    </h4>
-                    
-                    <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-slate-700">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <div class="space-y-2 pt-2 border-t border-slate-100">
-                        <h5 class="text-[11px] font-bold text-slate-700">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <button onclick="saveAdminSettings()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg">
-                        Publish Rate Updates Globally
-                    </button>
-                </div>
             </div>
+        </div>
 
+        <!-- FOOTER -->
+        <footer class="text-center py-6 mt-10">
+            <p class="text-xs font-bold text-slate-400">EMI MASTER PRO</p>
+            <p class="text-[10px] font-bold text-slate-500">By Lakmal Maduranga</p>
+        </footer>
+    </div>
+
+    <!-- ADMIN MODAL -->
+    <div id="adminModal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto shadow-2xl">
+            <h3 class="font-black text-slate-900 mb-4 text-lg">Admin Panel - User Approvals</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-700">
+                    <thead>
+                        <tr class="border-b font-bold text-slate-900">
+                            <th class="p-3">Name</th>
+                            <th class="p-3">Phone</th>
+                            <th class="p-3">Status / Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersTable"></tbody>
+                </table>
+            </div>
+            <button onclick="closeAdminModal()" class="mt-6 w-full bg-slate-200 py-3 rounded-2xl font-bold hover:bg-slate-300 transition">Close</button>
         </div>
     </div>
 
-    <!-- MAIN SCRIPT ENGINE -->
+    <!-- RATE SHEET MODAL -->
+    <div id="rateSheetModal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-black text-slate-900 text-lg">Interest Rate Guidelines</h3>
+            <p class="text-xs text-slate-500 font-bold">Standard company lending rates overview.</p>
+            <div class="space-y-2 text-sm text-slate-700">
+                <div class="flex justify-between p-3 bg-slate-50 rounded-xl font-bold"><span>Leasing / Category A</span><span>12% per annum</span></div>
+                <div class="flex justify-between p-3 bg-slate-50 rounded-xl font-bold"><span>Personal Loans</span><span>14% per annum</span></div>
+                <div class="flex justify-between p-3 bg-slate-50 rounded-xl font-bold"><span>Microfinance Facilities</span><span>18% per annum</span></div>
+            </div>
+            <button onclick="document.getElementById('rateSheetModal').classList.add('hidden')" class="w-full bg-slate-200 py-3 rounded-2xl font-bold hover:bg-slate-300 transition">Close</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
     <script>
         const firebaseConfig = {
-            authDomain: "emi-calculator-9e048.firebaseapp.com",
-            databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com",
-            projectId: "emi-calculator-9e048",
-            storageBucket: "emi-calculator-9e048.appspot.com",
-            messagingSenderId: "181063869117"
+            databaseURL: "https://emi-calculator-9e048-default-rtdb.firebaseio.com"
         };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
-        let currentUser = null;
+        
+        const ADMIN_PHONE = "0777353802"; // ඔබේ අංකය (Admin Bypass)
         let isRegisterMode = false;
-        let calculatedSchedule = [];
-        let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
-
-        let defaultRateData = {
-            unregistered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["13.50%", "13.50%", "14.00%", "14.50%", "15.00%", "16.00%"] },
-                { category: "Vans", rates: ["14.00%", "14.50%", "15.00%", "15.50%", "N/A", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.25%", "16.75%", "17.25%", "17.75%", "N/A", "N/A"] },
-                { category: "Tractors & Agribusiness", rates: ["20.25%", "20.50%", "20.75%", "21.00%", "N/A", "N/A"] },
-                { category: "Heavy Machinery & Construction", rates: ["17.00%", "17.50%", "18.00%", "18.50%", "N/A", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.25%", "23.25%", "24.25%", "25.25%", "N/A", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.25%", "25.25%", "N/A", "N/A", "N/A"] }
-            ],
-            registered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
-                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
-                { category: "Machinery & Agriculture", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
-            ]
-        };
-
-        let rateData = defaultRateData;
-
-        window.onload = function() {
-            listenToDatabaseUpdates();
-            checkStoredUser();
-        };
-
-        function checkStoredUser() {
-            const savedUser = localStorage.getItem('emi_active_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                activateAppUI();
-            }
-        }
+        let currentUser = null;
+        let scheduleData = []; 
 
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
-            const nameGrp = document.getElementById('nameFieldGroup');
-            const sub = document.getElementById('authSubtitle');
-            const btn = document.getElementById('authMainBtn');
-            const toggleBtn = document.getElementById('authToggleBtn');
-
-            if (isRegisterMode) {
-                nameGrp.classList.remove('hidden');
-                sub.innerText = "නව ගිණුමක් සාදාගන්න";
-                btn.innerText = "ලියාපදිංචි වන්න (Register)";
-                toggleBtn.innerText = "දැන්ම ගිණුමක් තියෙනවද? පිවිසෙන්න (Login)";
-            } else {
-                nameGrp.classList.add('hidden');
-                sub.innerText = "පද්ධතියට පිවිසීමට ලොග් වන්න";
-                btn.innerText = "පිවිසෙන්න (Login)";
-                toggleBtn.innerText = "ගිණුමක් නැද්ද? අලුතින් ලියාපදිංචි වන්න (Register)";
-            }
+            document.getElementById('nameFieldGroup').classList.toggle('hidden');
+            document.getElementById('authMainBtn').innerText = isRegisterMode ? "ලියාපදිංචි වන්න" : "පිවිසෙන්න";
+            document.getElementById('authToggleBtn').innerText = isRegisterMode ? "පිවිසීමට මෙතැන ක්ලික් කරන්න" : "අලුතින් ලියාපදිංචි වන්න";
         }
 
         function handleAuthSubmit() {
             const phone = document.getElementById('authPhone').value.trim();
-            const pass = document.getElementById('authPass').value.trim();
             const name = document.getElementById('authName').value.trim();
 
-            if (!phone || !pass) {
-                alert("කරුණාකර දුරකථන අංකය සහ මුරපදය ඇතුළත් කරන්න.");
+            if (!phone) {
+                alert("කරුණාකර දුරකථන අංකය ඇතුළත් කරන්න.");
                 return;
             }
-
-            const cleanPhone = phone.replace(/[^0-9]/g, '');
 
             if (isRegisterMode) {
                 if (!name) {
-                    alert("කරුණාකර ඔබේ නම ඇතුළත් කරන්න.");
+                    alert("කරුණාකර නම ඇතුළත් කරන්න.");
                     return;
                 }
-                const userData = { name: name, phone: cleanPhone, pass: pass, joined: new Date().toLocaleDateString() };
-                db.ref('users/' + cleanPhone).set(userData, (error) => {
-                    if (error) {
-                        alert("Registration failed: " + error.message);
-                    } else {
-                        alert("ලියාපදිංචි වීම සාර්ථකයි!");
-                        loginSuccess(userData);
-                    }
+                db.ref('users/' + phone).set({ name: name, status: 'pending' }).then(() => {
+                    alert("ලියාපදිංචි වීම සාර්ථකයි! Admin අනුමැතිය ලැබෙන තෙක් රැඳී සිටින්න.");
+                    window.location.reload();
                 });
             } else {
-                db.ref('users/' + cleanPhone).once('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data && data.pass === pass) {
-                        loginSuccess(data);
+                db.ref('users/' + phone).once('value', (snap) => {
+                    const u = snap.val();
+                    if (u) {
+                        if (u.status === 'active' || phone === ADMIN_PHONE) {
+                            currentUser = { name: u.name, phone: phone };
+                            initApp();
+                        } else {
+                            alert("ඔබේ ගිණුම තවම Admin විසින් අනුමත කර නොමැත.");
+                        }
                     } else {
-                        alert("වැරදි දුරකථන අංකයක් හෝ මුරපදයක්!");
+                        alert("මෙම අංකය ලියාපදිංචි කර නොමැත. කරුණාකර පළමුව ලියාපදිංචි වන්න.");
                     }
                 });
             }
         }
 
-        function loginSuccess(userData) {
-            currentUser = userData;
-            localStorage.setItem('emi_active_user', JSON.stringify(userData));
-            activateAppUI();
-        }
-
-        function activateAppUI() {
+        function initApp() {
             document.getElementById('authPage').classList.add('hidden');
             document.getElementById('mainAppWrapper').classList.remove('hidden');
-            document.getElementById('headerOfficerName').innerText = currentUser.name;
-            document.getElementById('officerNameDisplay').value = currentUser.name;
-            document.getElementById('officerMobileDisplay').value = currentUser.phone;
-        }
+            document.getElementById('loggedInUserInfo').innerText = `User: ${currentUser.name} (${currentUser.phone})`;
 
-        function logoutUser() {
-            localStorage.removeItem('emi_active_user');
-            window.location.reload();
-        }
-
-        function listenToDatabaseUpdates() {
-            db.ref('rateData').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    rateData = data;
-                    renderRates();
-                } else {
-                    renderRates();
-                }
-            });
-        }
-
-        function addBalloonField(defaultMonth = '', defaultAmount = '') {
-            const container = document.getElementById('balloonContainer');
-            const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-200";
-            div.innerHTML = `
-                <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-white border border-slate-200 rounded-xl text-xs text-center font-bold text-slate-900 outline-none">
-                </div>
-                <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-indigo-600 outline-none">
-                </div>
-                <button onclick="this.parentElement.remove()" class="text-rose-500 p-1 hover:text-rose-700"><i class="fa-solid fa-circle-xmark"></i></button>
-            `;
-            container.appendChild(div);
-        }
-
-        function getBalloonConfig() {
-            const map = {};
-            document.querySelectorAll('.balloon-row').forEach(row => {
-                const m = parseInt(row.querySelector('.b-month').value);
-                const a = parseFloat(row.querySelector('.b-amount').value);
-                if (m > 0 && a > 0) map[m] = a;
-            });
-            return map;
-        }
-
-        function calculateMultiBalloonSchedule() {
-            const P = parseFloat(document.getElementById('facilityAmount').value);
-            const annualRate = parseFloat(document.getElementById('annualRate').value);
-            const N = parseInt(document.getElementById('tenureMonths').value);
-            const balloonMap = getBalloonConfig();
-
-            if (!P || P <= 0 || !annualRate || annualRate <= 0 || !N || N <= 0) {
-                alert("කරුණාකර Financed Amount, Rate, සහ Tenure හිස්තැන් පුරවන්න.");
-                return;
+            if (currentUser.phone === ADMIN_PHONE) {
+                document.getElementById('adminPanelBtn').classList.remove('hidden');
             }
-
-            const r = (annualRate / 100) / 12;
-            let sumPvBalloons = 0;
-            let annuityFactorMinusBalloons = 0;
-            let balloonTxtArr = [];
-
-            for (let k = 1; k <= N; k++) {
-                if (balloonMap[k]) {
-                    sumPvBalloons += balloonMap[k] * Math.pow(1 + r, -k);
-                    balloonTxtArr.push(`Month #${k}: Rs. ${parseFloat(balloonMap[k]).toLocaleString('en-US')}`);
-                } else {
-                    annuityFactorMinusBalloons += Math.pow(1 + r, -k);
-                }
-            }
-
-            const regularEMI = (P - sumPvBalloons) / annuityFactorMinusBalloons;
-
-            let balance = P;
-            calculatedSchedule = [];
-            let totalInterest = 0;
-            let totalPayable = 0;
-            const startDate = new Date();
-
-            for (let i = 1; i <= N; i++) {
-                let interest = balance * r;
-                let currentTotalDue = balloonMap[i] ? balloonMap[i] : regularEMI;
-                let principal = currentTotalDue - interest;
-
-                balance = balance - principal;
-                if (balance < 0 || i === N) balance = 0;
-
-                totalInterest += interest;
-                totalPayable += currentTotalDue;
-
-                let dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + i, startDate.getDate());
-                let dateStr = dueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-
-                calculatedSchedule.push({
-                    month: i,
-                    dueDate: dateStr,
-                    principal: principal,
-                    interest: interest,
-                    totalDue: currentTotalDue,
-                    balance: balance,
-                    isBalloon: !!balloonMap[i]
-                });
-            }
-
-            summaryMetrics = {
-                P: P,
-                R: annualRate,
-                N: N,
-                regularEMI: regularEMI,
-                totalInterest: totalInterest,
-                totalPayable: totalPayable,
-                balloonDesc: balloonTxtArr.join(', ')
-            };
-
-            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
-            document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            const tbody = document.getElementById('scheduleTable');
-            tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-amber-50 font-bold text-amber-800' : 'hover:bg-slate-50'}">
-                    <td class="p-3 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-amber-200 text-amber-900 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
-                    <td class="p-3 text-slate-500 font-bold">${s.dueDate}</td>
-                    <td class="p-3 font-mono font-bold">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-500 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono ${s.isBalloon ? 'text-amber-800 font-bold' : 'text-indigo-600 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-500 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderRates() {
-            const unregTbody = document.getElementById('unregTable');
-            const regTbody = document.getElementById('regTable');
-
-            if(unregTbody) {
-                unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-indigo-600'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-
-            if(regTbody) {
-                regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-amber-600'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-        }
-
-        function togglePage() {
-            const isCalc = !document.getElementById('calcPage').classList.contains('hidden');
-            showPage(isCalc ? 'ratePage' : 'calcPage');
-        }
-
-        function showPage(pageId) {
-            document.getElementById('ratePage').classList.add('hidden');
-            document.getElementById('calcPage').classList.add('hidden');
-            document.getElementById(pageId).classList.remove('hidden');
-
-            const btnText = document.getElementById('navBtnText');
-            btnText.innerText = (pageId === 'calcPage') ? "Rate Sheet" : "Calculator";
         }
 
         function openAdminModal() {
-            document.getElementById('adminAuth').classList.remove('hidden');
-            document.getElementById('adminContent').classList.add('hidden');
-            document.getElementById('adminPass').value = '';
             document.getElementById('adminModal').classList.remove('hidden');
-        }
-
-        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
-
-        function verifyAdmin() {
-            if (document.getElementById('adminPass').value === 'Lakmal@93') {
-                document.getElementById('adminAuth').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                renderRateEditor();
-                loadAdminUsers();
-            } else {
-                alert('Access Denied: Incorrect Password');
-            }
-        }
-
-        function loadAdminUsers() {
-            const usersTable = document.getElementById('adminUsersTable');
-            db.ref('users').once('value', (snapshot) => {
-                const users = snapshot.val();
-                if (users) {
-                    usersTable.innerHTML = Object.values(users).map(u => `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-3 font-bold text-slate-900">${u.name || '-'}</td>
-                            <td class="p-3 font-mono text-indigo-600 font-bold">${u.phone || '-'}</td>
-                            <td class="p-3 text-slate-500 font-semibold">${u.joined || '-'}</td>
-                        </tr>
-                    `).join('');
-                } else {
-                    usersTable.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">ලියාපදිංචි වූ පරිශීලකයින් නොමැත.</td></tr>`;
+            const tbody = document.getElementById('adminUsersTable');
+            db.ref('users').once('value', (snap) => {
+                const users = snap.val();
+                if(!users) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">පරිශීලකයින් නැත</td></tr>`;
+                    return;
                 }
+                tbody.innerHTML = Object.entries(users).map(([phone, u]) => `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-3 font-bold">${u.name}</td>
+                        <td class="p-3 font-mono">${phone}</td>
+                        <td class="p-3">
+                            ${u.status === 'active' ? 
+                                '<span class="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-bold">Approved</span>' : 
+                                `<button onclick="approveUser('${phone}')" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-indigo-700">Approve</button>`
+                            }
+                        </td>
+                    </tr>
+                `).join('');
             });
         }
 
-        function renderRateEditor() {
-            const unregContainer = document.getElementById('unregRateEditor');
-            const regContainer = document.getElementById('regRateEditor');
-
-            const unregPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs", "6 Yrs"];
-            const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
-
-            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-indigo-600 block">${item.category}</label>
-                    <div class="grid grid-cols-6 gap-1.5">
-                        ${item.rates.map((r, col) => `
-                            <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded-xl text-[10px] text-center font-bold text-slate-800 outline-none focus:border-indigo-500">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-amber-600 block">${item.category}</label>
-                    <div class="grid grid-cols-5 gap-1.5">
-                        ${item.rates.map((r, col) => `
-                            <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded-xl text-[10px] text-center font-bold text-slate-800 outline-none focus:border-amber-500">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+        function closeAdminModal() { 
+            document.getElementById('adminModal').classList.add('hidden'); 
         }
 
-        function saveAdminSettings() {
-            document.querySelectorAll('.rate-edit-input').forEach(input => {
-                const type = input.dataset.type;
-                const catIdx = input.dataset.cat;
-                const colIdx = input.dataset.col;
-                let rawValue = input.value.trim();
+        function openRateSheetModal() {
+            document.getElementById('rateSheetModal').classList.remove('hidden');
+        }
 
-                if (rawValue.toUpperCase() !== 'N/A' && rawValue !== '') {
-                    if (!rawValue.endsWith('%')) rawValue = rawValue + '%';
-                }
-
-                rateData[type][catIdx].rates[colIdx] = rawValue;
-            });
-
-            db.ref('rateData').set(rateData, (error) => {
-                if (error) {
-                    alert("Error publishing updates: " + error.message);
-                } else {
-                    closeAdminModal();
-                    alert("Rate changes published globally!");
-                }
+        function approveUser(phone) {
+            db.ref('users/' + phone + '/status').set('active').then(() => {
+                alert("පරිශීලකයා සාර්ථකව අනුමත කරන ලදී!");
+                openAdminModal();
             });
         }
 
-        async function sharePDFDirectly() {
-            if (calculatedSchedule.length === 0) calculateMultiBalloonSchedule();
-            if (calculatedSchedule.length === 0) return alert("කරුණාකර Financed Amount, Rate, සහ Tenure ඇතුළත් කර Calculate කරන්න.");
+        function logoutUser() { 
+            window.location.reload(); 
+        }
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
+        function calculateEMI() {
+            const p = parseFloat(document.getElementById('loanAmount').value);
+            const annualRate = parseFloat(document.getElementById('interestRate').value);
+            const n = parseInt(document.getElementById('loanPeriod').value);
 
-            const officerName = currentUser ? currentUser.name : "Lakmal Maduranga";
-            const officerMobile = currentUser ? currentUser.phone : "0777353802";
-
-            const canvas = document.getElementById('pdfChartCanvas');
-            const ctx = canvas.getContext('2d');
-            if (window.pdfChartInstance) window.pdfChartInstance.destroy();
-
-            window.pdfChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Principal', 'Interest'],
-                    datasets: [{
-                        data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#4f46e5', '#d97706'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    animation: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '68%'
-                }
-            });
-
-            const chartImgData = canvas.toDataURL('image/png');
-
-            doc.setFillColor(255, 255, 255);
-            doc.rect(0, 0, 210, 28, 'F');
-
-            doc.setTextColor(79, 70, 229);
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text("EMI Master Pro", 12, 12);
-
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(217, 119, 6);
-            doc.text(`DEVELOPED BY ${officerName.toUpperCase()}`, 12, 17);
-
-            doc.setFontSize(7.5);
-            doc.setTextColor(100, 116, 139);
-            doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 22);
-
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(8);
-            doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
-            doc.text(`Tenure: ${summaryMetrics.N} Months  |  Rate: ${summaryMetrics.R}% p.a.`, 198, 18, { align: 'right' });
-
-            doc.setFillColor(226, 232, 240);
-            doc.rect(0, 28, 210, 1, 'F');
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("FINANCED AMOUNT", 16, 39);
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 46);
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(104, 34, 94, 16, 2, 2, 'F');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("REGULAR MONTHLY RENTAL", 108, 39);
-            doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 46);
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(12, 53, 88, 16, 2, 2, 'F');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL INTEREST", 16, 58);
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 65);
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(104, 53, 94, 16, 2, 2, 'F');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("TOTAL PAYABLE", 108, 58);
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(11);
-            doc.text(`Rs. ${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 65);
-
-            let startTableY = 72;
-            if (summaryMetrics.balloonDesc) {
-                doc.setFillColor(254, 243, 199);
-                doc.roundedRect(12, 71, 186, 7, 1.5, 1.5, 'F');
-                doc.setTextColor(180, 83, 9);
-                doc.setFontSize(7);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 75.5);
-                startTableY = 81;
+            if(!p || !annualRate || !n) {
+                alert("කරුණාකර සියලුම විස්තර නිවැරදිව පුරවන්න.");
+                return;
             }
 
-            doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
+            const r = annualRate / 12 / 100;
+            const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
             
-            doc.setFillColor(79, 70, 229);
-            doc.rect(43, startTableY + 8, 4, 4, 'F');
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(7);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Principal: Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 11.5);
+            document.getElementById('emiResultText').innerText = `Monthly EMI: Rs. ${emi.toFixed(2)}`;
+            document.getElementById('resultBox').classList.remove('hidden');
 
-            doc.setFillColor(217, 119, 6);
-            doc.rect(43, startTableY + 16, 4, 4, 'F');
-            doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
+            scheduleData = [];
+            let balance = p;
+            let tableHTML = '';
 
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
+            for (let i = 1; i <= n; i++) {
+                const interestPayment = balance * r;
+                const principalPayment = emi - interestPayment;
+                balance -= principalPayment;
+                if (balance < 0) balance = 0;
 
-            doc.setTextColor(79, 70, 229);
-            doc.setFontSize(6.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
+                scheduleData.push({
+                    month: i,
+                    principal: principalPayment.toFixed(2),
+                    interest: interestPayment.toFixed(2),
+                    balance: balance.toFixed(2)
+                });
 
-            doc.setTextColor(15, 23, 42);
-            doc.setFontSize(9.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text(officerName, 120, startTableY + 15);
-
-            doc.setTextColor(217, 119, 6);
-            doc.setFontSize(7.5);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
-
-            const tableBody = calculatedSchedule.map(s => [
-                s.month,
-                s.dueDate,
-                s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
-                s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
-            ]);
-
-            doc.autoTable({
-                startY: startTableY + 34,
-                head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
-                theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, halign: 'center' },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
-                columnStyles: {
-                    0: { halign: 'center', cellWidth: 10 },
-                    1: { halign: 'center', cellWidth: 28 },
-                    2: { halign: 'right' },
-                    3: { halign: 'right' },
-                    4: { halign: 'right', fontStyle: 'bold' },
-                    5: { halign: 'right' }
-                },
-                didParseCell: function(data) {
-                    if (data.section === 'body') {
-                        const rowIdx = data.row.index;
-                        if (calculatedSchedule[rowIdx] && calculatedSchedule[rowIdx].isBalloon) {
-                            data.cell.styles.fillColor = [254, 243, 199];
-                            data.cell.styles.textColor = [180, 83, 9];
-                            data.cell.styles.fontStyle = 'bold';
-                        }
-                    }
-                },
-                alternateRowStyles: { fillColor: [248, 250, 252] },
-                margin: { left: 12, right: 12 },
-                didDrawPage: function (data) {
-                    doc.setFontSize(7);
-                    doc.setTextColor(100, 116, 139);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(`EMI Master Pro | Created & Developed by ${officerName}`, 105, 290, { align: 'center' });
-                    doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
-                }
-            });
-
-            try {
-                const pdfBlob = doc.output('blob');
-                const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Lease Repayment Schedule',
-                        text: `Lease Repayment Schedule (Prepared by ${officerName})`
-                    });
-                } else {
-                    doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
-                }
-            } catch (err) {
-                console.log('Share error or canceled:', err);
-                doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
+                tableHTML += `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-2">${i}</td>
+                        <td class="p-2">Rs. ${principalPayment.toFixed(2)}</td>
+                        <td class="p-2">Rs. ${interestPayment.toFixed(2)}</td>
+                        <td class="p-2">Rs. ${balance.toFixed(2)}</td>
+                    </tr>
+                `;
             }
+            document.getElementById('scheduleTableBody').innerHTML = tableHTML;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(20);
+            doc.text("EMI Master Pro", 14, 20);
+
+            doc.setFontSize(10);
+            doc.setTextColor(79, 70, 229);
+            doc.text("By Lakmal Maduranga", 14, 26);
+            doc.setTextColor(0, 0, 0);
+
+            doc.setFontSize(11);
+            doc.text("Prepared By:", 14, 38);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Name: ${currentUser ? currentUser.name : 'N/A'}`, 14, 44);
+            doc.text(`Mobile: ${currentUser ? currentUser.phone : 'N/A'}`, 14, 50);
+
+            const p = document.getElementById('loanAmount').value;
+            const r = document.getElementById('interestRate').value;
+            const n = document.getElementById('loanPeriod').value;
+            const emiText = document.getElementById('emiResultText').innerText;
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Loan Details:", 14, 62);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Loan Amount: Rs. ${p}`, 14, 68);
+            doc.text(`Interest Rate: ${r}%`, 14, 74);
+            doc.text(`Period: ${n} Months`, 14, 80);
+            doc.setFont("helvetica", "bold");
+            doc.text(emiText, 14, 88);
+
+            if (scheduleData.length > 0) {
+                doc.text("Payment Schedule Summary:", 14, 100);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.text("Month", 14, 106);
+                doc.text("Principal", 45, 106);
+                doc.text("Interest", 90, 106);
+                doc.text("Balance", 135, 106);
+                
+                doc.setFont("helvetica", "normal");
+                let y = 112;
+                for (let i = 0; i < Math.min(scheduleData.length, 20); i++) {
+                    const row = scheduleData[i];
+                    doc.text(row.month.toString(), 14, y);
+                    doc.text(`Rs. ${row.principal}`, 45, y);
+                    doc.text(`Rs. ${row.interest}`, 90, y);
+                    doc.text(`Rs. ${row.balance}`, 135, y);
+                    y += 6;
+                    if(y > 280) break;
+                }
+            }
+
+            doc.save("EMI-Master-Report.pdf");
         }
     </script>
-</body><!-- Admin Panel Modal -->
-<div id="adminModal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
-        <h3 class="font-black text-slate-900 mb-4">Admin Panel - User Approval</h3>
-        <table class="w-full text-left text-sm text-slate-700">
-            <thead>
-                <tr class="border-b font-bold text-slate-900">
-                    <th class="p-2">Name</th>
-                    <th class="p-2">Phone</th>
-                    <th class="p-2">Action</th>
-                </tr>
-            </thead>
-            <tbody id="adminUsersTable"></tbody>
-        </table>
-        <button onclick="document.getElementById('adminModal').classList.add('hidden')" class="mt-6 w-full bg-slate-200 py-3 rounded-2xl font-bold">Close</button>
-    </div>
-</div>
-
-<script>
-    // Admin Panel Functions
-    function openAdminModal() {
-        document.getElementById('adminModal').classList.remove('hidden');
-        const tbody = document.getElementById('adminUsersTable');
-        db.ref('users').once('value', (snap) => {
-            const users = snap.val();
-            tbody.innerHTML = Object.entries(users || {}).map(([phone, u]) => `
-                <tr class="border-b">
-                    <td class="p-2 font-bold">${u.name}</td>
-                    <td class="p-2 font-mono">${phone}</td>
-                    <td class="p-2">
-                        ${u.status === 'active' ? 
-                            '<span class="text-green-600 font-black">Approved</span>' : 
-                            `<button onclick="approveUser('${phone}')" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold">Approve</button>`
-                        }
-                    </td>
-                </tr>
-            `).join('');
-        });
-    }
-
-    function approveUser(phone) {
-        db.ref('users/' + phone + '/status').set('active').then(() => {
-            alert("පරිශීලකයා අනුමත කරන ලදී!");
-            openAdminModal(); // Table එක refresh කරන්න
-        });
-    }
-</script>
-
+</body>
 </html>
