@@ -52,9 +52,9 @@
                         <h1 class="text-base font-extrabold text-slate-900 tracking-wide leading-none">EMI MASTER</h1>
                         <span class="bg-indigo-100 text-indigo-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
                     </div>
-                    <p class="text-[10px] text-slate-500 font-medium mt-0.5 tracking-wide flex items-center gap-1">
-                        <span>Officer:</span>
-                        <span id="officerNameHeader" class="text-indigo-600 font-bold">Guest</span>
+                    <!-- App Owner Credit below EMI Master -->
+                    <p class="text-[9px] text-slate-400 font-bold mt-0.5 tracking-wider">
+                        Developed by <span class="text-indigo-600 font-extrabold">Lakmal Maduranga</span>
                     </p>
                 </div>
             </div>
@@ -283,11 +283,11 @@
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Lakmal" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
+                    <input type="text" id="setupName" placeholder="e.g. Ruwan Silva" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-700 block mb-1">Mobile Number</label>
-                    <input type="text" id="setupMobile" placeholder="e.g. 0777353802" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
+                    <input type="text" id="setupMobile" placeholder="e.g. 0712345678" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600">
                 </div>
                 <button onclick="handleNewUserRegistration()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-md">
                     Register Now (Send for Approval)
@@ -540,7 +540,6 @@
                     document.getElementById('officerNameHeader').innerText = userData.name;
                     trackLoginCount(userKey);
                 } else {
-                    // Pending status view
                     document.getElementById('profileModal').classList.remove('hidden');
                     document.getElementById('existingUserView').classList.add('hidden');
                     document.getElementById('newUserView').classList.add('hidden');
@@ -632,7 +631,6 @@
             });
         }
 
-        // New registration creates status as 'pending' unless it's the owner
         function handleNewUserRegistration() {
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
