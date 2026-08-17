@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="si" class="h-full bg-slate-950">
+<html lang="si" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
     
     <!-- iOS Web App Metadata -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="EMI Master">
     
     <!-- Tailwind CSS & Icons -->
@@ -28,12 +28,11 @@
             theme: {
                 extend: {
                     colors: {
-                        brandPrimary: '#4f46e5',
-                        brandSecondary: '#06b6d4',
-                        brandAccent: '#f59e0b',
-                        darkBg: '#0f172a',
-                        cardBg: '#1e293b',
-                        borderClr: '#334155'
+                        lightBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        borderClr: '#e2e8f0',
+                        primaryClr: '#4f46e5',
+                        accentClr: '#06b6d4'
                     }
                 }
             }
@@ -41,262 +40,328 @@
     </script>
     <style>
         body { 
-            background: linear-gradient(135deg, #090d16 0%, #111827 50%, #0f172a 100%);
-            color: #f8fafc; 
+            background-color: #f1f5f9;
+            color: #1e293b; 
             font-family: system-ui, -apple-system, sans-serif;
             min-height: 100vh;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #090d16; }
-        ::-webkit-scrollbar-thumb { background: #4f46e566; border-radius: 3px; }
-        .glass-header {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-        }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .app-header {
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .app-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen text-slate-100 font-sans selection:bg-indigo-500 selection:text-white">
+<body class="flex flex-col min-h-screen selection:bg-indigo-500 selection:text-white">
 
-    <!-- HEADER NAVIGATION BAR -->
-    <header class="glass-header sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
-            
-            <div class="flex items-center space-x-3.5 cursor-pointer" onclick="window.location.reload()">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 p-0.5 shadow-lg flex items-center justify-center relative overflow-hidden">
-                    <i class="fa-solid fa-calculator text-white text-lg relative z-10"></i>
+    <!-- 0. AUTH PAGE (LOGIN / REGISTER) -->
+    <div id="authPage" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="app-card rounded-3xl max-w-md w-full p-8 space-y-6 shadow-2xl">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-calculator text-white text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 tracking-wide">EMI MASTER PRO</h2>
+                <p id="authSubtitle" class="text-xs font-bold text-slate-500">පද්ධතියට පිවිසීමට හෝ ලියාපදිංචි වන්න</p>
+            </div>
+
+            <div class="space-y-4">
+                <div id="nameFieldGroup" class="hidden">
+                    <label class="text-xs font-bold text-slate-700 block mb-1.5">පූර්ණ නම (Full Name)</label>
+                    <input type="text" id="authName" placeholder="ඔබේ නම ඇතුළත් කරන්න" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-300 to-white">EMI MASTER</span>
-                        <span class="text-[10px] bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-extrabold px-2 py-0.5 rounded-full shadow uppercase">PRO</span>
-                    </div>
-                    <p class="text-[10px] text-slate-400 font-medium tracking-wide">
-                        by <span class="text-indigo-400 font-semibold">Lakmal Maduranga</span>
-                    </p>
+                    <label class="text-xs font-bold text-slate-700 block mb-1.5">දුරකථන අංකය (Mobile Number)</label>
+                    <input type="text" id="authPhone" placeholder="07XXXXXXXX" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1.5">මුරපදය (Password)</label>
+                    <input type="password" id="authPass" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <button id="authMainBtn" onclick="handleAuthSubmit()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg shadow-indigo-600/25">
+                    පිවිසෙන්න (Login)
+                </button>
+
+                <div class="text-center pt-2">
+                    <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs font-bold text-indigo-600 hover:underline">
+                        ගිණුමක් නැද්ද? අලුතින් ලියාපදිංචි වන්න (Register)
+                    </button>
                 </div>
             </div>
-
-            <!-- Controls & Status Badge -->
-            <div class="flex items-center gap-2.5">
-                <button onclick="togglePage()" class="bg-slate-800/90 hover:bg-slate-700 border border-indigo-500/30 text-indigo-300 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md">
-                    <i class="fa-solid fa-arrows-rotate text-cyan-400"></i>
-                    <span id="navBtnText">Rate Sheet</span>
-                </button>
-
-                <button onclick="openAdminModal()" class="relative bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/40 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
-                    <i class="fa-solid fa-shield-halved text-amber-400"></i>
-                    <span>Admin</span>
-                </button>
-            </div>
-
         </div>
-    </header>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-        <!-- 1. CALCULATOR PAGE -->
-        <div id="calcPage" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- MAIN APP WRAPPER (Hidden until login) -->
+    <div id="mainAppWrapper" class="hidden flex flex-col min-h-screen">
+        <!-- HEADER NAVIGATION BAR -->
+        <header class="app-header sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
                 
-                <!-- Input Panel -->
-                <div class="lg:col-span-5 glass-panel rounded-3xl p-6 space-y-4">
-                    <h2 class="text-xs font-black text-indigo-400 uppercase tracking-wider border-b border-indigo-500/20 pb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-cyan-400"></i> Facility Parameters
-                    </h2>
+                <div class="flex items-center space-x-3.5 cursor-pointer" onclick="window.location.reload()">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-600 shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-calculator text-white text-lg"></i>
+                    </div>
 
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Financed Amount (Rs.)</label>
-                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-4 py-3 bg-slate-900/90 border border-indigo-500/30 rounded-2xl text-sm font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-inner">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black tracking-wider text-slate-900">EMI MASTER</span>
+                            <span class="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase">PRO</span>
                         </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-4 py-3 bg-slate-900/90 border border-indigo-500/30 rounded-2xl text-sm font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-inner">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Tenure (Months)</label>
-                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full px-4 py-3 bg-slate-900/90 border border-indigo-500/30 rounded-2xl text-sm font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Balloon Options -->
-                        <div class="pt-2 border-t border-indigo-500/20">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-xs font-bold text-slate-300">Balloon Payments (Optional)</label>
-                                <button onclick="addBalloonField()" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 px-2.5 py-1 rounded-xl font-bold transition shadow">+ Add</button>
-                            </div>
-                            <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                        </div>
-
-                        <!-- Officer Info Displays -->
-                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-indigo-500/20">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Officer Name</label>
-                                <input type="text" id="officerNameDisplay" readonly value="Lakmal Maduranga" class="w-full bg-slate-900/90 border border-indigo-500/20 p-2.5 rounded-xl text-xs text-indigo-300 font-bold outline-none cursor-not-allowed">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Contact No</label>
-                                <input type="text" id="officerMobileDisplay" readonly value="0777353802" class="w-full bg-slate-900/90 border border-indigo-500/20 p-2.5 rounded-xl text-xs text-indigo-300 font-bold outline-none cursor-not-allowed">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:opacity-90 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-xl shadow-indigo-600/20">
-                                Calculate Schedule
-                            </button>
-                            <button onclick="sharePDFDirectly()" class="bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-slate-200 px-4 rounded-2xl font-bold transition text-xs flex items-center gap-1.5 shadow-lg">
-                                <i class="fa-solid fa-share-nodes text-amber-400"></i> PDF
-                            </button>
-                        </div>
+                        <p class="text-[10px] text-slate-500 font-semibold">
+                            Officer: <span id="headerOfficerName" class="text-indigo-600 font-bold">Lakmal Maduranga</span>
+                        </p>
                     </div>
                 </div>
 
-                <!-- Schedule & Summary -->
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="glass-panel rounded-3xl p-5 space-y-3">
-                        <div id="summaryText" class="text-base font-extrabold text-cyan-300 border-b border-indigo-500/20 pb-2">
-                            Regular Monthly Rental: <span class="text-white font-mono">Rs. 0.00</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4 text-xs pt-1">
-                            <div class="bg-slate-900/85 p-3.5 rounded-2xl border border-indigo-500/20 shadow-inner">
-                                <span class="text-slate-400 block font-semibold text-[11px]">Total Interest</span>
-                                <span id="summaryInterest" class="text-amber-400 font-bold font-mono text-sm">Rs. 0.00</span>
+                <!-- Controls & Status Badge -->
+                <div class="flex items-center gap-2.5">
+                    <button onclick="togglePage()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-rotate text-indigo-600"></i>
+                        <span id="navBtnText">Rate Sheet</span>
+                    </button>
+
+                    <button onclick="openAdminModal()" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                        <span>Admin</span>
+                    </button>
+
+                    <button onclick="logoutUser()" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 p-2 rounded-xl text-xs font-bold transition" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+            <!-- 1. CALCULATOR PAGE -->
+            <div id="calcPage" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Input Panel -->
+                    <div class="lg:col-span-5 app-card rounded-3xl p-6 space-y-4">
+                        <h2 class="text-xs font-black text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-indigo-600"></i> Facility Parameters
+                        </h2>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Financed Amount (Rs.)</label>
+                                <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
                             </div>
-                            <div class="bg-slate-900/85 p-3.5 rounded-2xl border border-cyan-500/30 shadow-inner">
-                                <span class="text-slate-400 block font-semibold text-[11px]">Total Payable</span>
-                                <span id="summaryPayable" class="text-cyan-300 font-bold font-mono text-sm">Rs. 0.00</span>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Annual Rate (%)</label>
+                                    <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Tenure (Months)</label>
+                                    <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                                </div>
+                            </div>
+
+                            <!-- Balloon Options -->
+                            <div class="pt-2 border-t border-slate-100">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="text-xs font-bold text-slate-700">Balloon Payments (Optional)</label>
+                                    <button onclick="addBalloonField()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 px-2.5 py-1 rounded-xl font-bold transition">+ Add</button>
+                                </div>
+                                <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                            </div>
+
+                            <!-- Officer Info Displays -->
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Officer Name</label>
+                                    <input type="text" id="officerNameDisplay" readonly value="Lakmal Maduranga" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs text-slate-700 font-bold outline-none cursor-not-allowed">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Contact No</label>
+                                    <input type="text" id="officerMobileDisplay" readonly value="0777353802" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs text-slate-700 font-bold outline-none cursor-not-allowed">
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg shadow-indigo-600/20">
+                                    Calculate Schedule
+                                </button>
+                                <button onclick="sharePDFDirectly()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 rounded-2xl font-bold transition text-xs flex items-center gap-1.5">
+                                    <i class="fa-solid fa-share-nodes text-indigo-600"></i> PDF
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Amortization Table -->
-                    <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
-                        <div class="max-h-[460px] overflow-y-auto">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead class="bg-slate-900 text-indigo-300 sticky top-0 font-bold border-b border-indigo-500/30 backdrop-blur-md">
+                    <!-- Schedule & Summary -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="app-card rounded-3xl p-5 space-y-3">
+                            <div id="summaryText" class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-2">
+                                Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. 0.00</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 text-xs pt-1">
+                                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span class="text-slate-500 block font-semibold text-[11px]">Total Interest</span>
+                                    <span id="summaryInterest" class="text-amber-600 font-bold font-mono text-sm">Rs. 0.00</span>
+                                </div>
+                                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span class="text-slate-500 block font-semibold text-[11px]">Total Payable</span>
+                                    <span id="summaryPayable" class="text-indigo-600 font-bold font-mono text-sm">Rs. 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Amortization Table -->
+                        <div class="app-card rounded-3xl overflow-hidden shadow-sm">
+                            <div class="max-h-[460px] overflow-y-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead class="bg-slate-100 text-slate-700 sticky top-0 font-bold border-b border-slate-200">
+                                        <tr>
+                                            <th class="p-3">#</th>
+                                            <th class="p-3">Due Date</th>
+                                            <th class="p-3">Principal</th>
+                                            <th class="p-3">Interest</th>
+                                            <th class="p-3">Total Due</th>
+                                            <th class="p-3">Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scheduleTable" class="divide-y divide-slate-100">
+                                        <tr>
+                                            <td colspan="6" class="p-8 text-center text-slate-400 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 2. RATE SHEET PAGE -->
+            <div id="ratePage" class="hidden space-y-6">
+                <button onclick="showPage('calcPage')" class="w-full bg-white border border-slate-200 text-slate-800 font-black py-4 px-6 rounded-3xl shadow-sm transition hover:bg-slate-50 flex items-center justify-center gap-3 text-base">
+                    <i class="fa-solid fa-calculator text-xl text-indigo-600"></i>
+                    <span class="tracking-wide uppercase">Go to Calculator</span>
+                    <i class="fa-solid fa-arrow-right text-lg"></i>
+                </button>
+
+                <div class="app-card rounded-3xl p-6 space-y-6 shadow-sm">
+                    <div>
+                        <h2 class="text-xs font-black text-indigo-600 uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
+                        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">#</th>
-                                        <th class="p-3">Due Date</th>
-                                        <th class="p-3">Principal</th>
-                                        <th class="p-3">Interest</th>
-                                        <th class="p-3">Total Due</th>
-                                        <th class="p-3">Balance</th>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3">1 Year</th>
+                                        <th class="p-3">2 Years</th>
+                                        <th class="p-3">3 Years</th>
+                                        <th class="p-3">4 Years</th>
+                                        <th class="p-3">5 Years</th>
+                                        <th class="p-3">6 Years</th>
                                     </tr>
                                 </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-indigo-500/10">
+                                <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xs font-black text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
+                        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                                     <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-400 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3">1 Year</th>
+                                        <th class="p-3">2 Years</th>
+                                        <th class="p-3">3 Years</th>
+                                        <th class="p-3">4 Years</th>
+                                        <th class="p-3">5 Years</th>
                                     </tr>
-                                </tbody>
+                                </thead>
+                                <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
 
-        <!-- 2. RATE SHEET PAGE -->
-        <div id="ratePage" class="hidden space-y-6">
-            <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 text-indigo-300 font-black py-4 px-6 rounded-3xl shadow-xl transition duration-200 flex items-center justify-center gap-3 text-base">
-                <i class="fa-solid fa-calculator text-xl text-cyan-400"></i>
-                <span class="tracking-wide uppercase">Go to Calculator</span>
-                <i class="fa-solid fa-arrow-right text-lg"></i>
-            </button>
+        </main>
 
-            <div class="glass-panel rounded-3xl p-6 space-y-6 shadow-2xl">
-                <div>
-                    <h2 class="text-xs font-black text-cyan-300 uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-indigo-500/20 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-900 text-indigo-300 font-bold border-b border-indigo-500/30">
-                                <tr>
-                                    <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
-                                    <th class="p-3">6 Years</th>
-                                </tr>
-                            </thead>
-                            <tbody id="unregTable" class="divide-y divide-indigo-500/10"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-xs font-black text-amber-400 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-indigo-500/20 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-900 text-indigo-300 font-bold border-b border-indigo-500/30">
-                                <tr>
-                                    <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
-                                </tr>
-                            </thead>
-                            <tbody id="regTable" class="divide-y divide-indigo-500/10"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
+        <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
+    </div>
 
     <!-- ADMIN MODAL -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-lg flex items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl border border-amber-500/40">
-            <div class="flex justify-between items-center border-b border-amber-500/20 pb-3">
-                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-cyan-400"></i> Admin Rate Editor
+    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="app-card rounded-3xl max-w-4xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-600"></i> Admin Dashboard & User Management
                 </h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <div id="adminAuth" class="space-y-4 max-w-sm mx-auto py-6">
-                <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full px-4 py-3 bg-slate-900 border border-amber-500/30 rounded-2xl text-sm font-bold text-cyan-300 outline-none focus:ring-2 focus:ring-amber-400 shadow-inner">
-                <button onclick="verifyAdmin()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3 rounded-2xl transition text-sm shadow-lg">Access Dashboard</button>
+                <label class="text-xs font-bold text-slate-700 block">Enter Admin Password</label>
+                <input type="password" id="adminPass" placeholder="Password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="verifyAdmin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-2xl transition text-sm shadow-lg">Access Dashboard</button>
             </div>
 
             <div id="adminContent" class="hidden space-y-6">
+                <!-- Registered Users Section -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-users"></i> Registered Users / Officers Database
+                    </h4>
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Phone Number</th>
+                                    <th class="p-3">Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="3" class="p-4 text-center text-slate-400">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Rate Editor -->
-                <div class="space-y-3 pt-2">
-                    <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square text-amber-400"></i> Global Rate Editor
+                <div class="space-y-3 pt-4 border-t border-slate-200">
+                    <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor
                     </h4>
                     
                     <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-slate-300">Unregistered Rates</h5>
+                        <h5 class="text-[11px] font-bold text-slate-700">Unregistered Rates</h5>
                         <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <div class="space-y-2 pt-2 border-t border-indigo-500/20">
-                        <h5 class="text-[11px] font-bold text-slate-300">Registered Rates</h5>
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <h5 class="text-[11px] font-bold text-slate-700">Registered Rates</h5>
                         <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <button onclick="saveAdminSettings()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3.5 rounded-2xl transition text-sm shadow-lg">
+                    <button onclick="saveAdminSettings()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-2xl transition text-sm shadow-lg">
                         Publish Rate Updates Globally
                     </button>
                 </div>
@@ -320,6 +385,8 @@
         }
         const db = firebase.database();
 
+        let currentUser = null;
+        let isRegisterMode = false;
         let calculatedSchedule = [];
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
 
@@ -347,7 +414,93 @@
 
         window.onload = function() {
             listenToDatabaseUpdates();
+            checkStoredUser();
         };
+
+        function checkStoredUser() {
+            const savedUser = localStorage.getItem('emi_active_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                activateAppUI();
+            }
+        }
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            const nameGrp = document.getElementById('nameFieldGroup');
+            const sub = document.getElementById('authSubtitle');
+            const btn = document.getElementById('authMainBtn');
+            const toggleBtn = document.getElementById('authToggleBtn');
+
+            if (isRegisterMode) {
+                nameGrp.classList.remove('hidden');
+                sub.innerText = "නව ගිණුමක් සාදාගන්න";
+                btn.innerText = "ලියාපදිංචි වන්න (Register)";
+                toggleBtn.innerText = "දැන්ම ගිණුමක් තියෙනවද? පිවිසෙන්න (Login)";
+            } else {
+                nameGrp.classList.add('hidden');
+                sub.innerText = "පද්ධතියට පිවිසීමට ලොග් වන්න";
+                btn.innerText = "පිවිසෙන්න (Login)";
+                toggleBtn.innerText = "ගිණුමක් නැද්ද? අලුතින් ලියාපදිංචි වන්න (Register)";
+            }
+        }
+
+        function handleAuthSubmit() {
+            const phone = document.getElementById('authPhone').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+            const name = document.getElementById('authName').value.trim();
+
+            if (!phone || !pass) {
+                alert("කරුණාකර දුරකථන අංකය සහ මුරපදය ඇතුළත් කරන්න.");
+                return;
+            }
+
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+
+            if (isRegisterMode) {
+                if (!name) {
+                    alert("කරුණාකර ඔබේ නම ඇතුළත් කරන්න.");
+                    return;
+                }
+                const userData = { name: name, phone: cleanPhone, pass: pass, joined: new Date().toLocaleDateString() };
+                db.ref('users/' + cleanPhone).set(userData, (error) => {
+                    if (error) {
+                        alert("Registration failed: " + error.message);
+                    } else {
+                        alert("ලියාපදිංචි වීම සාර්ථකයි!");
+                        loginSuccess(userData);
+                    }
+                });
+            } else {
+                db.ref('users/' + cleanPhone).once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.pass === pass) {
+                        loginSuccess(data);
+                    } else {
+                        alert("වැරදි දුරකථන අංකයක් හෝ මුරපදයක්!");
+                    }
+                });
+            }
+        }
+
+        function loginSuccess(userData) {
+            currentUser = userData;
+            localStorage.setItem('emi_active_user', JSON.stringify(userData));
+            activateAppUI();
+        }
+
+        function activateAppUI() {
+            document.getElementById('authPage').classList.add('hidden');
+            document.getElementById('mainAppWrapper').classList.remove('hidden');
+            document.getElementById('headerOfficerName').innerText = currentUser.name;
+            document.getElementById('officerNameDisplay').value = currentUser.name;
+            document.getElementById('officerMobileDisplay').value = currentUser.phone;
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('emi_active_user');
+            window.location.reload();
+        }
 
         function listenToDatabaseUpdates() {
             db.ref('rateData').on('value', (snapshot) => {
@@ -364,15 +517,15 @@
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
             const container = document.getElementById('balloonContainer');
             const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-slate-900/80 p-2.5 rounded-2xl border border-indigo-500/20";
+            div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-200";
             div.innerHTML = `
                 <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-slate-950 border border-indigo-500/20 rounded-xl text-xs text-center font-bold text-cyan-300 outline-none">
+                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-white border border-slate-200 rounded-xl text-xs text-center font-bold text-slate-900 outline-none">
                 </div>
                 <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-slate-950 border border-indigo-500/20 rounded-xl text-xs font-bold text-amber-400 outline-none">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-indigo-600 outline-none">
                 </div>
-                <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-300"><i class="fa-solid fa-circle-xmark"></i></button>
+                <button onclick="this.parentElement.remove()" class="text-rose-500 p-1 hover:text-rose-700"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
             container.appendChild(div);
         }
@@ -455,19 +608,19 @@
                 balloonDesc: balloonTxtArr.join(', ')
             };
 
-            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-white font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
+            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-indigo-600 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-amber-500/20 font-bold text-amber-300' : 'hover:bg-slate-900/60'}">
-                    <td class="p-3 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-amber-400 text-slate-950 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
-                    <td class="p-3 text-slate-400 font-bold">${s.dueDate}</td>
+                <tr class="${s.isBalloon ? 'bg-amber-50 font-bold text-amber-800' : 'hover:bg-slate-50'}">
+                    <td class="p-3 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-amber-200 text-amber-900 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
+                    <td class="p-3 text-slate-500 font-bold">${s.dueDate}</td>
                     <td class="p-3 font-mono font-bold">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-400 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono ${s.isBalloon ? 'text-amber-300 font-bold' : 'text-cyan-300 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-3 font-mono text-slate-400 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono text-slate-500 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono ${s.isBalloon ? 'text-amber-800 font-bold' : 'text-indigo-600 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono text-slate-500 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
             `).join('');
         }
@@ -478,18 +631,18 @@
 
             if(unregTbody) {
                 unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-900/60">
-                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-cyan-300'}">${val}</td>`).join('')}
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-indigo-600'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
 
             if(regTbody) {
                 regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-slate-900/60">
-                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-amber-400'}">${val}</td>`).join('')}
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-amber-600'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
@@ -523,9 +676,28 @@
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
+                loadAdminUsers();
             } else {
                 alert('Access Denied: Incorrect Password');
             }
+        }
+
+        function loadAdminUsers() {
+            const usersTable = document.getElementById('adminUsersTable');
+            db.ref('users').once('value', (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    usersTable.innerHTML = Object.values(users).map(u => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-bold text-slate-900">${u.name || '-'}</td>
+                            <td class="p-3 font-mono text-indigo-600 font-bold">${u.phone || '-'}</td>
+                            <td class="p-3 text-slate-500 font-semibold">${u.joined || '-'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    usersTable.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">ලියාපදිංචි වූ පරිශීලකයින් නොමැත.</td></tr>`;
+                }
+            });
         }
 
         function renderRateEditor() {
@@ -536,13 +708,13 @@
             const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
 
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-900/80 border border-indigo-500/20 rounded-2xl space-y-1.5 shadow-inner">
-                    <label class="text-[11px] font-bold text-cyan-300 block">${item.category}</label>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
+                    <label class="text-[11px] font-bold text-indigo-600 block">${item.category}</label>
                     <div class="grid grid-cols-6 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-slate-950 border border-indigo-500/20 rounded-xl text-[10px] text-center font-bold text-slate-100 outline-none focus:border-cyan-400">
+                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded-xl text-[10px] text-center font-bold text-slate-800 outline-none focus:border-indigo-500">
                             </div>
                         `).join('')}
                     </div>
@@ -550,13 +722,13 @@
             `).join('');
 
             regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2.5 bg-slate-900/80 border border-indigo-500/20 rounded-2xl space-y-1.5 shadow-inner">
-                    <label class="text-[11px] font-bold text-amber-400 block">${item.category}</label>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
+                    <label class="text-[11px] font-bold text-amber-600 block">${item.category}</label>
                     <div class="grid grid-cols-5 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-slate-950 border border-indigo-500/20 rounded-xl text-[10px] text-center font-bold text-slate-100 outline-none focus:border-amber-400">
+                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-white border border-slate-200 rounded-xl text-[10px] text-center font-bold text-slate-800 outline-none focus:border-amber-500">
                             </div>
                         `).join('')}
                     </div>
@@ -595,8 +767,8 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            const officerName = "Lakmal Maduranga";
-            const officerMobile = "0777353802";
+            const officerName = currentUser ? currentUser.name : "Lakmal Maduranga";
+            const officerMobile = currentUser ? currentUser.phone : "0777353802";
 
             const canvas = document.getElementById('pdfChartCanvas');
             const ctx = canvas.getContext('2d');
@@ -608,7 +780,7 @@
                     labels: ['Principal', 'Interest'],
                     datasets: [{
                         data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#06b6d4', '#f59e0b'],
+                        backgroundColor: ['#4f46e5', '#d97706'],
                         borderWidth: 0
                     }]
                 },
@@ -622,54 +794,54 @@
 
             const chartImgData = canvas.toDataURL('image/png');
 
-            doc.setFillColor(15, 23, 42);
+            doc.setFillColor(255, 255, 255);
             doc.rect(0, 0, 210, 28, 'F');
 
-            doc.setTextColor(99, 102, 241);
+            doc.setTextColor(79, 70, 229);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(245, 158, 11);
-            doc.text("DEVELOPED BY LAKMAL MADURANGA", 12, 17);
+            doc.setTextColor(217, 119, 6);
+            doc.text(`DEVELOPED BY ${officerName.toUpperCase()}`, 12, 17);
 
             doc.setFontSize(7.5);
-            doc.setTextColor(148, 163, 184);
+            doc.setTextColor(100, 116, 139);
             doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 22);
 
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(15, 23, 42);
             doc.setFontSize(8);
             doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
             doc.text(`Tenure: ${summaryMetrics.N} Months  |  Rate: ${summaryMetrics.R}% p.a.`, 198, 18, { align: 'right' });
 
-            doc.setFillColor(99, 102, 241);
-            doc.rect(0, 28, 210, 1.5, 'F');
+            doc.setFillColor(226, 232, 240);
+            doc.rect(0, 28, 210, 1, 'F');
 
-            doc.setFillColor(30, 41, 59);
+            doc.setFillColor(248, 250, 252);
             doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
-            doc.setTextColor(6, 182, 212);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("FINANCED AMOUNT", 16, 39);
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(15, 23, 42);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 46);
 
-            doc.setFillColor(245, 158, 11);
+            doc.setFillColor(248, 250, 252);
             doc.roundedRect(104, 34, 94, 16, 2, 2, 'F');
-            doc.setTextColor(15, 23, 42);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("REGULAR MONTHLY RENTAL", 108, 39);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 46);
 
-            doc.setFillColor(241, 245, 249);
+            doc.setFillColor(248, 250, 252);
             doc.roundedRect(12, 53, 88, 16, 2, 2, 'F');
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL INTEREST", 16, 58);
@@ -677,9 +849,9 @@
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 65);
 
-            doc.setFillColor(241, 245, 249);
+            doc.setFillColor(248, 250, 252);
             doc.roundedRect(104, 53, 94, 16, 2, 2, 'F');
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL PAYABLE", 108, 58);
@@ -689,9 +861,9 @@
 
             let startTableY = 72;
             if (summaryMetrics.balloonDesc) {
-                doc.setFillColor(241, 245, 249);
+                doc.setFillColor(254, 243, 199);
                 doc.roundedRect(12, 71, 186, 7, 1.5, 1.5, 'F');
-                doc.setTextColor(71, 85, 105);
+                doc.setTextColor(180, 83, 9);
                 doc.setFontSize(7);
                 doc.setFont('helvetica', 'bold');
                 doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 75.5);
@@ -700,31 +872,31 @@
 
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
-            doc.setFillColor(6, 182, 212);
+            doc.setFillColor(79, 70, 229);
             doc.rect(43, startTableY + 8, 4, 4, 'F');
             doc.setTextColor(15, 23, 42);
             doc.setFontSize(7);
             doc.setFont('helvetica', 'bold');
             doc.text(`Principal: Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 11.5);
 
-            doc.setFillColor(245, 158, 11);
+            doc.setFillColor(217, 119, 6);
             doc.rect(43, startTableY + 16, 4, 4, 'F');
             doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
 
-            doc.setFillColor(15, 23, 42);
+            doc.setFillColor(248, 250, 252);
             doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
 
-            doc.setTextColor(99, 102, 241);
+            doc.setTextColor(79, 70, 229);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
 
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(15, 23, 42);
             doc.setFontSize(9.5);
             doc.setFont('helvetica', 'bold');
             doc.text(officerName, 120, startTableY + 15);
 
-            doc.setTextColor(245, 158, 11);
+            doc.setTextColor(217, 119, 6);
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
@@ -743,7 +915,7 @@
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
                 body: tableBody,
                 theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [99, 102, 241], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                headStyles: { fillStyle: 'F', fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 10 },
@@ -769,7 +941,7 @@
                     doc.setFontSize(7);
                     doc.setTextColor(100, 116, 139);
                     doc.setFont('helvetica', 'bold');
-                    doc.text("EMI Master Pro | Created & Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
+                    doc.text(`EMI Master Pro | Created & Developed by ${officerName}`, 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                 }
             });
