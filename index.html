@@ -385,9 +385,15 @@
 
                 <!-- User Management & Stats -->
                 <div id="ownerUserManagementSection" class="hidden space-y-4 pt-4 border-t border-[#282c37]">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
-                    </h4>
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
+                        </h4>
+                        <!-- Export Usage PDF Button -->
+                        <button onclick="shareUsagePDFDirectly()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md border border-indigo-400">
+                            <i class="fa-solid fa-file-pdf text-amber-300"></i> Export Usage PDF
+                        </button>
+                    </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
@@ -455,6 +461,7 @@
 
         let calculatedSchedule = [];
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
+        let cachedUserData = null; // Store user logs for PDF export
 
         let defaultRateData = {
             registered: [
@@ -724,6 +731,7 @@
         function startLiveUserLogsListener() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
+                cachedUserData = data; // Cache data for PDF report
                 const tbody = document.getElementById('userLogsTable');
                 if (!tbody) return;
 
@@ -844,7 +852,6 @@
                 }
             }
 
-            // Standard EMI formula fallback if no non-balloon months exist or no balloons present
             let regularEMI = 0;
             if (Object.keys(balloonMap).length === 0) {
                 regularEMI = (P * r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
@@ -1161,7 +1168,6 @@
                 s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
             ]);
 
-            // AutoTable Safe Call
             if (typeof doc.autoTable === 'function') {
                 doc.autoTable({
                     startY: startTableY + 34,
@@ -1204,13 +1210,159 @@
             const pdfBlob = doc.output('blob');
             const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-            // Mobile devices සහ Browser compatibilities සඳහා නිරවුල් කළ Share/Download ක්‍රමය
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
                         files: [file],
                         title: 'Lease Schedule',
                         text: `Lease Schedule (Prepared by ${officerName})`
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        doc.save(fileName);
+                    }
+                }
+            } else {
+                doc.save(fileName);
+            }
+        }
+
+        /* NEW FUNCTION: OWNER CONTROL USAGE LOG PDF EXPORT */
+        async function shareUsagePDFDirectly() {
+            if (!cachedUserData) {
+                return alert("No user log data available to export.");
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            // Header Banner
+            doc.setFillColor(83, 69, 237);
+            doc.rect(0, 0, 210, 28, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text("EMI Master Pro", 12, 12);
+
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(224, 231, 255);
+            doc.text("OWNER CONTROL - USER DETAILS & USAGE LOGS", 12, 17);
+
+            doc.setFontSize(7.5);
+            doc.setTextColor(255, 255, 255);
+            doc.text("SYSTEM USAGE REPORT", 12, 22);
+
+            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).toUpperCase();
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(8);
+            doc.text(`Generated: ${nowStr}`, 198, 15, { align: 'right' });
+
+            // System Summary Cards
+            let totalLogins = 0;
+            let totalUsers = 0;
+            let activeNow = 0;
+            let pendingCount = 0;
+            const tableRows = [];
+
+            for (let key in cachedUserData) {
+                const u = cachedUserData[key];
+                if (!u.name || !u.mobile) continue;
+
+                totalUsers++;
+                totalLogins += (u.loginCount || 1);
+                if (u.status === 'pending') pendingCount++;
+                if (u.isOnline === true) activeNow++;
+
+                tableRows.push([
+                    u.name + (key === OWNER_MOBILE.replace(/[^0-9]/g, "") ? " (Owner)" : ""),
+                    u.mobile,
+                    (u.status || 'pending').toUpperCase(),
+                    u.lastLoggedIn || u.lastActive || "N/A",
+                    (u.loginCount || 1).toString() + " Logins"
+                ]);
+            }
+
+            // Stat Boxes
+            doc.setFillColor(243, 245, 249);
+            doc.roundedRect(12, 34, 42, 16, 2, 2, 'F');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'bold');
+            doc.text("TOTAL USERS", 16, 39);
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(11);
+            doc.text(totalUsers.toString(), 16, 46);
+
+            doc.setFillColor(243, 245, 249);
+            doc.roundedRect(60, 34, 42, 16, 2, 2, 'F');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'bold');
+            doc.text("PENDING APPROVALS", 64, 39);
+            doc.setTextColor(225, 29, 72);
+            doc.setFontSize(11);
+            doc.text(pendingCount.toString(), 64, 46);
+
+            doc.setFillColor(243, 245, 249);
+            doc.roundedRect(108, 34, 42, 16, 2, 2, 'F');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'bold');
+            doc.text("ACTIVE NOW", 112, 39);
+            doc.setTextColor(16, 185, 129);
+            doc.setFontSize(11);
+            doc.text(activeNow.toString(), 112, 46);
+
+            doc.setFillColor(243, 245, 249);
+            doc.roundedRect(156, 34, 42, 16, 2, 2, 'F');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'bold');
+            doc.text("TOTAL LOGINS", 160, 39);
+            doc.setTextColor(83, 69, 237);
+            doc.setFontSize(11);
+            doc.text(totalLogins.toString(), 160, 46);
+
+            // Usage Log Table
+            if (typeof doc.autoTable === 'function') {
+                doc.autoTable({
+                    startY: 56,
+                    head: [['Name', 'Mobile', 'Status', 'Last Login', 'Usage Count']],
+                    body: tableRows,
+                    theme: 'plain',
+                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7.5, halign: 'left' },
+                    bodyStyles: { fontSize: 7, cellPadding: 2, fontStyle: 'bold', textColor: [30, 41, 59] },
+                    columnStyles: {
+                        0: { halign: 'left', cellWidth: 50 },
+                        1: { halign: 'left', cellWidth: 35 },
+                        2: { halign: 'center', cellWidth: 30 },
+                        3: { halign: 'center', cellWidth: 40 },
+                        4: { halign: 'center', cellWidth: 31 }
+                    },
+                    alternateRowStyles: { fillColor: [250, 250, 250] },
+                    margin: { left: 12, right: 12 },
+                    didDrawPage: function (data) {
+                        doc.setFontSize(7);
+                        doc.setTextColor(148, 163, 184);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
+                        doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
+                    }
+                });
+            }
+
+            const fileName = `EMI master pro usage.pdf`;
+            const pdfBlob = doc.output('blob');
+            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'EMI Master Pro Usage',
+                        text: `EMI Master Pro Usage & User Log Details`
                     });
                 } catch (err) {
                     if (err.name !== 'AbortError') {
