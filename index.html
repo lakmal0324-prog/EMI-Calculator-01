@@ -345,8 +345,8 @@
             <!-- Admin Dashboard Content -->
             <div id="adminContent" class="hidden space-y-6">
                 
-                <!-- Password Change Section for Admin -->
-                <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
+                <!-- Password Change Section (Owner Only) -->
+                <div id="ownerPasswordChangeSection" class="hidden p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                     <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-key"></i> Security Settings: Change Admin Password
                     </h4>
@@ -735,6 +735,7 @@
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
+                document.getElementById('ownerPasswordChangeSection').classList.remove('hidden');
                 document.getElementById('ownerUserManagementSection').classList.remove('hidden');
                 startLiveUserLogsListener();
                 startLiveUnauthorizedAttemptsListener();
@@ -762,12 +763,16 @@
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
                 const ownerSection = document.getElementById('ownerUserManagementSection');
+                const ownerPassSection = document.getElementById('ownerPasswordChangeSection');
+
                 if (currentKey === ownerKey) {
                     ownerSection.classList.remove('hidden');
+                    ownerPassSection.classList.remove('hidden');
                     startLiveUserLogsListener();
                     startLiveUnauthorizedAttemptsListener();
                 } else {
                     ownerSection.classList.add('hidden');
+                    ownerPassSection.classList.add('hidden');
                 }
             } else {
                 // Save Unauthorized Login Attempt Details to Database
