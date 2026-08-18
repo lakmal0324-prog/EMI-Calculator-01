@@ -1200,21 +1200,25 @@
                 });
             }
 
+            const fileName = `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`;
             const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
+            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
+            // Mobile devices සහ Browser compatibilities සඳහා නිරවුල් කළ Share/Download ක්‍රමය
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
                         files: [file],
-                        title: 'Lease Repayment Schedule',
-                        text: `Lease Repayment Schedule (Prepared by ${officerName})`
+                        title: 'Lease Schedule',
+                        text: `Lease Schedule (Prepared by ${officerName})`
                     });
                 } catch (err) {
-                    console.log('Share action ended or dismissed', err);
+                    if (err.name !== 'AbortError') {
+                        doc.save(fileName);
+                    }
                 }
             } else {
-                doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
+                doc.save(fileName);
             }
         }
     </script>
