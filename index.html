@@ -43,14 +43,14 @@
 <body class="min-h-screen flex flex-col justify-between relative">
 
     <!-- Mandatory Login / Registration Overlay -->
-    <div id="loginOverlay" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="loginOverlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div class="text-center space-y-2">
                 <div class="w-12 h-12 bg-indigo-50 text-brandPrimary rounded-2xl flex items-center justify-center mx-auto text-xl border border-indigo-100">
                     <i class="fa-solid fa-user-lock"></i>
                 </div>
                 <h2 class="text-lg font-bold text-slate-800">Welcome to EMI Master</h2>
-                <p class="text-xs text-slate-500">ඇප් එක භාවිතා කිරීම සඳහා Log In වන්න හෝ Register වන්න.</p>
+                <p class="text-xs text-slate-500">Please Log In or Register to access the system.</p>
             </div>
 
             <!-- Choice Buttons -->
@@ -61,7 +61,7 @@
                 </button>
                 <button onclick="showRegisterForm()" class="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold py-3 rounded-2xl transition text-sm flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user-plus text-brandPrimary"></i>
-                    <span>New Register</span>
+                    <span>New Registration</span>
                 </button>
             </div>
 
@@ -92,6 +92,10 @@
                     <button onclick="submitUserRegistration()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Register & Request</button>
                 </div>
             </div>
+            
+            <div class="text-center pt-2 border-t border-slate-100">
+                <p class="text-[10px] text-slate-400 font-semibold">Created by <span class="text-brandPrimary font-bold">Lakmal Maduranga</span></p>
+            </div>
         </div>
     </div>
 
@@ -109,8 +113,8 @@
                         <span class="bg-indigo-50 text-brandPrimary text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase border border-indigo-100">PRO</span>
                     </div>
                     <p class="text-[10px] text-slate-500 font-semibold mt-0.5 tracking-wide flex items-center gap-1">
-                        <span>Officer:</span>
-                        <span id="headerOfficerName" class="text-brandPrimary font-bold">Lakmal Maduranga</span>
+                        <span>Created by:</span>
+                        <span class="text-brandPrimary font-bold">Lakmal Maduranga</span>
                     </p>
                 </div>
             </div>
@@ -148,7 +152,7 @@
                 <!-- Input Panel -->
                 <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-5 space-y-4 shadow-sm">
                     <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-[#5345ED] fa-sliders"></i> Facility Parameters
+                        <i class="fa-solid fa-sliders"></i> Facility Parameters
                     </h2>
 
                     <div class="space-y-3.5">
@@ -235,7 +239,7 @@
                                 </thead>
                                 <tbody id="scheduleTable" class="divide-y divide-slate-100">
                                     <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-400 font-semibold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
+                                        <td colspan="6" class="p-8 text-center text-slate-400 font-semibold">The complete schedule will be displayed here after calculation.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -298,7 +302,16 @@
 
     </main>
 
-    <!-- Admin Panel Modal (Kept with Distinct Dark Dashboard Theme) -->
+    <!-- App Footer -->
+    <footer class="bg-white border-t border-slate-200/80 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-slate-500 font-semibold">
+                EMI Master Pro &copy; 2026 | Developed by <span class="text-brandPrimary font-bold">Lakmal Maduranga</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Admin Panel Modal -->
     <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-[#121418] border border-[#282c37] rounded-3xl max-w-5xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 shadow-2xl">
             <div class="flex justify-between items-center border-b border-[#282c37] pb-3">
@@ -318,7 +331,7 @@
             <!-- Admin Dashboard Content -->
             <div id="adminContent" class="hidden space-y-6">
                 
-                <!-- TOP SECTION: Global Rate Editor -->
+                <!-- Global Rate Editor -->
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
@@ -339,7 +352,7 @@
                     </button>
                 </div>
 
-                <!-- BOTTOM SECTION: User Management & Stats -->
+                <!-- User Management & Stats -->
                 <div id="ownerUserManagementSection" class="hidden space-y-4 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
@@ -441,34 +454,15 @@
         };
 
         function checkUserSession() {
-            const mobile = localStorage.getItem('officerMobile');
-            if (!mobile) {
-                showAuthOverlay();
-                return;
-            }
-
-            const userKey = mobile.replace(/[^0-9]/g, "");
-            db.ref('userLogs/' + userKey).once('value', (snap) => {
-                const u = snap.val();
-                if (u && (u.status === 'approved' || userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""))) {
-                    document.getElementById('loginOverlay').classList.add('hidden');
-                    document.getElementById('officerNameDisplay').value = u.name;
-                    document.getElementById('officerMobileDisplay').value = u.mobile;
-                    
-                    const headerOfficer = document.getElementById('headerOfficerName');
-                    if (headerOfficer) headerOfficer.innerText = u.name;
-
-                    setupPresenceSystem(u.mobile, u.name);
-                } else {
-                    alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.`);
-                    logoutUser();
-                }
-            });
-        }
-
-        function showAuthOverlay() {
             document.getElementById('loginOverlay').classList.remove('hidden');
-            resetAuthView();
+
+            const savedMobile = localStorage.getItem('officerMobile');
+            if (savedMobile) {
+                showLoginForm();
+                document.getElementById('loginMobileInput').value = savedMobile;
+            } else {
+                resetAuthView();
+            }
         }
 
         function logoutUser() {
@@ -480,6 +474,11 @@
             localStorage.removeItem('officerName');
             localStorage.removeItem('officerMobile');
             showAuthOverlay();
+        }
+
+        function showAuthOverlay() {
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            resetAuthView();
         }
 
         function showLoginForm() {
@@ -504,7 +503,7 @@
 
         function performUserLogin() {
             const mobile = document.getElementById('loginMobileInput').value.trim();
-            if (!mobile) return alert("කරුණාකර දුරකථන අංකය ඇතුළත් කරන්න.");
+            if (!mobile) return alert("Please enter your mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             db.ref('userLogs/' + userKey).once('value', (snap) => {
@@ -512,7 +511,7 @@
                 if (u && u.name) {
                     const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                     if (u.status !== 'approved' && !isOwner) {
-                        return alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.`);
+                        return alert(`Your account (${mobile}) has not been approved by the Admin yet. Please wait.`);
                     }
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -528,13 +527,10 @@
                     document.getElementById('loginOverlay').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = u.name;
                     document.getElementById('officerMobileDisplay').value = u.mobile;
-                    
-                    const headerOfficer = document.getElementById('headerOfficerName');
-                    if (headerOfficer) headerOfficer.innerText = u.name;
 
                     setupPresenceSystem(u.mobile, u.name);
                 } else {
-                    alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. කරුණාකර 'New Register' හරහා ලියාපදිංචි වන්න.");
+                    alert("No account found with this number. Please register as a new user.");
                 }
             });
         }
@@ -543,7 +539,7 @@
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
 
-            if (!name || !mobile) return alert("කරුණාකර ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න.");
+            if (!name || !mobile) return alert("Please enter both your full name and mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -566,13 +562,10 @@
                         document.getElementById('loginOverlay').classList.add('hidden');
                         document.getElementById('officerNameDisplay').value = name;
                         document.getElementById('officerMobileDisplay').value = mobile;
-                        
-                        const headerOfficer = document.getElementById('headerOfficerName');
-                        if (headerOfficer) headerOfficer.innerText = name;
 
                         setupPresenceSystem(mobile, name);
                     } else {
-                        alert(`ලියාපදිංචි වීම සාර්ථකයි! (${mobile}) සඳහා Admin අනුමැතිය ලැබුණු පසු ඔබට Log විය හැක.`);
+                        alert(`Registration successful! You can log in once your account (${mobile}) is approved by Admin.`);
                         resetAuthView();
                     }
                 } else {
@@ -767,7 +760,7 @@
             const balloonMap = getBalloonConfig();
 
             if (!P || P <= 0 || !annualRate || annualRate <= 0 || !N || N <= 0) {
-                alert("කරුණාකර Financed Amount, Rate, සහ Tenure හිස්තැන් පුරවන්න.");
+                alert("Please fill in Financed Amount, Annual Rate, and Tenure.");
                 return;
             }
 
@@ -950,7 +943,7 @@
             }
 
             if (calculatedSchedule.length === 0) {
-                return alert("කරුණාකර Financed Amount, Rate, සහ Tenure ඇතුළත් කර Calculate කරන්න.");
+                return alert("Please enter Financed Amount, Annual Rate, Tenure and click Calculate.");
             }
 
             const { jsPDF } = window.jspdf;
@@ -994,7 +987,7 @@
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(224, 231, 255);
-            doc.text("DEVELOPED BY LAKMAL MADURANGA", 12, 17);
+            doc.text("CREATED BY LAKMAL MADURANGA", 12, 17);
 
             doc.setFontSize(7.5);
             doc.setTextColor(255, 255, 255);
@@ -1126,7 +1119,7 @@
                     doc.setFontSize(7);
                     doc.setTextColor(148, 163, 184);
                     doc.setFont('helvetica', 'bold');
-                    doc.text("EMI Master Pro | Created & Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
+                    doc.text("EMI Master Pro | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                 }
             });
