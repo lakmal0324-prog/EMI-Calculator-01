@@ -82,7 +82,7 @@
                 
                 <!-- Password Field for 0777353802 -->
                 <div id="loginPasswordGroup" class="hidden">
-                    <label class="text-xs font-bold text-rose-600 block mb-1">Admin Password (0000)</label>
+                    <label class="text-xs font-bold text-rose-600 block mb-1">Admin Password</label>
                     <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
@@ -633,11 +633,9 @@
 
             const userKey = mobile.replace(/[^0-9]/g, "");
 
-            // 0777353802 අංකය සඳහා පමණක් '0000' මුරපදය පරීක්ෂා කිරීම
             if (userKey === '0777353802') {
                 const enteredPass = document.getElementById('loginPasswordInput').value.trim();
                 if (enteredPass !== '0000') {
-                    // වැරදි නම් Admin Invalid Attempt පිටුව පෙන්වීම සහ Database එකට રેકોર્ડ කිරීම
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     db.ref('adminAttempts').push({
                         userName: "Admin Owner",
@@ -677,7 +675,6 @@
                     setupPresenceSystem(u.mobile, u.name);
                 } else {
                     if (userKey === '0777353802') {
-                        // ස්වයංක්‍රීයව Owner ගිණුම සකස් කර ඇතුල් වීම
                         const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                         db.ref('userLogs/' + userKey).set({
                             name: OWNER_NAME,
