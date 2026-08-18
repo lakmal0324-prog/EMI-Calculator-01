@@ -22,149 +22,118 @@
             theme: {
                 extend: {
                     colors: {
-                        gold: '#D4AF37',
-                        darkBg: '#0b0c0e',
-                        cardBg: '#121418',
-                        borderBg: '#282c37'
+                        brandPrimary: '#5345ED',
+                        brandPrimaryDark: '#4334D9',
+                        brandBg: '#F3F5F9',
+                        brandCard: '#FFFFFF',
+                        brandBorder: '#E8ECF3',
+                        goldAccent: '#D4AF37'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #0b0c0e; color: #f1f5f9; font-family: sans-serif; }
+        body { background-color: #F3F5F9; color: #1E293B; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0c0e; }
-        ::-webkit-scrollbar-thumb { background: #282c37; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #F3F5F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between relative">
 
-    <!-- Top Toast Notification -->
-    <div id="loginToastNotification" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-[90%] bg-[#121418]/95 border border-gold/40 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md transition-all duration-300 transform -translate-y-5">
-        <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gold/20 text-gold flex items-center justify-center border border-gold/30 shrink-0">
-                    <i class="fa-solid fa-user-check text-sm"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-black text-gold uppercase tracking-wider">User Logged In</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    </div>
-                    <p id="toastDetails" class="text-xs font-bold text-slate-200 mt-0.5">Kasun Perera (0771234567)</p>
-                </div>
-            </div>
-            <button onclick="hideLoginToast()" class="text-slate-400 hover:text-white p-1">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
-    </div>
-
     <!-- Mandatory Login / Registration Overlay -->
-    <div id="loginOverlay" class="fixed inset-0 z-50 bg-[#0b0c0e] flex items-center justify-center p-4">
-        <div class="bg-[#121418] border border-[#282c37] rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+    <div id="loginOverlay" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div class="text-center space-y-2">
-                <div class="w-12 h-12 bg-gold/10 text-gold rounded-2xl flex items-center justify-center mx-auto text-xl border border-gold/30">
+                <div class="w-12 h-12 bg-indigo-50 text-brandPrimary rounded-2xl flex items-center justify-center mx-auto text-xl border border-indigo-100">
                     <i class="fa-solid fa-user-lock"></i>
                 </div>
-                <h2 class="text-lg font-bold text-gold">Welcome to EMI Master</h2>
-                <p class="text-xs text-slate-400">ඇප් එක භාවිතා කිරීම සඳහා Log In වන්න හෝ Register වන්න.</p>
+                <h2 class="text-lg font-bold text-slate-800">Welcome to EMI Master</h2>
+                <p class="text-xs text-slate-500">ඇප් එක භාවිතා කිරීම සඳහා Log In වන්න හෝ Register වන්න.</p>
             </div>
 
             <!-- Choice Buttons -->
             <div id="authChoiceView" class="space-y-2.5 pt-2">
-                <button onclick="showLoginForm()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg flex items-center justify-center gap-2">
+                <button onclick="showLoginForm()" class="w-full bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-3 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     <span>Log In</span>
                 </button>
-                <button onclick="showRegisterForm()" class="w-full bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-user-plus text-gold"></i>
+                <button onclick="showRegisterForm()" class="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold py-3 rounded-2xl transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-brandPrimary"></i>
                     <span>New Register</span>
                 </button>
             </div>
 
-            <!-- Login Form (Mobile Only) -->
+            <!-- Login Form -->
             <div id="loginFormView" class="hidden space-y-3 pt-2">
                 <div>
-                    <label class="text-xs font-bold text-slate-300 block mb-1">Registered Mobile Number</label>
-                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <label class="text-xs font-bold text-slate-600 block mb-1">Registered Mobile Number</label>
+                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="resetAuthView()" class="w-1/3 bg-[#1a1d24] hover:bg-[#222630] text-slate-300 font-bold py-2.5 rounded-xl transition text-xs">Back</button>
-                    <button onclick="performUserLogin()" class="w-2/3 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-xs shadow-lg">Login Now</button>
+                    <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
+                    <button onclick="performUserLogin()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Login Now</button>
                 </div>
             </div>
 
-            <!-- Registration Form (Name & Mobile) -->
+            <!-- Registration Form -->
             <div id="registerFormView" class="hidden space-y-3 pt-2">
                 <div>
-                    <label class="text-xs font-bold text-slate-300 block mb-1">Your Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <label class="text-xs font-bold text-slate-600 block mb-1">Your Full Name</label>
+                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-300 block mb-1">Mobile Number</label>
-                    <input type="text" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                    <label class="text-xs font-bold text-slate-600 block mb-1">Mobile Number</label>
+                    <input type="text" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="resetAuthView()" class="w-1/3 bg-[#1a1d24] hover:bg-[#222630] text-slate-300 font-bold py-2.5 rounded-xl transition text-xs">Back</button>
-                    <button onclick="submitUserRegistration()" class="w-2/3 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-xs shadow-lg">Register & Request</button>
+                    <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
+                    <button onclick="submitUserRegistration()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Register & Request</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Header / Navbar -->
-    <header class="bg-[#121418] border-b border-[#282c37] sticky top-0 z-30">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo & Title -->
-            <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-gold/20 flex items-center justify-center">
-                    <div class="w-full h-full bg-[#0b0c0e] rounded-[11px] flex items-center justify-center relative overflow-hidden">
-                        <i class="fa-solid fa-crown text-gold text-xs absolute -top-1 -right-1 opacity-40"></i>
-                        <i class="fa-solid fa-calculator text-gold text-base"></i>
-                    </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-brandPrimary text-white flex items-center justify-center shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-calculator text-base"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-1.5">
-                        <h1 class="text-base font-extrabold text-gold tracking-wide leading-none">EMI MASTER</h1>
-                        <span class="bg-gold text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
+                        <h1 class="text-base font-extrabold text-slate-900 tracking-wide leading-none">EMI MASTER</h1>
+                        <span class="bg-indigo-50 text-brandPrimary text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase border border-indigo-100">PRO</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 font-medium mt-0.5 tracking-wide flex items-center gap-1">
-                        <span>by</span>
-                        <span class="bg-[#1f242d] text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/20 font-semibold shadow-inner">
-                            Lakmal Maduranga
-                        </span>
+                    <p class="text-[10px] text-slate-500 font-semibold mt-0.5 tracking-wide flex items-center gap-1">
+                        <span>Officer:</span>
+                        <span id="headerOfficerName" class="text-brandPrimary font-bold">Lakmal Maduranga</span>
                     </p>
                 </div>
             </div>
 
             <!-- Controls -->
-            <div class="flex flex-col items-end gap-1">
-                <div class="flex items-center gap-2">
-                    <button onclick="togglePage()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrows-rotate text-gold"></i>
-                        <span id="navBtnText">Rate Sheet</span>
-                    </button>
+            <div class="flex items-center gap-2">
+                <button onclick="togglePage()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3 py-2 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-arrows-rotate text-brandPrimary"></i>
+                    <span id="navBtnText">Rate Sheet</span>
+                </button>
 
-                    <!-- Admin Button with Pending Approvals Red Badge -->
-                    <button onclick="openAdminModal()" class="relative bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Admin</span>
-                        
-                        <span id="adminNotificationBadge" class="hidden absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-extrabold text-white shadow-lg border border-[#0b0c0e]">0</span>
-                        <span id="adminNotificationPing" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-rose-500 animate-ping opacity-75"></span>
-                    </button>
+                <!-- Admin Button -->
+                <button onclick="openAdminModal()" class="relative bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 px-3 py-2 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                    <span>Admin</span>
                     
-                    <button onclick="logoutUser()" class="bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Logout">
-                        <i class="fa-solid fa-power-off"></i>
-                    </button>
-                </div>
-
-                <div id="mainNetStatus" class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Online</span>
-                </div>
+                    <span id="adminNotificationBadge" class="hidden absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-extrabold text-white shadow-lg border-2 border-white">0</span>
+                    <span id="adminNotificationPing" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-rose-500 animate-ping opacity-75"></span>
+                </button>
+                
+                <button onclick="logoutUser()" class="bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-500 hover:text-rose-600 p-2 rounded-2xl text-xs font-bold transition" title="Logout">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -177,55 +146,55 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Input Panel -->
-                <div class="lg:col-span-5 bg-[#121418] border border-[#282c37] rounded-2xl p-5 space-y-4">
-                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider border-b border-[#282c37] pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders"></i> Facility Parameters
+                <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-5 space-y-4 shadow-sm">
+                    <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
+                        <i class="fa-solid fa-[#5345ED] fa-sliders"></i> Facility Parameters
                     </h2>
 
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                         <div>
-                            <label class="text-xs font-bold text-slate-300 block mb-1">Financed Amount (Rs.)</label>
-                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                            <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Financed Amount (Rs.)</label>
+                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-xs font-bold text-slate-300 block mb-1">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Annual Rate (%)</label>
+                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                             </div>
                             <div>
-                                <label class="text-xs font-bold text-slate-300 block mb-1">Tenure (Months)</label>
-                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
+                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
+                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                             </div>
                         </div>
 
                         <!-- Balloon Options -->
-                        <div class="pt-2 border-t border-[#282c37]">
+                        <div class="pt-2 border-t border-slate-100">
                             <div class="flex justify-between items-center mb-2">
-                                <label class="text-xs font-bold text-slate-300">Balloon Payments (Optional)</label>
-                                <button onclick="addBalloonField()" class="text-xs bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 px-2 py-0.5 rounded-lg font-bold transition">+ Add</button>
+                                <label class="text-xs font-bold text-slate-700">Balloon Payments (Optional)</label>
+                                <button onclick="addBalloonField()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-brandPrimary border border-indigo-100 px-3 py-1 rounded-xl font-bold transition">+ Add</button>
                             </div>
                             <div id="balloonContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
                         </div>
 
                         <!-- Officer Info -->
-                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#282c37]">
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
                             <div>
-                                <label class="text-[10px] font-bold text-slate-400">Officer Name</label>
-                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-amber-300 font-bold outline-none cursor-not-allowed">
+                                <label class="text-[10px] font-extrabold text-slate-400 uppercase">Officer Name</label>
+                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-xs text-brandPrimary font-bold outline-none cursor-not-allowed">
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-slate-400">Contact No</label>
-                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-[#0b0c0e]/50 border border-[#282c37] p-1.5 rounded text-xs text-amber-300 font-bold outline-none cursor-not-allowed">
+                                <label class="text-[10px] font-extrabold text-slate-400 uppercase">Contact No</label>
+                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-xs text-brandPrimary font-bold outline-none cursor-not-allowed">
                             </div>
                         </div>
 
                         <div class="flex gap-2 pt-2">
-                            <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-gold/10">
+                            <button onclick="calculateMultiBalloonSchedule()" class="flex-1 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-3.5 rounded-2xl transition text-sm shadow-md shadow-indigo-200">
                                 Calculate Schedule
                             </button>
-                            <button onclick="sharePDFDirectly()" class="bg-[#1a1d24] hover:bg-[#222630] border border-[#282c37] text-slate-200 px-4 rounded-xl font-bold transition text-xs flex items-center gap-1.5">
-                                <i class="fa-solid fa-share-nodes text-gold"></i> Share PDF
+                            <button onclick="sharePDFDirectly()" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 rounded-2xl font-bold transition text-xs flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-share-nodes text-brandPrimary"></i> Share PDF
                             </button>
                         </div>
                     </div>
@@ -233,40 +202,40 @@
 
                 <!-- Schedule & Results -->
                 <div class="lg:col-span-7 space-y-4">
-                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-4 space-y-3 shadow-md">
-                        <div id="summaryText" class="text-base font-extrabold text-gold border-b border-[#282c37]/60 pb-2">
-                            Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. 0.00</span>
+                    <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-3 shadow-sm">
+                        <div id="summaryText" class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-2.5">
+                            Regular Monthly Rental: <span class="text-brandPrimary font-mono">Rs. 0.00</span>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4 text-xs pt-1">
-                            <div class="bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
-                                <span class="text-slate-400 block font-semibold text-[11px]">Total Interest</span>
-                                <span id="summaryInterest" class="text-amber-400 font-bold font-mono text-sm">Rs. 0.00</span>
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60">
+                                <span class="text-slate-400 block font-bold text-[10px] uppercase">Total Interest</span>
+                                <span id="summaryInterest" class="text-amber-600 font-bold font-mono text-sm mt-0.5 block">Rs. 0.00</span>
                             </div>
-                            <div class="bg-[#0b0c0e] p-2.5 rounded-xl border border-[#282c37]">
-                                <span class="text-slate-400 block font-semibold text-[11px]">Total Payable</span>
-                                <span id="summaryPayable" class="text-emerald-400 font-bold font-mono text-sm">Rs. 0.00</span>
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60">
+                                <span class="text-slate-400 block font-bold text-[10px] uppercase">Total Payable</span>
+                                <span id="summaryPayable" class="text-brandPrimary font-bold font-mono text-sm mt-0.5 block">Rs. 0.00</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Amortization Table -->
-                    <div class="bg-[#121418] border border-[#282c37] rounded-2xl overflow-hidden">
+                    <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm">
                         <div class="max-h-[460px] overflow-y-auto">
                             <table class="w-full text-left border-collapse text-xs">
-                                <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
+                                <thead class="bg-slate-50 text-slate-500 sticky top-0 font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-2.5">#</th>
-                                        <th class="p-2.5">Due Date</th>
-                                        <th class="p-2.5">Principal</th>
-                                        <th class="p-2.5">Interest</th>
-                                        <th class="p-2.5">Total Due</th>
-                                        <th class="p-2.5">Balance</th>
+                                        <th class="p-3">#</th>
+                                        <th class="p-3">Due Date</th>
+                                        <th class="p-3">Principal</th>
+                                        <th class="p-3">Interest</th>
+                                        <th class="p-3">Total Due</th>
+                                        <th class="p-3">Balance</th>
                                     </tr>
                                 </thead>
-                                <tbody id="scheduleTable" class="divide-y divide-[#282c37]/50">
+                                <tbody id="scheduleTable" class="divide-y divide-slate-100">
                                     <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-500 font-bold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
+                                        <td colspan="6" class="p-8 text-center text-slate-400 font-semibold">ගණනය කළ පසු සම්පූර්ණ Schedule එක මෙහි පෙන්වනු ඇත.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -279,18 +248,18 @@
 
         <!-- Rate Sheet Page -->
         <div id="ratePage" class="hidden space-y-6">
-            <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 hover:from-amber-400 hover:to-gold text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl transition duration-200 flex items-center justify-center gap-3 text-base border border-gold/40">
-                <i class="fa-solid fa-calculator text-xl"></i>
+            <button onclick="showPage('calcPage')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 font-black py-4 px-6 rounded-3xl shadow-sm transition duration-200 flex items-center justify-center gap-3 text-base">
+                <i class="fa-solid fa-calculator text-brandPrimary text-xl"></i>
                 <span class="tracking-wide uppercase">Go to Calculator</span>
-                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <i class="fa-solid fa-arrow-right text-slate-400"></i>
             </button>
 
-            <div class="bg-[#121418] border border-[#282c37] rounded-2xl p-5 space-y-6">
+            <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-6 shadow-sm">
                 <div>
-                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-[#282c37] rounded-xl">
+                    <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
+                    <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
                         <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-[#1a1d24] text-slate-400 font-bold border-b border-[#282c37]">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                                 <tr>
                                     <th class="p-3">Category</th>
                                     <th class="p-3">1 Year</th>
@@ -301,16 +270,16 @@
                                     <th class="p-3">6 Years</th>
                                 </tr>
                             </thead>
-                            <tbody id="unregTable" class="divide-y divide-[#282c37]"></tbody>
+                            <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <div>
-                    <h2 class="text-sm font-bold text-gold uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-[#282c37] rounded-xl">
+                    <h2 class="text-xs font-extrabold text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
+                    <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
                         <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-[#1a1d24] text-slate-400 font-bold border-b border-[#282c37]">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                                 <tr>
                                     <th class="p-3">Category</th>
                                     <th class="p-3">1 Year</th>
@@ -320,7 +289,7 @@
                                     <th class="p-3">5 Years</th>
                                 </tr>
                             </thead>
-                            <tbody id="regTable" class="divide-y divide-[#282c37]"></tbody>
+                            <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -329,19 +298,21 @@
 
     </main>
 
-    <!-- Admin Panel Modal -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-[#121418] border border-[#282c37] rounded-2xl max-w-5xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-[#282c37] pb-2">
-                <h3 class="text-base font-bold text-gold">Admin Management Dashboard</h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- Admin Panel Modal (Kept with Distinct Dark Dashboard Theme) -->
+    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#121418] border border-[#282c37] rounded-3xl max-w-5xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#282c37] pb-3">
+                <h3 class="text-base font-bold text-goldAccent flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> Admin Management Dashboard
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-2.5 bg-[#0b0c0e] border border-[#282c37] rounded-xl text-sm font-bold text-slate-100 outline-none focus:border-gold">
-                <button onclick="verifyAdmin()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">Access Dashboard</button>
+                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl text-sm font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
             <!-- Admin Dashboard Content -->
@@ -349,7 +320,7 @@
                 
                 <!-- TOP SECTION: Global Rate Editor -->
                 <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
+                    <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
                     </h4>
                     
@@ -363,40 +334,40 @@
                         <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <button onclick="saveAdminSettings()" class="w-full bg-gold hover:bg-[#c49f27] text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md">
+                    <button onclick="saveAdminSettings()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">
                         Publish Rate Updates Globally
                     </button>
                 </div>
 
-                <!-- BOTTOM SECTION: User Management & Stats (ONLY ACCESSIBLE BY 0777353802 OWNER) -->
+                <!-- BOTTOM SECTION: User Management & Stats -->
                 <div id="ownerUserManagementSection" class="hidden space-y-4 pt-4 border-t border-[#282c37]">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
                     </h4>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
                             <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
-                            <div id="statTotalUsers" class="text-lg font-bold text-gold">0</div>
+                            <div id="statTotalUsers" class="text-lg font-bold text-goldAccent">0</div>
                         </div>
-                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-rose-500/30 text-center">
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-rose-500/30 text-center">
                             <div class="text-[10px] text-rose-400 font-bold">PENDING APPROVALS</div>
                             <div id="statPendingApprovals" class="text-lg font-bold text-rose-400">0</div>
                         </div>
-                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-emerald-500/30 text-center">
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-emerald-500/30 text-center">
                             <div class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                 ACTIVE NOW
                             </div>
                             <div id="statActiveNow" class="text-lg font-bold text-emerald-400">0</div>
                         </div>
-                        <div class="bg-[#0b0c0e] p-3 rounded-xl border border-[#282c37] text-center">
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
                             <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
                             <div id="statTotalLogins" class="text-lg font-bold text-indigo-400">0</div>
                         </div>
                     </div>
 
-                    <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-xl max-h-60">
+                    <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-2xl max-h-60">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                 <tr>
@@ -462,7 +433,6 @@
         };
 
         let rateData = defaultRateData;
-        let toastTimeout;
 
         window.onload = function() {
             checkUserSession();
@@ -484,8 +454,11 @@
                     document.getElementById('loginOverlay').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = u.name;
                     document.getElementById('officerMobileDisplay').value = u.mobile;
+                    
+                    const headerOfficer = document.getElementById('headerOfficerName');
+                    if (headerOfficer) headerOfficer.innerText = u.name;
+
                     setupPresenceSystem(u.mobile, u.name);
-                    showLoginToast(u.name, u.mobile);
                 } else {
                     alert(`ඔබගේ ගිණුම (${mobile}) Admin විසින් තවම Approve කර නොමැත. කරුණාකර රැඳී සිටින්න.`);
                     logoutUser();
@@ -555,8 +528,11 @@
                     document.getElementById('loginOverlay').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = u.name;
                     document.getElementById('officerMobileDisplay').value = u.mobile;
+                    
+                    const headerOfficer = document.getElementById('headerOfficerName');
+                    if (headerOfficer) headerOfficer.innerText = u.name;
+
                     setupPresenceSystem(u.mobile, u.name);
-                    showLoginToast(u.name, u.mobile);
                 } else {
                     alert("මෙම අංකයෙන් පරිශීලකයෙකු සොයාගත නොහැක. කරුණාකර 'New Register' හරහා ලියාපදිංචි වන්න.");
                 }
@@ -590,8 +566,11 @@
                         document.getElementById('loginOverlay').classList.add('hidden');
                         document.getElementById('officerNameDisplay').value = name;
                         document.getElementById('officerMobileDisplay').value = mobile;
+                        
+                        const headerOfficer = document.getElementById('headerOfficerName');
+                        if (headerOfficer) headerOfficer.innerText = name;
+
                         setupPresenceSystem(mobile, name);
-                        showLoginToast(name, mobile);
                     } else {
                         alert(`ලියාපදිංචි වීම සාර්ථකයි! (${mobile}) සඳහා Admin අනුමැතිය ලැබුණු පසු ඔබට Log විය හැක.`);
                         resetAuthView();
@@ -600,31 +579,6 @@
                     alert("Registration failed: " + error.message);
                 }
             });
-        }
-
-        function showLoginToast(name, mobile) {
-            const toast = document.getElementById('loginToastNotification');
-            const details = document.getElementById('toastDetails');
-            if (!toast || !details) return;
-
-            details.innerText = `${name} (${mobile})`;
-            toast.classList.remove('hidden');
-            
-            setTimeout(() => {
-                toast.classList.remove('-translate-y-5');
-                toast.classList.add('translate-y-0');
-            }, 10);
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => { hideLoginToast(); }, 4500);
-        }
-
-        function hideLoginToast() {
-            const toast = document.getElementById('loginToastNotification');
-            if (!toast) return;
-            toast.classList.remove('translate-y-0');
-            toast.classList.add('-translate-y-5');
-            setTimeout(() => { toast.classList.add('hidden'); }, 300);
         }
 
         function setupPresenceSystem(mobile, name) {
@@ -639,24 +593,8 @@
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     userStatusRef.update({ isOnline: true, lastActive: nowStr });
-                    updateMainBadge(true);
-                } else {
-                    updateMainBadge(false);
                 }
             });
-        }
-
-        function updateMainBadge(isOnline) {
-            const mainBadge = document.getElementById('mainNetStatus');
-            if (!mainBadge) return;
-
-            if (isOnline && navigator.onLine) {
-                mainBadge.className = "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                mainBadge.innerHTML = `<span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span><span>Online</span>`;
-            } else {
-                mainBadge.className = "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[8px] font-bold tracking-wider uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                mainBadge.innerHTML = `<span class="w-1 h-1 rounded-full bg-rose-500"></span><span>Offline</span>`;
-            }
         }
 
         function listenToDatabaseUpdates() {
@@ -712,7 +650,6 @@
                 const currentKey = currentMobile.replace(/[^0-9]/g, "");
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-                // ONLY SHOW USER MANAGEMENT TO OWNER (0777353802)
                 const ownerSection = document.getElementById('ownerUserManagementSection');
                 if (currentKey === ownerKey) {
                     ownerSection.classList.remove('hidden');
@@ -766,12 +703,12 @@
                         <tr class="hover:bg-[#222630]/30">
                             <td class="p-2.5 font-bold text-slate-200 flex items-center gap-1.5">
                                 ${u.name}
-                                ${isTargetOwner ? '<span class="text-[8px] bg-gold/20 text-gold border border-gold/30 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
+                                ${isTargetOwner ? '<span class="text-[8px] bg-goldAccent/20 text-goldAccent border border-goldAccent/30 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
                             </td>
                             <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile}</td>
                             <td class="p-2.5 text-center">${statusText}</td>
                             <td class="p-2.5 text-center text-[10px] text-slate-300 font-mono font-bold">${lastLogTime}</td>
-                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-gold font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 1} Logins</span></td>
+                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-goldAccent font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 1} Logins</span></td>
                             <td class="p-2.5 text-right space-x-1">
                                 ${u.status === 'pending' ? `<button onclick="approveUser('${key}')" class="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-emerald-500/30" title="Approve"><i class="fa-solid fa-check"></i> Approve</button>` : ''}
                                 ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-rose-500/30" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` : ''}
@@ -800,15 +737,15 @@
         function addBalloonField(defaultMonth = '', defaultAmount = '') {
             const container = document.getElementById('balloonContainer');
             const div = document.createElement('div');
-            div.className = "balloon-row flex gap-2 items-center bg-[#121418] p-1.5 rounded-lg border border-[#282c37]";
+            div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-1.5 rounded-2xl border border-slate-200";
             div.innerHTML = `
                 <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs text-center font-bold text-slate-200 outline-none">
+                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-white border border-slate-200 rounded-xl text-xs text-center font-bold text-slate-800 outline-none">
                 </div>
                 <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-xs font-bold text-gold outline-none">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-brandPrimary outline-none">
                 </div>
-                <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-300"><i class="fa-solid fa-circle-xmark"></i></button>
+                <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-600"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
             container.appendChild(div);
         }
@@ -891,19 +828,19 @@
                 balloonDesc: balloonTxtArr.join(', ')
             };
 
-            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-slate-100 font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
+            document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-brandPrimary font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
-                <tr class="${s.isBalloon ? 'bg-[#D4AF37]/15 font-bold text-gold' : 'hover:bg-[#222630]/40'}">
-                    <td class="p-2.5 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-gold text-slate-950 px-1 py-0.5 rounded ml-1 uppercase font-bold">Balloon</span>' : ''}</td>
-                    <td class="p-2.5 text-slate-400 font-bold">${s.dueDate}</td>
-                    <td class="p-2.5 font-mono font-bold">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono text-slate-400 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono ${s.isBalloon ? 'text-gold font-bold' : 'text-slate-100 font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                    <td class="p-2.5 font-mono text-slate-400 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <tr class="${s.isBalloon ? 'bg-amber-50 font-bold text-amber-800' : 'hover:bg-slate-50'}">
+                    <td class="p-3 font-bold">${s.month} ${s.isBalloon ? '<span class="text-[8px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded ml-1 uppercase font-black">Balloon</span>' : ''}</td>
+                    <td class="p-3 text-slate-500 font-bold">${s.dueDate}</td>
+                    <td class="p-3 font-mono font-bold text-slate-700">${s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono text-slate-500 font-bold">${s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono ${s.isBalloon ? 'text-amber-700 font-bold' : 'text-brandPrimary font-bold'}">${s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="p-3 font-mono text-slate-500 font-bold">${s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
             `).join('');
         }
@@ -914,18 +851,18 @@
 
             if(unregTbody) {
                 unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-[#222630]/30">
-                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-brandPrimary'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
 
             if(regTbody) {
                 regTbody.innerHTML = rateData.registered.map(r => `
-                    <tr class="hover:bg-[#222630]/30">
-                        <td class="p-3 font-bold text-slate-200">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-600' : 'text-slate-300'}">${val}</td>`).join('')}
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-amber-600'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
@@ -953,13 +890,13 @@
             const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
 
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
-                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-lg space-y-1.5">
-                    <label class="text-[11px] font-bold text-gold block">${item.category}</label>
+                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-xl space-y-1.5">
+                    <label class="text-[11px] font-bold text-goldAccent block">${item.category}</label>
                     <div class="grid grid-cols-6 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-[#D4AF37]">
+                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
@@ -967,13 +904,13 @@
             `).join('');
 
             regContainer.innerHTML = rateData.registered.map((item, idx) => `
-                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-lg space-y-1.5">
-                    <label class="text-[11px] font-bold text-gold block">${item.category}</label>
+                <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-xl space-y-1.5">
+                    <label class="text-[11px] font-bold text-goldAccent block">${item.category}</label>
                     <div class="grid grid-cols-5 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-[#D4AF37]">
+                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
@@ -1032,7 +969,7 @@
                     labels: ['Principal', 'Interest'],
                     datasets: [{
                         data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#D4AF37', '#282c37'],
+                        backgroundColor: ['#5345ED', '#E8ECF3'],
                         borderWidth: 0
                     }]
                 },
@@ -1046,21 +983,21 @@
 
             const chartImgData = canvas.toDataURL('image/png');
 
-            doc.setFillColor(18, 20, 24);
+            doc.setFillColor(83, 69, 237);
             doc.rect(0, 0, 210, 28, 'F');
 
-            doc.setTextColor(212, 175, 55);
+            doc.setTextColor(255, 255, 255);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.text("EMI Master Pro", 12, 12);
 
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(251, 191, 36);
+            doc.setTextColor(224, 231, 255);
             doc.text("DEVELOPED BY LAKMAL MADURANGA", 12, 17);
 
             doc.setFontSize(7.5);
-            doc.setTextColor(148, 163, 184);
+            doc.setTextColor(255, 255, 255);
             doc.text("OFFICIAL LEASE / EMI REPAYMENT SCHEDULE", 12, 22);
 
             const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
@@ -1069,53 +1006,50 @@
             doc.text(`Generated: ${nowStr}`, 198, 12, { align: 'right' });
             doc.text(`Tenure: ${summaryMetrics.N} Months  |  Rate: ${summaryMetrics.R}% p.a.`, 198, 18, { align: 'right' });
 
-            doc.setFillColor(212, 175, 55);
-            doc.rect(0, 28, 210, 1.5, 'F');
-
-            doc.setFillColor(26, 29, 36);
+            doc.setFillColor(243, 245, 249);
             doc.roundedRect(12, 34, 88, 16, 2, 2, 'F');
-            doc.setTextColor(212, 175, 55);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("FINANCED AMOUNT", 16, 39);
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(30, 41, 59);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 46);
 
-            doc.setFillColor(212, 175, 55);
+            doc.setFillColor(83, 69, 237);
             doc.roundedRect(104, 34, 94, 16, 2, 2, 'F');
-            doc.setTextColor(18, 20, 24);
+            doc.setTextColor(255, 255, 255);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("REGULAR MONTHLY RENTAL", 108, 39);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 46);
 
-            doc.setFillColor(241, 245, 249);
+            doc.setFillColor(243, 245, 249);
             doc.roundedRect(12, 53, 88, 16, 2, 2, 'F');
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL INTEREST", 16, 58);
-            doc.setTextColor(18, 20, 24);
+            doc.setTextColor(217, 119, 6);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 16, 65);
 
-            doc.setFillColor(241, 245, 249);
+            doc.setFillColor(243, 245, 249);
             doc.roundedRect(104, 53, 94, 16, 2, 2, 'F');
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("TOTAL PAYABLE", 108, 58);
-            doc.setTextColor(18, 20, 24);
+            doc.setTextColor(83, 69, 237);
             doc.setFontSize(11);
             doc.text(`Rs. ${summaryMetrics.totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 108, 65);
 
             let startTableY = 72;
             if (summaryMetrics.balloonDesc) {
-                doc.setFillColor(241, 245, 249);
+                doc.setFillColor(254, 243, 199);
                 doc.roundedRect(12, 71, 186, 7, 1.5, 1.5, 'F');
-                doc.setTextColor(71, 85, 105);
+                doc.setTextColor(180, 83, 9);
                 doc.setFontSize(7);
                 doc.setFont('helvetica', 'bold');
                 doc.text(`Balloon Payments: ${summaryMetrics.balloonDesc}`, 16, 75.5);
@@ -1124,31 +1058,31 @@
 
             doc.addImage(chartImgData, 'PNG', 12, startTableY + 2, 28, 28);
             
-            doc.setFillColor(212, 175, 55);
+            doc.setFillColor(83, 69, 237);
             doc.rect(43, startTableY + 8, 4, 4, 'F');
-            doc.setTextColor(18, 20, 24);
+            doc.setTextColor(30, 41, 59);
             doc.setFontSize(7);
             doc.setFont('helvetica', 'bold');
             doc.text(`Principal: Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 11.5);
 
-            doc.setFillColor(40, 44, 55);
+            doc.setFillColor(232, 236, 243);
             doc.rect(43, startTableY + 16, 4, 4, 'F');
             doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
 
-            doc.setFillColor(18, 20, 24);
+            doc.setFillColor(243, 245, 249);
             doc.roundedRect(115, startTableY + 2, 83, 28, 2, 2, 'F');
 
-            doc.setTextColor(212, 175, 55);
+            doc.setTextColor(100, 116, 139);
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
             doc.text("PREPARED BY OFFICER", 120, startTableY + 8);
 
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(30, 41, 59);
             doc.setFontSize(9.5);
             doc.setFont('helvetica', 'bold');
             doc.text(officerName, 120, startTableY + 15);
 
-            doc.setTextColor(203, 213, 225);
+            doc.setTextColor(83, 69, 237);
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
@@ -1165,10 +1099,9 @@
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
                 theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [18, 20, 24], textColor: [212, 175, 55], fontStyle: 'bold', fontSize: 7, halign: 'center' },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold' },
+                headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold', textColor: [30, 41, 59] },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 10 },
                     1: { halign: 'center', cellWidth: 28 },
@@ -1187,11 +1120,11 @@
                         }
                     }
                 },
-                alternateRowStyles: { fillColor: [248, 250, 252] },
+                alternateRowStyles: { fillColor: [250, 250, 250] },
                 margin: { left: 12, right: 12 },
                 didDrawPage: function (data) {
                     doc.setFontSize(7);
-                    doc.setTextColor(100, 116, 139);
+                    doc.setTextColor(148, 163, 184);
                     doc.setFont('helvetica', 'bold');
                     doc.text("EMI Master Pro | Created & Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
                     doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
