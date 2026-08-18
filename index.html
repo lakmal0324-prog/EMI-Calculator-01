@@ -755,6 +755,7 @@
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
             const isOwner = (userKey === ownerKey);
             const assignedUsername = isOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+            const userMobile = u.mobile || OWNER_MOBILE;
             
             db.ref('userLogs/' + userKey).update({
                 loginCount: (u.loginCount || 0) + 1,
@@ -766,15 +767,15 @@
             });
 
             localStorage.setItem('officerName', u.name);
-            localStorage.setItem('officerMobile', u.mobile || OWNER_MOBILE);
+            localStorage.setItem('officerMobile', userMobile);
             localStorage.setItem('officerUsername', assignedUsername);
 
             document.getElementById('loginOverlay').classList.add('hidden');
             document.getElementById('officerNameDisplay').value = u.name;
-            document.getElementById('officerMobileDisplay').value = u.mobile || OWNER_MOBILE;
+            document.getElementById('officerMobileDisplay').value = userMobile;
             document.getElementById('facilityUsernameBadge').innerText = "@" + assignedUsername;
 
-            setupPresenceSystem(u.mobile || OWNER_MOBILE, u.name);
+            setupPresenceSystem(userMobile, u.name);
         }
 
         function closeInvalidAttemptPage() {
@@ -1385,7 +1386,7 @@
             const doc = new jsPDF('p', 'mm', 'a4');
 
             const officerName = localStorage.getItem('officerName') || "Authorized Officer";
-            const officerUsername = localStorage.getItem('officerUsername') || "user";
+            const officerMobile = localStorage.getItem('officerMobile') || OWNER_MOBILE;
 
             const canvas = document.getElementById('pdfChartCanvas');
             const ctx = canvas.getContext('2d');
@@ -1513,7 +1514,7 @@
             doc.setTextColor(83, 69, 237);
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
-            doc.text(`Username: @${officerUsername}`, 120, startTableY + 21);
+            doc.text(`Mobile: ${officerMobile}`, 120, startTableY + 21);
 
             const tableBody = calculatedSchedule.map(s => [
                 s.month.toString(),
