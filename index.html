@@ -39,9 +39,8 @@
             background-color: #F3F5F9; 
             color: #1E293B; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            touch-action: manipulation; /* Disables double-tap to zoom on touch devices */
+            touch-action: manipulation;
         }
-        /* Mobile Input Auto-Zoom Fix (Font-size 16px rule) */
         input, select, textarea {
             font-size: 16px !important;
         }
@@ -190,7 +189,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
-                                <!-- Editable Number Input for Months -->
+                                <!-- Direct Number Input -->
                                 <input type="number" id="tenureMonths" value="60" min="1" max="360" oninput="autoFetchInterestRate()" placeholder="e.g. 60" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                             </div>
                             <div>
@@ -287,7 +286,7 @@
             </button>
 
             <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-6 shadow-sm">
-                <!-- Registered Vehicles Section (Placed First) -->
+                <!-- Registered Vehicles Section -->
                 <div>
                     <h2 class="text-xs font-extrabold text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
                     <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
@@ -307,7 +306,7 @@
                     </div>
                 </div>
 
-                <!-- Unregistered Vehicles Section (Placed Second) -->
+                <!-- Unregistered Vehicles Section -->
                 <div>
                     <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
                     <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
@@ -367,13 +366,13 @@
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
                     </h4>
                     
-                    <!-- Registered Section Editor First -->
+                    <!-- Registered Section Editor -->
                     <div class="space-y-2">
                         <h5 class="text-[11px] font-bold text-amber-500">Registered Rates</h5>
                         <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
-                    <!-- Unregistered Section Editor Second -->
+                    <!-- Unregistered Section Editor -->
                     <div class="space-y-2 pt-2 border-t border-[#282c37]/50">
                         <h5 class="text-[11px] font-bold text-indigo-400">Unregistered Rates</h5>
                         <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
@@ -512,7 +511,6 @@
                     const cleanRate = parseFloat(ratesArr[colIndex].replace('%', ''));
                     document.getElementById('annualRate').value = cleanRate;
                 } else {
-                    // Custom month input එකක් ටයිප් කළ විට හෝ Rate table එකේ නැති මාසයක් ලබා දුන් විට clear කරයි
                     document.getElementById('annualRate').value = '';
                 }
             }
@@ -1013,7 +1011,6 @@
                 return alert("Please enter Financed Amount, Annual Rate, Tenure and click Calculate.");
             }
 
-            // --- Mobile Back Button Handling ---
             window.history.pushState({ pdfShareActive: true }, "");
 
             const handlePopState = (e) => {
