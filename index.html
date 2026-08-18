@@ -1011,13 +1011,6 @@
                 return alert("Please enter Financed Amount, Annual Rate, Tenure and click Calculate.");
             }
 
-            window.history.pushState({ pdfShareActive: true }, "");
-
-            const handlePopState = (e) => {
-                window.removeEventListener('popstate', handlePopState);
-            };
-            window.addEventListener('popstate', handlePopState, { once: true });
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
@@ -1161,40 +1154,46 @@
                 s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
             ]);
 
-            doc.autoTable({
-                startY: startTableY + 34,
-                head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                theme: 'plain',
-                headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'center' },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold', textColor: [30, 41, 59] },
-                columnStyles: {
-                    0: { halign: 'center', cellWidth: 10 },
-                    1: { halign: 'center', cellWidth: 28 },
-                    2: { halign: 'right' },
-                    3: { halign: 'right' },
-                    4: { halign: 'right', fontStyle: 'bold' },
-                    5: { halign: 'right' }
-                },
-                didParseCell: function(data) {
-                    if (data.section === 'body') {
-                        const rowIdx = data.row.index;
-                        if (calculatedSchedule[rowIdx] && calculatedSchedule[rowIdx].isBalloon) {
-                            data.cell.styles.fillColor = [254, 243, 199];
-                            data.cell.styles.textColor = [180, 83, 9];
-                            data.cell.styles.fontStyle = 'bold';
+            // AutoTable Rendering Fix
+            const autoTableFn = doc.autoTable || (window.jspdfAutoTable ? window.jspdfAutoTable : null);
+            
+            if (autoTableFn) {
+                autoTableFn.call(doc, {
+                    startY: startTableY + 34,
+                    head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
+                    body: tableBody,
+                    theme: 'plain',
+                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                    bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold', textColor: [30, 41, 59] },
+                    columnStyles: {
+                        0: { halign: 'center', cellWidth: 10 },
+                        1: { halign: 'center', cellWidth: 28 },
+                        2: { halign: 'right' },
+                        3: { halign: 'right' },
+                        4: { halign: 'right', fontStyle: 'bold' },
+                        5: { halign: 'right' }
+                    },
+                    didParseCell: function(data) {
+                        if (data.section === 'body') {
+                            const rowIdx = data.row.index;
+                            if (calculatedSchedule[rowIdx] && calculatedSchedule[rowIdx].isBalloon) {
+                                data.cell.styles.fillColor = [254, 243, 199];
+                                data.cell.styles.textColor = [180, 83, 9];
+                                data.cell.styles.fontStyle = 'bold';
+                            }
                         }
+                    },
+                    alternateRowStyles: { fillColor: [250, 250, 250] },
+                    margin: { left: 12, right: 12 },
+                    didDrawPage: function (data) {
+                        doc.setFontSize(7);
+                        doc.setTextColor(148, 163, 184);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text("EMI Master Pro | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
+                        doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                     }
-                },
-                alternateRowStyles: { fillColor: [250, 250, 250] },
-                margin: { left: 12, right: 12 },
-                didDrawPage: function (data) {
-                    doc.setFontSize(7);
-                    doc.setTextColor(148, 163, 184);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text("EMI Master Pro | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
-                    doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
-                }
-            });
+                });
+            }
 
             const pdfBlob = doc.output('blob');
             const file = new File([pdfBlob], `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`, { type: 'application/pdf' });
@@ -1207,17 +1206,10 @@
                         text: `Lease Repayment Schedule (Prepared by ${officerName})`
                     });
                 } catch (err) {
-                    console.log('Share canceled', err);
-                } finally {
-                    if (window.history.state && window.history.state.pdfShareActive) {
-                        window.history.back();
-                    }
+                    console.log('Share action ended or dismissed', err);
                 }
             } else {
                 doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
-                if (window.history.state && window.history.state.pdfShareActive) {
-                    window.history.back();
-                }
             }
         }
     </script>
