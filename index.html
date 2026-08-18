@@ -160,8 +160,8 @@
                         <div>
                             <label class="text-[10px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Registration</label>
                             <select id="vehicleRegStatus" onchange="populateCategoryDropdown()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-brandPrimary">
-                                <option value="unregistered">Unregistered</option>
                                 <option value="registered">Registered</option>
+                                <option value="unregistered">Unregistered</option>
                             </select>
                         </div>
                         <div>
@@ -283,6 +283,27 @@
             </button>
 
             <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-6 shadow-sm">
+                <!-- Registered Vehicles Section (Placed First) -->
+                <div>
+                    <h2 class="text-xs font-extrabold text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
+                    <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">12 Months</th>
+                                    <th class="p-3">24 Months</th>
+                                    <th class="p-3">36 Months</th>
+                                    <th class="p-3">48 Months</th>
+                                    <th class="p-3">60 Months</th>
+                                </tr>
+                            </thead>
+                            <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Unregistered Vehicles Section (Placed Second) -->
                 <div>
                     <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider mb-3">Unregistered Vehicle Rates</h2>
                     <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
@@ -299,25 +320,6 @@
                                 </tr>
                             </thead>
                             <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-xs font-extrabold text-amber-600 uppercase tracking-wider mb-3">Registered Vehicle Rates</h2>
-                    <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Category</th>
-                                    <th class="p-3">12 Months</th>
-                                    <th class="p-3">24 Months</th>
-                                    <th class="p-3">36 Months</th>
-                                    <th class="p-3">48 Months</th>
-                                    <th class="p-3">60 Months</th>
-                                </tr>
-                            </thead>
-                            <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -361,14 +363,16 @@
                         <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
                     </h4>
                     
+                    <!-- Registered Section Editor First -->
                     <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-slate-300">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                        <h5 class="text-[11px] font-bold text-amber-500">Registered Rates</h5>
+                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
+                    <!-- Unregistered Section Editor Second -->
                     <div class="space-y-2 pt-2 border-t border-[#282c37]/50">
-                        <h5 class="text-[11px] font-bold text-slate-300">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                        <h5 class="text-[11px] font-bold text-indigo-400">Unregistered Rates</h5>
+                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
 
                     <button onclick="saveAdminSettings()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">
@@ -450,6 +454,14 @@
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
 
         let defaultRateData = {
+            registered: [
+                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
+                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
+                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
+                { category: "Machinery & Agriculture", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
+                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
+                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
+            ],
             unregistered: [
                 { category: "Cars, SUVs & Double Cabs", rates: ["13.50%", "13.50%", "14.00%", "14.50%", "15.00%", "16.00%"] },
                 { category: "Vans", rates: ["14.00%", "14.50%", "15.00%", "15.50%", "N/A", "N/A"] },
@@ -458,14 +470,6 @@
                 { category: "Heavy Machinery & Construction", rates: ["17.00%", "17.50%", "18.00%", "18.50%", "N/A", "N/A"] },
                 { category: "3 Wheelers", rates: ["22.25%", "23.25%", "24.25%", "25.25%", "N/A", "N/A"] },
                 { category: "Motor Cycles", rates: ["24.25%", "25.25%", "N/A", "N/A", "N/A"] }
-            ],
-            registered: [
-                { category: "Cars, SUVs & Double Cabs", rates: ["14.00%", "14.00%", "14.50%", "15.00%", "15.50%"] },
-                { category: "Vans", rates: ["14.50%", "15.00%", "15.50%", "16.00%", "N/A"] },
-                { category: "Small Trucks & Buses", rates: ["16.75%", "17.25%", "17.75%", "18.25%", "N/A"] },
-                { category: "Machinery & Agriculture", rates: ["18.00%", "18.50%", "19.00%", "19.50%", "N/A"] },
-                { category: "3 Wheelers", rates: ["22.75%", "23.75%", "24.75%", "25.75%", "N/A"] },
-                { category: "Motor Cycles", rates: ["24.75%", "25.75%", "N/A", "N/A", "N/A"] }
             ]
         };
 
@@ -902,20 +906,20 @@
             const unregTbody = document.getElementById('unregTable');
             const regTbody = document.getElementById('regTable');
 
-            if(unregTbody) {
-                unregTbody.innerHTML = rateData.unregistered.map(r => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
-                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-brandPrimary'}">${val}</td>`).join('')}
-                    </tr>
-                `).join('');
-            }
-
             if(regTbody) {
                 regTbody.innerHTML = rateData.registered.map(r => `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 font-bold text-slate-800">${r.category}</td>
                         ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-amber-600'}">${val}</td>`).join('')}
+                    </tr>
+                `).join('');
+            }
+
+            if(unregTbody) {
+                unregTbody.innerHTML = rateData.unregistered.map(r => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-bold text-slate-800">${r.category}</td>
+                        ${r.rates.map(val => `<td class="p-3 font-bold ${val === 'N/A' ? 'text-slate-300' : 'text-brandPrimary'}">${val}</td>`).join('')}
                     </tr>
                 `).join('');
             }
@@ -942,28 +946,28 @@
             const unregPeriods = ["12 M", "24 M", "36 M", "48 M", "60 M", "72 M"];
             const regPeriods = ["12 M", "24 M", "36 M", "48 M", "60 M"];
 
-            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
+            regContainer.innerHTML = rateData.registered.map((item, idx) => `
                 <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-goldAccent block">${item.category}</label>
-                    <div class="grid grid-cols-6 gap-1.5">
+                    <label class="text-[11px] font-bold text-amber-500 block">${item.category}</label>
+                    <div class="grid grid-cols-5 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
+                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
 
-            regContainer.innerHTML = rateData.registered.map((item, idx) => `
+            unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
                 <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-xl space-y-1.5">
-                    <label class="text-[11px] font-bold text-goldAccent block">${item.category}</label>
-                    <div class="grid grid-cols-5 gap-1.5">
+                    <label class="text-[11px] font-bold text-indigo-400 block">${item.category}</label>
+                    <div class="grid grid-cols-6 gap-1.5">
                         ${item.rates.map((r, col) => `
                             <div>
-                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
+                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
@@ -1140,18 +1144,21 @@
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
 
+            // PDF Table Rows Generation with Explicit Strings
             const tableBody = calculatedSchedule.map(s => [
-                s.month,
-                s.dueDate,
+                s.month.toString(),
+                s.dueDate.toString(),
                 s.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                 s.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                 s.totalDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                 s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
             ]);
 
+            // Correct AutoTable Call using explicit options
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
+                body: tableBody,
                 theme: 'plain',
                 headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold', textColor: [30, 41, 59] },
