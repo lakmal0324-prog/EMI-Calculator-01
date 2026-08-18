@@ -80,7 +80,7 @@
                     <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
 
-                <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) -->
+                <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) - PIN only (Numeric Keyboard) -->
                 <div id="ownerPasswordContainer" class="hidden space-y-1">
                     <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Login Password Required</label>
                     <input type="tel" inputmode="numeric" pattern="[0-9]*" id="ownerPinInput" placeholder="Enter PIN (e.g. 0000)" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
@@ -372,10 +372,10 @@
                 <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Admin Password Verification -->
+            <!-- Admin Password Verification - Changed to Normal Text Input for Letters/Passwords -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Admin Page Password Required</label>
-                <input type="tel" inputmode="numeric" pattern="[0-9]*" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="text" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
@@ -465,7 +465,7 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: Security & Passwords -->
+                <!-- TAB 3: Security & Passwords - Changed password update inputs to normal text for letters support -->
                 <div id="securityTab" class="hidden space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Login Password Change Option -->
@@ -476,9 +476,9 @@
                             
                             <div class="space-y-2 pt-1">
                                 <div class="space-y-2">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="newLoginPasswordInput" placeholder="New Login Password (e.g. 0000)" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
                                     <button onclick="changeLoginPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
                                 </div>
                             </div>
@@ -492,9 +492,9 @@
                             
                             <div class="space-y-2 pt-1">
                                 <div class="space-y-2">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
                                     <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
                                 </div>
                             </div>
@@ -764,7 +764,7 @@
             if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
                 const enteredPin = document.getElementById('ownerPinInput').value.trim();
                 if (enteredPin !== currentLoginPassword) {
-                    return alert("Incorrect Login Password! Please enter the correct password (e.g. 0000).");
+                    return alert("Incorrect Login Password! Please enter the correct password.");
                 }
 
                 const adminUserObj = {
