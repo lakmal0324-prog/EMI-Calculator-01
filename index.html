@@ -106,7 +106,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i> Admin number (0777353802) cannot be registered from here. Please use Login directly.
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-600 block mb-1">Auto Generated Username</label>
+                    <label class="text-xs font-bold text-slate-600 block mb-1">Auto Generated Username (Based on Name)</label>
                     <input type="text" id="setupUsername" readonly placeholder="System auto generated" class="w-full p-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl font-bold text-brandPrimary outline-none cursor-not-allowed">
                 </div>
                 <div class="flex gap-2" id="registerBtnContainer">
@@ -669,6 +669,7 @@
             passGroup.classList.remove('hidden');
         }
 
+        // නම් එක ටයිප් කරන විට එයින් Username එක ස්වයංක්‍රීයව සකස් වීම සහ Database එකේ පරීක්ෂා කිරීම
         function autoGenerateUsername() {
             const nameVal = document.getElementById('setupName').value.trim();
             const usernameInput = document.getElementById('setupUsername');
@@ -1765,8 +1766,7 @@
                         data.doc.setFontSize(7);
                         data.doc.setTextColor(148, 163, 184);
                         data.doc.setFont('helvetica', 'bold');
-                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
-                        data.doc.text(`Page ${data.doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
+                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' }, { align: 'right' });
                     }
                 });
             }
