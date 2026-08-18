@@ -532,8 +532,8 @@
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
         const OWNER_USERNAME = "admin";
-        let currentAdminPassword = "Lakmal@93"; // Updated default admin page password to Lakmal@93
-        let currentLoginPassword = "0000"; // Default login password for 0777353802
+        let currentAdminPassword = "Lakmal@93"; 
+        let currentLoginPassword = "0000"; 
 
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
@@ -984,22 +984,21 @@
         }
 
         function openAdminModal() {
-            document.getElementById('adminModal').classList.remove('hidden');
             const currentMobile = (localStorage.getItem('officerMobile') || "").replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            if (currentMobile === ownerKey) {
-                document.getElementById('adminAuth').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                renderRateEditor();
-                switchAdminTab('overviewTab');
-                startLiveUserLogsListener();
-                startLiveUnauthorizedAttemptsListener();
-            } else {
-                document.getElementById('adminAuth').classList.remove('hidden');
-                document.getElementById('adminContent').classList.add('hidden');
-                document.getElementById('adminPass').value = '';
+            if (currentMobile !== ownerKey) {
+                alert("Access Restricted: Only Admin (0777353802) can access the Admin Dashboard and Pending Approvals.");
+                return;
             }
+
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminAuth').classList.add('hidden');
+            document.getElementById('adminContent').classList.remove('hidden');
+            renderRateEditor();
+            switchAdminTab('overviewTab');
+            startLiveUserLogsListener();
+            startLiveUnauthorizedAttemptsListener();
         }
 
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
@@ -1657,7 +1656,6 @@
                 });
             }
 
-            // Append Last Rate Modification Details & Modifier Details Section at the end of the PDF
             if (lastRateMeta) {
                 doc.addPage();
                 doc.setFillColor(83, 69, 237);
