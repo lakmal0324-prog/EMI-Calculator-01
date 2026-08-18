@@ -479,6 +479,7 @@
         let rateData = defaultRateData;
 
         window.onload = function() {
+            populateCategoryDropdown();
             checkUserSession();
             listenToDatabaseUpdates();
             listenForPendingApprovalsBadge();
@@ -504,7 +505,7 @@
             const tenureIndexMap = { 12: 0, 24: 1, 36: 2, 48: 3, 60: 4, 72: 5 };
             const colIndex = tenureIndexMap[tenureMonths];
 
-            if (catIndex !== null && rateData[regStatus] && rateData[regStatus][catIndex]) {
+            if (catIndex !== null && catIndex !== undefined && rateData[regStatus] && rateData[regStatus][catIndex]) {
                 const ratesArr = rateData[regStatus][catIndex].rates;
                 
                 if (colIndex !== undefined && ratesArr[colIndex] && ratesArr[colIndex] !== 'N/A') {
@@ -843,7 +844,13 @@
                 }
             }
 
-            const regularEMI = (P - sumPvBalloons) / annuityFactorMinusBalloons;
+            // Standard EMI formula fallback if no non-balloon months exist or no balloons present
+            let regularEMI = 0;
+            if (Object.keys(balloonMap).length === 0) {
+                regularEMI = (P * r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
+            } else {
+                regularEMI = annuityFactorMinusBalloons > 0 ? (P - sumPvBalloons) / annuityFactorMinusBalloons : 0;
+            }
 
             let balance = P;
             calculatedSchedule = [];
@@ -907,7 +914,7 @@
             const unregTbody = document.getElementById('unregTable');
             const regTbody = document.getElementById('regTable');
 
-            if(regTbody) {
+            if(regTbody && rateData.registered) {
                 regTbody.innerHTML = rateData.registered.map(r => `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 font-bold text-slate-800">${r.category}</td>
@@ -916,7 +923,7 @@
                 `).join('');
             }
 
-            if(unregTbody) {
+            if(unregTbody && rateData.unregistered) {
                 unregTbody.innerHTML = rateData.unregistered.map(r => `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 font-bold text-slate-800">${r.category}</td>
@@ -1154,11 +1161,9 @@
                 s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
             ]);
 
-            // AutoTable Rendering Fix
-            const autoTableFn = doc.autoTable || (window.jspdfAutoTable ? window.jspdfAutoTable : null);
-            
-            if (autoTableFn) {
-                autoTableFn.call(doc, {
+            // AutoTable Safe Call
+            if (typeof doc.autoTable === 'function') {
+                doc.autoTable({
                     startY: startTableY + 34,
                     head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
                     body: tableBody,
