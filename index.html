@@ -82,8 +82,8 @@
                 
                 <!-- Password Field for 0777353802 -->
                 <div id="loginPasswordGroup" class="hidden">
-                    <label class="text-xs font-bold text-rose-600 block mb-1">Admin Password</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                    <label class="text-xs font-bold text-rose-600 block mb-1">Login Password (0000)</label>
+                    <input type="password" id="loginPasswordInput" placeholder="Enter password (0000)" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
                 <div class="flex gap-2">
@@ -120,8 +120,8 @@
             <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto text-2xl border border-rose-500/30 animate-bounce">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <h2 class="text-xl font-extrabold text-rose-500 tracking-wider">ADMIN INVALID ATTEMPT</h2>
-            <p class="text-xs text-slate-300">Unauthorized access attempt detected for Admin mobile number (0777353802) with incorrect password. This event has been recorded.</p>
+            <h2 class="text-xl font-extrabold text-rose-500 tracking-wider">LOGIN INVALID ATTEMPT</h2>
+            <p class="text-xs text-slate-300">Incorrect password entered for Admin mobile number (0777353802). This event has been recorded.</p>
             <button onclick="closeInvalidAttemptPage()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl transition text-xs shadow-lg">Back to Login</button>
         </div>
     </div>
@@ -622,9 +622,10 @@
         }
 
         function checkLoginPasswordRequirement(input) {
-            const val = input.value.trim();
+            const val = input.value.trim().replace(/[^0-9]/g, "");
             const passGroup = document.getElementById('loginPasswordGroup');
-            if (val === '0777353802') {
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+            if (val === ownerKey) {
                 passGroup.classList.remove('hidden');
             } else {
                 passGroup.classList.add('hidden');
@@ -637,11 +638,11 @@
             if (!mobile) return alert("Please enter your mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            if (userKey === '0777353802') {
+            if (userKey === ownerKey) {
                 const enteredPass = document.getElementById('loginPasswordInput').value.trim();
-                // Check if entered password is incorrect compared to currentAdminPassword
-                if (enteredPass !== currentAdminPassword) {
+                if (enteredPass !== "0000") {
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     db.ref('adminAttempts').push({
                         userName: "Admin Owner",
@@ -659,7 +660,7 @@
             db.ref('userLogs/' + userKey).once('value', (snap) => {
                 const u = snap.val();
                 if (u && u.name) {
-                    const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+                    const isOwner = (userKey === ownerKey);
                     if (u.status !== 'approved' && !isOwner) {
                         return alert(`Your account (${mobile}) has not been approved by the Admin yet. Please wait.`);
                     }
@@ -680,7 +681,7 @@
 
                     setupPresenceSystem(u.mobile, u.name);
                 } else {
-                    if (userKey === '0777353802') {
+                    if (userKey === ownerKey) {
                         const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                         db.ref('userLogs/' + userKey).set({
                             name: OWNER_NAME,
@@ -717,35 +718,45 @@
             if (!name || !mobile) return alert("Please enter both your full name and mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
-            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const isOwner = (userKey === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+            const isOwner = (userKey === ownerKey);
 
-            db.ref('userLogs/' + userKey).set({
-                name: name,
-                mobile: mobile,
-                status: isOwner ? 'approved' : 'pending',
-                loginCount: 1,
-                isOnline: false,
-                lastActive: nowStr,
-                lastLoggedIn: nowStr,
-                role: isOwner ? 'owner' : 'user'
-            }, (error) => {
-                if (!error) {
-                    if (isOwner) {
-                        localStorage.setItem('officerName', name);
-                        localStorage.setItem('officerMobile', mobile);
-                        document.getElementById('loginOverlay').classList.add('hidden');
-                        document.getElementById('officerNameDisplay').value = name;
-                        document.getElementById('officerMobileDisplay').value = mobile;
-
-                        setupPresenceSystem(mobile, name);
-                    } else {
-                        alert(`Registration successful! You can log in once your account (${mobile}) is approved by Admin.`);
-                        resetAuthView();
-                    }
-                } else {
-                    alert("Registration failed: " + error.message);
+            db.ref('userLogs/' + userKey).once('value', (snapshot) => {
+                const existingUser = snapshot.val();
+                if (existingUser && existingUser.name && !isOwner) {
+                    alert("This mobile number is already registered in the system.");
+                    return;
                 }
+
+                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                db.ref('userLogs/' + userKey).set({
+                    name: name,
+                    mobile: mobile,
+                    status: isOwner ? 'approved' : 'pending',
+                    loginCount: isOwner ? (existingUser ? existingUser.loginCount : 1) : 0,
+                    isOnline: false,
+                    lastActive: nowStr,
+                    lastLoggedIn: nowStr,
+                    role: isOwner ? 'owner' : 'user'
+                }, (error) => {
+                    if (!error) {
+                        if (isOwner) {
+                            localStorage.setItem('officerName', name);
+                            localStorage.setItem('officerMobile', mobile);
+                            document.getElementById('loginOverlay').classList.add('hidden');
+                            document.getElementById('officerNameDisplay').value = name;
+                            document.getElementById('officerMobileDisplay').value = mobile;
+
+                            setupPresenceSystem(mobile, name);
+                        } else {
+                            alert(`Registration successful! You can log in once your account (${mobile}) is approved by Admin.`);
+                            resetAuthView();
+                        }
+                    } else {
+                        alert("Registration failed: " + error.message);
+                    }
+                });
             });
         }
 
@@ -1533,11 +1544,11 @@
                     alternateRowStyles: { fillColor: [250, 250, 250] },
                     margin: { left: 12, right: 12 },
                     didDrawPage: function (data) {
-                        doc.setFontSize(7);
-                        doc.setTextColor(148, 163, 184);
-                        doc.setFont('helvetica', 'bold');
-                        doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
-                        doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
+                        data.doc.setFontSize(7);
+                        data.doc.setTextColor(148, 163, 184);
+                        data.doc.setFont('helvetica', 'bold');
+                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
+                        data.doc.text(`Page ${data.doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                     }
                 });
             }
