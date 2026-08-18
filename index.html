@@ -77,8 +77,15 @@
             <div id="loginFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Registered Mobile Number</label>
-                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="loginMobileInput" placeholder="e.g. 0771234567" oninput="checkLoginPasswordRequirement(this)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
+                
+                <!-- Password Field for 0777353802 -->
+                <div id="loginPasswordGroup" class="hidden">
+                    <label class="text-xs font-bold text-rose-600 block mb-1">Admin Password (0000)</label>
+                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                </div>
+
                 <div class="flex gap-2">
                     <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
                     <button onclick="performUserLogin()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Login Now</button>
@@ -104,6 +111,18 @@
             <div class="text-center pt-2 border-t border-slate-100">
                 <p class="text-[10px] text-slate-400 font-semibold">Created by <span class="text-brandPrimary font-bold">Lakmal Maduranga</span></p>
             </div>
+        </div>
+    </div>
+
+    <!-- Admin Invalid Attempt Modal Page (Hidden by default) -->
+    <div id="adminInvalidModal" class="hidden fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-rose-500/50 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto text-2xl border border-rose-500/30 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="text-xl font-extrabold text-rose-500 tracking-wider">ADMIN INVALID ATTEMPT</h2>
+            <p class="text-xs text-slate-300">Unauthorized access attempt detected for Admin mobile number (0777353802) with incorrect password. This event has been recorded.</p>
+            <button onclick="closeInvalidAttemptPage()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl transition text-xs shadow-lg">Back to Login</button>
         </div>
     </div>
 
@@ -550,6 +569,7 @@
             if (savedMobile) {
                 showLoginForm();
                 document.getElementById('loginMobileInput').value = savedMobile;
+                checkLoginPasswordRequirement(document.getElementById('loginMobileInput'));
             } else {
                 resetAuthView();
             }
@@ -576,7 +596,10 @@
             document.getElementById('registerFormView').classList.add('hidden');
             document.getElementById('loginFormView').classList.remove('hidden');
             const savedMobile = localStorage.getItem('officerMobile') || '';
-            if (savedMobile) document.getElementById('loginMobileInput').value = savedMobile;
+            if (savedMobile) {
+                document.getElementById('loginMobileInput').value = savedMobile;
+                checkLoginPasswordRequirement(document.getElementById('loginMobileInput'));
+            }
         }
 
         function showRegisterForm() {
@@ -589,6 +612,19 @@
             document.getElementById('authChoiceView').classList.remove('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.add('hidden');
+            document.getElementById('loginPasswordGroup').classList.add('hidden');
+            document.getElementById('loginPasswordInput').value = '';
+        }
+
+        function checkLoginPasswordRequirement(input) {
+            const val = input.value.trim();
+            const passGroup = document.getElementById('loginPasswordGroup');
+            if (val === '0777353802') {
+                passGroup.classList.remove('hidden');
+            } else {
+                passGroup.classList.add('hidden');
+                document.getElementById('loginPasswordInput').value = '';
+            }
         }
 
         function performUserLogin() {
@@ -596,6 +632,26 @@
             if (!mobile) return alert("Please enter your mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
+
+            // 0777353802 අංකය සඳහා පමණක් '0000' මුරපදය පරීක්ෂා කිරීම
+            if (userKey === '0777353802') {
+                const enteredPass = document.getElementById('loginPasswordInput').value.trim();
+                if (enteredPass !== '0000') {
+                    // වැරදි නම් Admin Invalid Attempt පිටුව පෙන්වීම සහ Database එකට રેકોર્ડ කිරීම
+                    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    db.ref('adminAttempts').push({
+                        userName: "Admin Owner",
+                        userMobile: mobile,
+                        attemptedPass: enteredPass || "(Blank)",
+                        time: nowStr
+                    });
+                    
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('adminInvalidModal').classList.remove('hidden');
+                    return;
+                }
+            }
+
             db.ref('userLogs/' + userKey).once('value', (snap) => {
                 const u = snap.val();
                 if (u && u.name) {
@@ -620,9 +676,35 @@
 
                     setupPresenceSystem(u.mobile, u.name);
                 } else {
-                    alert("No account found with this number. Please register as a new user.");
+                    if (userKey === '0777353802') {
+                        // ස්වයංක්‍රීයව Owner ගිණුම සකස් කර ඇතුල් වීම
+                        const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        db.ref('userLogs/' + userKey).set({
+                            name: OWNER_NAME,
+                            mobile: OWNER_MOBILE,
+                            status: 'approved',
+                            loginCount: 1,
+                            isOnline: true,
+                            lastActive: nowStr,
+                            lastLoggedIn: nowStr,
+                            role: 'owner'
+                        });
+                        localStorage.setItem('officerName', OWNER_NAME);
+                        localStorage.setItem('officerMobile', OWNER_MOBILE);
+                        document.getElementById('loginOverlay').classList.add('hidden');
+                        document.getElementById('officerNameDisplay').value = OWNER_NAME;
+                        document.getElementById('officerMobileDisplay').value = OWNER_MOBILE;
+                        setupPresenceSystem(OWNER_MOBILE, OWNER_NAME);
+                    } else {
+                        alert("No account found with this number. Please register as a new user.");
+                    }
                 }
             });
+        }
+
+        function closeInvalidAttemptPage() {
+            document.getElementById('adminInvalidModal').classList.add('hidden');
+            showAuthOverlay();
         }
 
         function submitUserRegistration() {
@@ -723,7 +805,6 @@
             });
         }
 
-        /* 0777353802 (Owner) සඳහා DIRECT ACCESS LOGIC */
         function openAdminModal() {
             const currentMobile = (localStorage.getItem('officerMobile') || '').replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
@@ -731,7 +812,6 @@
             document.getElementById('adminModal').classList.remove('hidden');
 
             if (currentMobile === ownerKey) {
-                // Direct Access for Owner
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
@@ -740,7 +820,6 @@
                 startLiveUserLogsListener();
                 startLiveUnauthorizedAttemptsListener();
             } else {
-                // Show Password view for other users
                 document.getElementById('adminAuth').classList.remove('hidden');
                 document.getElementById('adminContent').classList.add('hidden');
                 document.getElementById('adminPass').value = '';
@@ -775,7 +854,6 @@
                     ownerPassSection.classList.add('hidden');
                 }
             } else {
-                // Save Unauthorized Login Attempt Details to Database
                 const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 db.ref('adminAttempts').push({
                     userName: officerName,
