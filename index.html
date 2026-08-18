@@ -190,14 +190,8 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
-                                <select id="tenureMonths" onchange="autoFetchInterestRate()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
-                                    <option value="12">12 Months (1 Yr)</option>
-                                    <option value="24">24 Months (2 Yrs)</option>
-                                    <option value="36">36 Months (3 Yrs)</option>
-                                    <option value="48">48 Months (4 Yrs)</option>
-                                    <option value="60" selected>60 Months (5 Yrs)</option>
-                                    <option value="72">72 Months (6 Yrs)</option>
-                                </select>
+                                <!-- Editable Number Input for Months -->
+                                <input type="number" id="tenureMonths" value="60" min="1" max="360" oninput="autoFetchInterestRate()" placeholder="e.g. 60" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                             </div>
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Annual Rate (%)</label>
@@ -513,14 +507,13 @@
 
             if (catIndex !== null && rateData[regStatus] && rateData[regStatus][catIndex]) {
                 const ratesArr = rateData[regStatus][catIndex].rates;
-                const fetchedRateStr = ratesArr[colIndex] || 'N/A';
                 
-                if (fetchedRateStr !== 'N/A') {
-                    const cleanRate = parseFloat(fetchedRateStr.replace('%', ''));
+                if (colIndex !== undefined && ratesArr[colIndex] && ratesArr[colIndex] !== 'N/A') {
+                    const cleanRate = parseFloat(ratesArr[colIndex].replace('%', ''));
                     document.getElementById('annualRate').value = cleanRate;
                 } else {
+                    // Custom month input එකක් ටයිප් කළ විට හෝ Rate table එකේ නැති මාසයක් ලබා දුන් විට clear කරයි
                     document.getElementById('annualRate').value = '';
-                    alert('Selected tenure/category rate is not available (N/A). Please enter rate manually.');
                 }
             }
         }
@@ -1021,7 +1014,6 @@
             }
 
             // --- Mobile Back Button Handling ---
-            // Push temporary history state so pressing mobile back button cancels share overlay without leaving app
             window.history.pushState({ pdfShareActive: true }, "");
 
             const handlePopState = (e) => {
@@ -1175,7 +1167,6 @@
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
-                body: tableBody,
                 theme: 'plain',
                 headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'center' },
                 bodyStyles: { fontSize: 6.5, cellPadding: 1.2, fontStyle: 'bold', textColor: [30, 41, 59] },
@@ -1221,7 +1212,6 @@
                 } catch (err) {
                     console.log('Share canceled', err);
                 } finally {
-                    // Clean history state after sharing is closed/canceled
                     if (window.history.state && window.history.state.pdfShareActive) {
                         window.history.back();
                     }
