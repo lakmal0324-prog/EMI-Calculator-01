@@ -658,7 +658,6 @@
             let base = nameVal.toLowerCase().replace(/[^a-z0-9]/g, '');
             if (!base) base = "user";
             
-            // Ensure uniqueness against cached or firebase users
             db.ref('userLogs').once('value', (snap) => {
                 const users = snap.val() || {};
                 let finalUname = base;
@@ -803,13 +802,11 @@
             db.ref('userLogs').once('value', (snapshot) => {
                 const users = snapshot.val() || {};
                 
-                // Check if mobile already exists
                 if (users[userKey] && users[userKey].name) {
                     alert("This mobile number is already registered in the system.");
                     return;
                 }
 
-                // Check if username is already taken by someone else
                 let finalUsername = username;
                 let usernameTaken = false;
                 for (let k in users) {
@@ -1587,7 +1584,6 @@
                 const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                 const assignedUname = isTargetOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
 
-                // Mobile number excluded from PDF table rows for privacy
                 tableRows.push([
                     u.name + (isTargetOwner ? " (Owner)" : ""),
                     "@" + assignedUname,
