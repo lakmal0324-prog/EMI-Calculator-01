@@ -80,6 +80,12 @@
                     <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
 
+                <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) -->
+                <div id="ownerPasswordContainer" class="hidden space-y-1">
+                    <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Admin Password Required (0000)</label>
+                    <input type="password" id="ownerPinInput" placeholder="Enter 0000" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500" style="-webkit-text-security: disc; text-security: disc;">
+                </div>
+
                 <div class="flex gap-2">
                     <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
                     <button onclick="performUserLogin()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Login Now</button>
@@ -563,6 +569,23 @@
             listenForPendingApprovalsBadge();
             listenForAdminPassword();
             listenForLastRateMeta();
+            
+            // Listen to input changes in login field to dynamically show/hide 0000 password box
+            const loginInputElem = document.getElementById('loginMobileInput');
+            if(loginInputElem) {
+                loginInputElem.addEventListener('input', function() {
+                    const val = this.value.trim().toLowerCase();
+                    const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+                    const cleanVal = val.replace(/[^a-z0-9]/g, "");
+                    const ownerPassContainer = document.getElementById('ownerPasswordContainer');
+                    
+                    if (cleanVal === ownerKey || val === OWNER_USERNAME) {
+                        ownerPassContainer.classList.remove('hidden');
+                    } else {
+                        ownerPassContainer.classList.add('hidden');
+                    }
+                });
+            }
         };
 
         function populateCategoryDropdown() {
@@ -604,6 +627,10 @@
             if (savedMobile) {
                 showLoginForm();
                 document.getElementById('loginMobileInput').value = savedMobile;
+                const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+                if(savedMobile.replace(/[^0-9]/g, "") === ownerKey) {
+                    document.getElementById('ownerPasswordContainer').classList.remove('hidden');
+                }
             } else {
                 resetAuthView();
             }
@@ -633,6 +660,10 @@
             const savedMobile = localStorage.getItem('officerMobile') || '';
             if (savedMobile) {
                 document.getElementById('loginMobileInput').value = savedMobile;
+                const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+                if(savedMobile.replace(/[^0-9]/g, "") === ownerKey) {
+                    document.getElementById('ownerPasswordContainer').classList.remove('hidden');
+                }
             }
         }
 
@@ -651,6 +682,8 @@
             document.getElementById('authChoiceView').classList.remove('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.add('hidden');
+            document.getElementById('ownerPasswordContainer').classList.add('hidden');
+            document.getElementById('ownerPinInput').value = '';
         }
 
         function autoGenerateUsername() {
@@ -708,8 +741,13 @@
             const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            // Admin Direct Login
+            // Admin / App Owner Direct Login check with 0000 password requirement
             if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
+                const enteredPin = document.getElementById('ownerPinInput').value.trim();
+                if (enteredPin !== "0000") {
+                    return alert("Incorrect Password! Please enter '0000' for Admin access.");
+                }
+
                 const adminUserObj = {
                     name: OWNER_NAME,
                     username: OWNER_USERNAME,
