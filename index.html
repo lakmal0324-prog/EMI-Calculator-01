@@ -83,7 +83,7 @@
                 <!-- Password Field for Admin / Special Access -->
                 <div id="loginPasswordGroup" class="hidden">
                     <label class="text-xs font-bold text-rose-600 block mb-1">Password</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Enter password (e.g. 0000 or Admin Pass)" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500" style="-webkit-text-security: disc; text-security: disc;">
                 </div>
 
                 <div class="flex gap-2">
@@ -364,7 +364,7 @@
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password (e.g. 0000)" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
@@ -458,11 +458,29 @@
                 <div id="securityTab" class="hidden space-y-4">
                     <div id="ownerPasswordChangeSection" class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                         <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-key"></i> Security Settings: Change Admin Password
+                            <i class="fa-solid fa-key"></i> Security Settings: Change Passwords
                         </h4>
-                        <div class="flex gap-2">
-                            <input type="password" id="newAdminPasswordInput" placeholder="Enter new password (e.g. 0000)" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                            <button onclick="changeAdminPassword()" class="bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap">Update Password</button>
+                        
+                        <!-- Change Login Password -->
+                        <div class="space-y-2 pb-3 border-b border-[#282c37]">
+                            <label class="text-[11px] font-bold text-slate-300 block">Change Login Password (for 0777353802)</label>
+                            <div class="space-y-2">
+                                <input type="password" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <input type="password" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <input type="password" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <button onclick="changeLoginPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
+                            </div>
+                        </div>
+
+                        <!-- Change Admin Page Password -->
+                        <div class="space-y-2 pt-1">
+                            <label class="text-[11px] font-bold text-slate-300 block">Change Admin Page Password</label>
+                            <div class="space-y-2">
+                                <input type="password" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <input type="password" id="newAdminPasswordInput" placeholder="New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <input type="password" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                                <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
+                            </div>
                         </div>
                     </div>
 
@@ -503,7 +521,8 @@
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
         const OWNER_USERNAME = "admin";
-        let currentAdminPassword = "0000"; // Set default password to 0000 as requested
+        let currentAdminPassword = "Lakmal@933"; // Updated default admin page password
+        let currentLoginPassword = "0000"; // Default login password for 0777353802
 
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
@@ -550,6 +569,7 @@
             listenToDatabaseUpdates();
             listenForPendingApprovalsBadge();
             listenForAdminPassword();
+            listenForLoginPassword();
         };
 
         function populateCategoryDropdown() {
@@ -713,7 +733,7 @@
 
             if (userKey === ownerKey) {
                 const enteredPass = document.getElementById('loginPasswordInput').value.trim();
-                if (enteredPass !== currentAdminPassword) {
+                if (enteredPass !== currentLoginPassword) {
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     db.ref('adminAttempts').push({
                         userName: "Admin Owner",
@@ -899,6 +919,13 @@
             });
         }
 
+        function listenForLoginPassword() {
+            db.ref('adminSettings/loginPassword').on('value', (snap) => {
+                const val = snap.val();
+                if (val) currentLoginPassword = val;
+            });
+        }
+
         function listenForPendingApprovalsBadge() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -930,20 +957,18 @@
             const currentMobile = (localStorage.getItem('officerMobile') || '').replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            document.getElementById('adminModal').classList.remove('hidden');
-
-            if (currentMobile === ownerKey) {
-                document.getElementById('adminAuth').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                renderRateEditor();
-                switchAdminTab('overviewTab');
-                startLiveUserLogsListener();
-                startLiveUnauthorizedAttemptsListener();
-            } else {
-                document.getElementById('adminAuth').classList.remove('hidden');
-                document.getElementById('adminContent').classList.add('hidden');
-                document.getElementById('adminPass').value = '';
+            if (currentMobile !== ownerKey) {
+                alert("Access Denied: Only the admin (0777353802) can access the admin page.");
+                return;
             }
+
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminAuth').classList.add('hidden');
+            document.getElementById('adminContent').classList.remove('hidden');
+            renderRateEditor();
+            switchAdminTab('overviewTab');
+            startLiveUserLogsListener();
+            startLiveUnauthorizedAttemptsListener();
         }
 
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
@@ -994,17 +1019,64 @@
             }
         }
 
+        function changeLoginPassword() {
+            const currentPass = document.getElementById('currentLoginPasswordInput').value.trim();
+            const newPass = document.getElementById('newLoginPasswordInput').value.trim();
+            const confirmPass = document.getElementById('confirmLoginPasswordInput').value.trim();
+
+            if (!currentPass || !newPass || !confirmPass) {
+                return alert("Please fill in all login password fields.");
+            }
+            if (currentPass !== currentLoginPassword) {
+                return alert("Incorrect current login password.");
+            }
+            if (newPass !== confirmPass) {
+                return alert("New login passwords do not match.");
+            }
+            if (!confirm("Are you sure you want to change the login password?")) {
+                return;
+            }
+
+            db.ref('adminSettings/loginPassword').set(newPass, (error) => {
+                if (!error) {
+                    currentLoginPassword = newPass;
+                    alert("Login Password updated successfully!");
+                    document.getElementById('currentLoginPasswordInput').value = '';
+                    document.getElementById('newLoginPasswordInput').value = '';
+                    document.getElementById('confirmLoginPasswordInput').value = '';
+                } else {
+                    alert("Failed to update login password: " + error.message);
+                }
+            });
+        }
+
         function changeAdminPassword() {
+            const currentPass = document.getElementById('currentAdminPasswordInput').value.trim();
             const newPass = document.getElementById('newAdminPasswordInput').value.trim();
-            if (!newPass) return alert("Please enter a new password.");
+            const confirmPass = document.getElementById('confirmAdminPasswordInput').value.trim();
+
+            if (!currentPass || !newPass || !confirmPass) {
+                return alert("Please fill in all admin password fields.");
+            }
+            if (currentPass !== currentAdminPassword) {
+                return alert("Incorrect current admin password.");
+            }
+            if (newPass !== confirmPass) {
+                return alert("New admin passwords do not match.");
+            }
+            if (!confirm("Are you sure you want to change the admin password?")) {
+                return;
+            }
 
             db.ref('adminSettings/password').set(newPass, (error) => {
                 if (!error) {
                     currentAdminPassword = newPass;
                     alert("Admin Password updated successfully!");
+                    document.getElementById('currentAdminPasswordInput').value = '';
                     document.getElementById('newAdminPasswordInput').value = '';
+                    document.getElementById('confirmAdminPasswordInput').value = '';
                 } else {
-                    alert("Failed to update password: " + error.message);
+                    alert("Failed to update admin password: " + error.message);
                 }
             });
         }
