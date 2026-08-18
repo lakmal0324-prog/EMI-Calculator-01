@@ -338,6 +338,17 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Last Rate Modified Details Footer Display -->
+                <div id="lastRateModifiedInfo" class="bg-indigo-50/60 border border-indigo-100 p-3.5 rounded-2xl text-xs text-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <span class="font-bold text-brandPrimary"><i class="fa-solid fa-clock-rotate-left"></i> Last Rate Modification:</span>
+                        <span id="lastModifiedDetailsText" class="font-semibold text-slate-700 ml-1">No modifications recorded yet.</span>
+                    </div>
+                    <div id="lastModifiedByText" class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
+                        Modified by: None
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -521,7 +532,7 @@
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
         const OWNER_USERNAME = "admin";
-        let currentAdminPassword = "Lakmal@933"; // Updated default admin page password
+        let currentAdminPassword = "Lakmal@93"; // Updated default admin page password to Lakmal@93
         let currentLoginPassword = "0000"; // Default login password for 0777353802
 
         const firebaseConfig = {
@@ -540,6 +551,7 @@
         let calculatedSchedule = [];
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
         let cachedUserData = null; 
+        let lastRateMeta = null;
 
         let defaultRateData = {
             registered: [
@@ -570,6 +582,7 @@
             listenForPendingApprovalsBadge();
             listenForAdminPassword();
             listenForLoginPassword();
+            listenForLastRateMeta();
         };
 
         function populateCategoryDropdown() {
@@ -926,6 +939,23 @@
             });
         }
 
+        function listenForLastRateMeta() {
+            db.ref('rateMetadata').on('value', (snap) => {
+                const data = snap.val();
+                lastRateMeta = data;
+                const detailsText = document.getElementById('lastModifiedDetailsText');
+                const byText = document.getElementById('lastModifiedByText');
+
+                if (data && detailsText && byText) {
+                    detailsText.innerText = `${data.categoryName} (${data.tenureLabel} - New Rate: ${data.newRateValue})`;
+                    byText.innerText = `Modified by: ${data.userName} (${data.userMobile}) at ${data.time}`;
+                } else if (detailsText && byText) {
+                    detailsText.innerText = "No modifications recorded yet.";
+                    byText.innerText = "Modified by: None";
+                }
+            });
+        }
+
         function listenForPendingApprovalsBadge() {
             db.ref('userLogs').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -954,21 +984,22 @@
         }
 
         function openAdminModal() {
-            const currentMobile = (localStorage.getItem('officerMobile') || '').replace(/[^0-9]/g, "");
+            document.getElementById('adminModal').classList.remove('hidden');
+            const currentMobile = (localStorage.getItem('officerMobile') || "").replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            if (currentMobile !== ownerKey) {
-                alert("Access Denied: Only the admin (0777353802) can access the admin page.");
-                return;
+            if (currentMobile === ownerKey) {
+                document.getElementById('adminAuth').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                renderRateEditor();
+                switchAdminTab('overviewTab');
+                startLiveUserLogsListener();
+                startLiveUnauthorizedAttemptsListener();
+            } else {
+                document.getElementById('adminAuth').classList.remove('hidden');
+                document.getElementById('adminContent').classList.add('hidden');
+                document.getElementById('adminPass').value = '';
             }
-
-            document.getElementById('adminModal').classList.remove('hidden');
-            document.getElementById('adminAuth').classList.add('hidden');
-            document.getElementById('adminContent').classList.remove('hidden');
-            renderRateEditor();
-            switchAdminTab('overviewTab');
-            startLiveUserLogsListener();
-            startLiveUnauthorizedAttemptsListener();
         }
 
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
@@ -1386,6 +1417,10 @@
         }
 
         function saveAdminSettings() {
+            let lastModifiedMetaInfo = null;
+            const regPeriods = ["12 Months", "24 Months", "36 Months", "48 Months", "60 Months"];
+            const unregPeriods = ["12 Months", "24 Months", "36 Months", "48 Months", "60 Months", "72 Months"];
+
             document.querySelectorAll('.rate-edit-input').forEach(input => {
                 const type = input.dataset.type;
                 const catIdx = input.dataset.cat;
@@ -1398,6 +1433,24 @@
                     }
                 }
 
+                const oldVal = rateData[type][catIdx].rates[colIdx];
+                if (oldVal !== rawValue) {
+                    const catName = rateData[type][catIdx].category;
+                    const periodLabel = (type === 'registered') ? regPeriods[colIdx] : unregPeriods[colIdx];
+                    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    const officerName = localStorage.getItem('officerName') || "Authorized Officer";
+                    const officerMobile = localStorage.getItem('officerMobile') || "N/A";
+
+                    lastModifiedMetaInfo = {
+                        categoryName: `${type.toUpperCase()} - ${catName}`,
+                        tenureLabel: periodLabel,
+                        newRateValue: rawValue,
+                        userName: officerName,
+                        userMobile: officerMobile,
+                        time: nowStr
+                    };
+                }
+
                 rateData[type][catIdx].rates[colIdx] = rawValue;
             });
 
@@ -1405,6 +1458,9 @@
                 if (error) {
                     alert("Error publishing updates: " + error.message);
                 } else {
+                    if (lastModifiedMetaInfo) {
+                        db.ref('rateMetadata').set(lastModifiedMetaInfo);
+                    }
                     closeAdminModal();
                     alert("Rate changes published globally!");
                 }
@@ -1599,6 +1655,41 @@
                         doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                     }
                 });
+            }
+
+            // Append Last Rate Modification Details & Modifier Details Section at the end of the PDF
+            if (lastRateMeta) {
+                doc.addPage();
+                doc.setFillColor(83, 69, 237);
+                doc.rect(0, 0, 210, 20, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text("LATEST RATE MODIFICATION AUDIT LOG", 12, 13);
+
+                doc.setFillColor(243, 245, 249);
+                doc.roundedRect(12, 28, 186, 35, 3, 3, 'F');
+
+                doc.setTextColor(100, 116, 139);
+                doc.setFontSize(8);
+                doc.text("MODIFIED CATEGORY & PERIOD:", 16, 36);
+                doc.setTextColor(30, 41, 59);
+                doc.setFontSize(10);
+                doc.text(`${lastRateMeta.categoryName} (${lastRateMeta.tenureLabel})`, 16, 42);
+
+                doc.setTextColor(100, 116, 139);
+                doc.setFontSize(8);
+                doc.text("NEW UPDATED RATE:", 110, 36);
+                doc.setTextColor(217, 119, 6);
+                doc.setFontSize(10);
+                doc.text(lastRateMeta.newRateValue, 110, 42);
+
+                doc.setTextColor(100, 116, 139);
+                doc.setFontSize(8);
+                doc.text("LAST MODIFIED BY USER DETAILS:", 16, 52);
+                doc.setTextColor(30, 41, 59);
+                doc.setFontSize(9);
+                doc.text(`${lastRateMeta.userName} | Mobile: ${lastRateMeta.userMobile} | Time: ${lastRateMeta.time}`, 16, 58);
             }
 
             const fileName = `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`;
