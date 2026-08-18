@@ -338,17 +338,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Last Rate Modified Details Footer Display -->
-                <div id="lastRateModifiedInfo" class="bg-indigo-50/60 border border-indigo-100 p-3.5 rounded-2xl text-xs text-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <div>
-                        <span class="font-bold text-brandPrimary"><i class="fa-solid fa-clock-rotate-left"></i> Last Rate Modification:</span>
-                        <span id="lastModifiedDetailsText" class="font-semibold text-slate-700 ml-1">No modifications recorded yet.</span>
-                    </div>
-                    <div id="lastModifiedByText" class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
-                        Modified by: None
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -372,7 +361,7 @@
                 <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Admin Password Verification - Changed to Normal Text Input for Letters/Passwords -->
+            <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Admin Page Password Required</label>
                 <input type="text" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
@@ -465,8 +454,30 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: Security & Passwords - Changed password update inputs to normal text for letters support -->
+                <!-- TAB 3: Security & Passwords - Last Rate Modification Moved Here with PDF Share Option -->
                 <div id="securityTab" class="hidden space-y-4">
+                    
+                    <!-- Last Rate Modification Display Box inside Security & Passwords Tab -->
+                    <div class="p-4 bg-[#0b0c0e] border border-goldAccent/30 rounded-2xl space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Last Rate Modification Info
+                            </h4>
+                            <button onclick="shareLastRateModificationPDF()" class="bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition">
+                                <i class="fa-solid fa-file-pdf"></i> Share Modification PDF
+                            </button>
+                        </div>
+                        <div id="lastRateModifiedInfo" class="text-xs text-slate-300 space-y-1 bg-[#121418] p-3 rounded-xl border border-[#282c37]">
+                            <div>
+                                <span class="font-bold text-goldAccent">Details:</span>
+                                <span id="lastModifiedDetailsText" class="font-semibold text-slate-200 ml-1">No modifications recorded yet.</span>
+                            </div>
+                            <div id="lastModifiedByText" class="text-[11px] font-bold text-amber-400 pt-1">
+                                Modified by: None
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Login Password Change Option -->
                         <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
@@ -589,7 +600,6 @@
             listenForPasswords();
             listenForLastRateMeta();
             
-            // Listen to input changes in login field to dynamically show/hide password box
             const loginInputElem = document.getElementById('loginMobileInput');
             if(loginInputElem) {
                 loginInputElem.addEventListener('input', function() {
@@ -760,7 +770,6 @@
             const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            // Admin / App Owner Direct Login check with independent login password requirement
             if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
                 const enteredPin = document.getElementById('ownerPinInput').value.trim();
                 if (enteredPin !== currentLoginPassword) {
@@ -1465,6 +1474,89 @@
             });
         }
 
+        async function shareLastRateModificationPDF() {
+            if (!lastRateMeta) {
+                return alert("No rate modification history available to export.");
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            doc.setFillColor(83, 69, 237);
+            doc.rect(0, 0, 210, 28, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text("EMI Master Pro", 12, 12);
+
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(224, 231, 255);
+            doc.text("ADMIN SECURITY & AUDIT REPORT", 12, 17);
+
+            doc.setFontSize(7.5);
+            doc.setTextColor(255, 255, 255);
+            doc.text("LATEST RATE MODIFICATION DETAILS", 12, 22);
+
+            const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).toUpperCase();
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(8);
+            doc.text(`Generated: ${nowStr}`, 198, 15, { align: 'right' });
+
+            doc.setFillColor(243, 245, 249);
+            doc.roundedRect(12, 34, 186, 45, 3, 3, 'F');
+
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text("MODIFIED CATEGORY & PERIOD:", 16, 42);
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(10);
+            doc.text(`${lastRateMeta.categoryName} (${lastRateMeta.tenureLabel})`, 16, 48);
+
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.text("NEW UPDATED RATE:", 110, 42);
+            doc.setTextColor(217, 119, 6);
+            doc.setFontSize(10);
+            doc.text(lastRateMeta.newRateValue, 110, 48);
+
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.text("MODIFIED BY OFFICER:", 16, 58);
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(9);
+            doc.text(`${lastRateMeta.userName} (Mobile: ${lastRateMeta.userMobile})`, 16, 64);
+
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.text("MODIFICATION TIME:", 110, 58);
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(9);
+            doc.text(lastRateMeta.time, 110, 64);
+
+            const fileName = `Rate_Modification_Audit.pdf`;
+            const pdfBlob = doc.output('blob');
+            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Rate Modification Audit',
+                        text: `Latest Rate Modification Record`
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        doc.save(fileName);
+                    }
+                }
+            } else {
+                doc.save(fileName);
+            }
+        }
+
         async function sharePDFDirectly() {
             if (calculatedSchedule.length === 0) {
                 calculateMultiBalloonSchedule();
@@ -1653,40 +1745,6 @@
                         doc.text(`Page ${doc.internal.getNumberOfPages()}`, 198, 290, { align: 'right' });
                     }
                 });
-            }
-
-            if (lastRateMeta) {
-                doc.addPage();
-                doc.setFillColor(83, 69, 237);
-                doc.rect(0, 0, 210, 20, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text("LATEST RATE MODIFICATION AUDIT LOG", 12, 13);
-
-                doc.setFillColor(243, 245, 249);
-                doc.roundedRect(12, 28, 186, 35, 3, 3, 'F');
-
-                doc.setTextColor(100, 116, 139);
-                doc.setFontSize(8);
-                doc.text("MODIFIED CATEGORY & PERIOD:", 16, 36);
-                doc.setTextColor(30, 41, 59);
-                doc.setFontSize(10);
-                doc.text(`${lastRateMeta.categoryName} (${lastRateMeta.tenureLabel})`, 16, 42);
-
-                doc.setTextColor(100, 116, 139);
-                doc.setFontSize(8);
-                doc.text("NEW UPDATED RATE:", 110, 36);
-                doc.setTextColor(217, 119, 6);
-                doc.setFontSize(10);
-                doc.text(lastRateMeta.newRateValue, 110, 42);
-
-                doc.setTextColor(100, 116, 139);
-                doc.setFontSize(8);
-                doc.text("LAST MODIFIED BY USER DETAILS:", 16, 52);
-                doc.setTextColor(30, 41, 59);
-                doc.setFontSize(9);
-                doc.text(`${lastRateMeta.userName} | Mobile: ${lastRateMeta.userMobile} | Time: ${lastRateMeta.time}`, 16, 58);
             }
 
             const fileName = `Lease_Schedule_Rs_${summaryMetrics.P}.pdf`;
