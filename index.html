@@ -96,15 +96,22 @@
             <div id="registerFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Your Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" oninput="autoGenerateUsername()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Mobile Number</label>
-                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="setupMobile" placeholder="e.g. 0771234567" oninput="checkRegisterMobile(this)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
-                <div class="flex gap-2">
+                <div id="registerAdminNotice" class="hidden text-[11px] text-rose-600 font-bold bg-rose-50 p-2 rounded-xl border border-rose-100">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Admin number (0777353802) cannot be registered from here. Please use Login directly.
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600 block mb-1">Auto Generated Username</label>
+                    <input type="text" id="setupUsername" readonly placeholder="System auto generated" class="w-full p-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl font-bold text-brandPrimary outline-none cursor-not-allowed">
+                </div>
+                <div class="flex gap-2" id="registerBtnContainer">
                     <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
-                    <button onclick="submitUserRegistration()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Register & Request</button>
+                    <button id="submitRegBtn" onclick="submitUserRegistration()" class="w-2/3 bg-brandPrimary hover:bg-brandPrimaryDark text-white font-bold py-2.5 rounded-2xl transition text-xs shadow-md">Register & Request</button>
                 </div>
             </div>
             
@@ -175,7 +182,7 @@
                 
                 <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-5 space-y-4 shadow-sm">
                     <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders"></i> Facility Overview
+                        <i class="fa-solid fa-sliders"></i> Facility Overview <span id="facilityUsernameBadge" class="ml-auto text-[10px] bg-indigo-50 text-brandPrimary px-2 py-0.5 rounded-lg border border-indigo-100 font-bold"></span>
                     </h2>
 
                     <div class="grid grid-cols-2 gap-3 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/60">
@@ -414,7 +421,7 @@
                                 <thead class="bg-[#1a1d24] text-rose-300 sticky top-0 font-bold border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-2">User Name</th>
-                                        <th class="p-2">Mobile Number</th>
+                                        <th class="p-2">Username</th>
                                         <th class="p-2">Attempted Password</th>
                                         <th class="p-2 text-right">Time</th>
                                     </tr>
@@ -461,6 +468,7 @@
                                 <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                     <tr>
                                         <th class="p-2.5">Name</th>
+                                        <th class="p-2.5">Username</th>
                                         <th class="p-2.5">Mobile</th>
                                         <th class="p-2.5 text-center">Status</th>
                                         <th class="p-2.5 text-center">Last Login</th>
@@ -486,6 +494,7 @@
     <script>
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
+        const OWNER_USERNAME = "admin";
         let currentAdminPassword = "Lakmal@93"; // Default Admin Password
 
         const firebaseConfig = {
@@ -588,6 +597,7 @@
             }
             localStorage.removeItem('officerName');
             localStorage.removeItem('officerMobile');
+            localStorage.removeItem('officerUsername');
             showAuthOverlay();
         }
 
@@ -611,6 +621,11 @@
             document.getElementById('authChoiceView').classList.add('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.remove('hidden');
+            document.getElementById('setupName').value = '';
+            document.getElementById('setupMobile').value = '';
+            document.getElementById('setupUsername').value = '';
+            document.getElementById('registerAdminNotice').classList.add('hidden');
+            document.getElementById('registerBtnContainer').classList.remove('hidden');
         }
 
         function resetAuthView() {
@@ -633,6 +648,34 @@
             }
         }
 
+        function autoGenerateUsername() {
+            const nameVal = document.getElementById('setupName').value.trim();
+            const usernameInput = document.getElementById('setupUsername');
+            if (!nameVal) {
+                usernameInput.value = '';
+                return;
+            }
+            // Generate clean username: lowercase, remove spaces/special chars
+            let base = nameVal.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (!base) base = "user";
+            usernameInput.value = base;
+        }
+
+        function checkRegisterMobile(input) {
+            const val = input.value.trim().replace(/[^0-9]/g, "");
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+            const notice = document.getElementById('registerAdminNotice');
+            const btnContainer = document.getElementById('registerBtnContainer');
+
+            if (val === ownerKey) {
+                notice.classList.remove('hidden');
+                btnContainer.classList.add('hidden');
+            } else {
+                notice.classList.add('hidden');
+                btnContainer.classList.remove('hidden');
+            }
+        }
+
         function performUserLogin() {
             const mobile = document.getElementById('loginMobileInput').value.trim();
             if (!mobile) return alert("Please enter your mobile number.");
@@ -646,6 +689,7 @@
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     db.ref('adminAttempts').push({
                         userName: "Admin Owner",
+                        userUsername: OWNER_USERNAME,
                         userMobile: mobile,
                         attemptedPass: enteredPass || "(Blank)",
                         time: nowStr
@@ -666,18 +710,24 @@
                     }
 
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    const assignedUsername = isOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                    
                     db.ref('userLogs/' + userKey).update({
                         loginCount: (u.loginCount || 0) + 1,
                         isOnline: true,
                         lastActive: nowStr,
-                        lastLoggedIn: nowStr
+                        lastLoggedIn: nowStr,
+                        username: assignedUsername
                     });
 
                     localStorage.setItem('officerName', u.name);
                     localStorage.setItem('officerMobile', u.mobile);
+                    localStorage.setItem('officerUsername', assignedUsername);
+
                     document.getElementById('loginOverlay').classList.add('hidden');
                     document.getElementById('officerNameDisplay').value = u.name;
                     document.getElementById('officerMobileDisplay').value = u.mobile;
+                    document.getElementById('facilityUsernameBadge').innerText = "@" + assignedUsername;
 
                     setupPresenceSystem(u.mobile, u.name);
                 } else {
@@ -685,6 +735,7 @@
                         const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                         db.ref('userLogs/' + userKey).set({
                             name: OWNER_NAME,
+                            username: OWNER_USERNAME,
                             mobile: OWNER_MOBILE,
                             status: 'approved',
                             loginCount: 1,
@@ -695,9 +746,13 @@
                         });
                         localStorage.setItem('officerName', OWNER_NAME);
                         localStorage.setItem('officerMobile', OWNER_MOBILE);
+                        localStorage.setItem('officerUsername', OWNER_USERNAME);
+
                         document.getElementById('loginOverlay').classList.add('hidden');
                         document.getElementById('officerNameDisplay').value = OWNER_NAME;
                         document.getElementById('officerMobileDisplay').value = OWNER_MOBILE;
+                        document.getElementById('facilityUsernameBadge').innerText = "@" + OWNER_USERNAME;
+
                         setupPresenceSystem(OWNER_MOBILE, OWNER_NAME);
                     } else {
                         alert("No account found with this number. Please register as a new user.");
@@ -714,16 +769,19 @@
         function submitUserRegistration() {
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
+            const username = document.getElementById('setupUsername').value.trim();
 
             if (!name || !mobile) return alert("Please enter both your full name and mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
-            const isOwner = (userKey === ownerKey);
+            if (userKey === ownerKey) {
+                return alert("Admin number (0777353802) cannot be registered from here!");
+            }
 
             db.ref('userLogs/' + userKey).once('value', (snapshot) => {
                 const existingUser = snapshot.val();
-                if (existingUser && existingUser.name && !isOwner) {
+                if (existingUser && existingUser.name) {
                     alert("This mobile number is already registered in the system.");
                     return;
                 }
@@ -732,27 +790,18 @@
 
                 db.ref('userLogs/' + userKey).set({
                     name: name,
+                    username: username || name.toLowerCase().replace(/[^a-z0-9]/g, ''),
                     mobile: mobile,
-                    status: isOwner ? 'approved' : 'pending',
-                    loginCount: isOwner ? (existingUser ? existingUser.loginCount : 1) : 0,
+                    status: 'pending',
+                    loginCount: 0,
                     isOnline: false,
                     lastActive: nowStr,
                     lastLoggedIn: nowStr,
-                    role: isOwner ? 'owner' : 'user'
+                    role: 'user'
                 }, (error) => {
                     if (!error) {
-                        if (isOwner) {
-                            localStorage.setItem('officerName', name);
-                            localStorage.setItem('officerMobile', mobile);
-                            document.getElementById('loginOverlay').classList.add('hidden');
-                            document.getElementById('officerNameDisplay').value = name;
-                            document.getElementById('officerMobileDisplay').value = mobile;
-
-                            setupPresenceSystem(mobile, name);
-                        } else {
-                            alert(`Registration successful! You can log in once your account (${mobile}) is approved by Admin.`);
-                            resetAuthView();
-                        }
+                        alert(`Registration successful! You can log in once your account (${mobile}) is approved by Admin.`);
+                        resetAuthView();
                     } else {
                         alert("Registration failed: " + error.message);
                     }
@@ -846,6 +895,7 @@
             const enteredPass = document.getElementById('adminPass').value.trim();
             const officerName = localStorage.getItem('officerName') || "Unknown User";
             const officerMobile = localStorage.getItem('officerMobile') || "Unknown Mobile";
+            const officerUsername = localStorage.getItem('officerUsername'] || "user";
 
             if (enteredPass === currentAdminPassword) {
                 document.getElementById('adminAuth').classList.add('hidden');
@@ -871,6 +921,7 @@
                 const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 db.ref('adminAttempts').push({
                     userName: officerName,
+                    userUsername: officerUsername,
                     userMobile: officerMobile,
                     attemptedPass: enteredPass,
                     time: nowStr
@@ -911,7 +962,7 @@
                     html += `
                         <tr class="hover:bg-rose-950/20">
                             <td class="p-2 font-bold text-slate-200">${item.userName}</td>
-                            <td class="p-2 text-slate-400 font-mono">${item.userMobile}</td>
+                            <td class="p-2 text-indigo-400 font-mono">@${item.userUsername || 'user'}</td>
                             <td class="p-2 font-mono text-amber-400 font-bold">${item.attemptedPass}</td>
                             <td class="p-2 text-right text-slate-400 font-mono text-[10px]">${item.time}</td>
                         </tr>
@@ -939,7 +990,7 @@
                 if (!tbody) return;
 
                 if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-500 font-bold">No registered users yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-slate-500 font-bold">No registered users yet.</td></tr>`;
                     document.getElementById('statTotalLogins').innerText = '0';
                     document.getElementById('statTotalUsers').innerText = '0';
                     document.getElementById('statActiveNow').innerText = '0';
@@ -963,6 +1014,8 @@
                     if (u.isOnline === true) activeNow++;
 
                     const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+                    const assignedUname = isTargetOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                    
                     const statusText = u.status === 'approved' 
                         ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Approved</span>`
                         : `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Pending</span>`;
@@ -975,6 +1028,7 @@
                                 ${u.name}
                                 ${isTargetOwner ? '<span class="text-[8px] bg-goldAccent/20 text-goldAccent border border-goldAccent/30 px-1 py-0.2 rounded font-bold uppercase">Owner</span>' : ''}
                             </td>
+                            <td class="p-2.5 text-indigo-400 font-mono font-bold">@${assignedUname}</td>
                             <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile}</td>
                             <td class="p-2.5 text-center">${statusText}</td>
                             <td class="p-2.5 text-center text-[10px] text-slate-300 font-mono font-bold">${lastLogTime}</td>
@@ -1234,7 +1288,7 @@
             const doc = new jsPDF('p', 'mm', 'a4');
 
             const officerName = localStorage.getItem('officerName') || "Authorized Officer";
-            const officerMobile = localStorage.getItem('officerMobile') || "N/A";
+            const officerUsername = localStorage.getItem('officerUsername') || "user";
 
             const canvas = document.getElementById('pdfChartCanvas');
             const ctx = canvas.getContext('2d');
@@ -1362,7 +1416,7 @@
             doc.setTextColor(83, 69, 237);
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
-            doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
+            doc.text(`Username: @${officerUsername}`, 120, startTableY + 21);
 
             const tableBody = calculatedSchedule.map(s => [
                 s.month.toString(),
@@ -1477,8 +1531,12 @@
                 if (u.status === 'pending') pendingCount++;
                 if (u.isOnline === true) activeNow++;
 
+                const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+                const assignedUname = isTargetOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+
                 tableRows.push([
-                    u.name + (key === OWNER_MOBILE.replace(/[^0-9]/g, "") ? " (Owner)" : ""),
+                    u.name + (isTargetOwner ? " (Owner)" : ""),
+                    "@" + assignedUname,
                     u.mobile,
                     (u.status || 'pending').toUpperCase(),
                     u.lastLoggedIn || u.lastActive || "N/A",
@@ -1529,17 +1587,18 @@
             if (typeof doc.autoTable === 'function') {
                 doc.autoTable({
                     startY: 56,
-                    head: [['Name', 'Mobile', 'Status', 'Last Login', 'Usage Count']],
+                    head: [['Name', 'Username', 'Mobile', 'Status', 'Last Login', 'Usage Count']],
                     body: tableRows,
                     theme: 'plain',
-                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7.5, halign: 'left' },
+                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'left' },
                     bodyStyles: { fontSize: 7, cellPadding: 2, fontStyle: 'bold', textColor: [30, 41, 59] },
                     columnStyles: {
-                        0: { halign: 'left', cellWidth: 50 },
+                        0: { halign: 'left', cellWidth: 45 },
                         1: { halign: 'left', cellWidth: 35 },
-                        2: { halign: 'center', cellWidth: 30 },
-                        3: { halign: 'center', cellWidth: 40 },
-                        4: { halign: 'center', cellWidth: 31 }
+                        2: { halign: 'left', cellWidth: 30 },
+                        3: { halign: 'center', cellWidth: 25 },
+                        4: { halign: 'center', cellWidth: 35 },
+                        5: { halign: 'center', cellWidth: 30 }
                     },
                     alternateRowStyles: { fillColor: [250, 250, 250] },
                     margin: { left: 12, right: 12 },
