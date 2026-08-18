@@ -13,7 +13,7 @@
     <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- Firebase App & Database (Fixed CDNs) -->
+    <!-- Firebase App & Database -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -80,10 +80,10 @@
                     <input type="tel" inputmode="numeric" pattern="[0-9]*" id="loginMobileInput" placeholder="e.g. 0771234567" oninput="checkLoginPasswordRequirement(this)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 
-                <!-- Password Field for 0777353802 -->
+                <!-- Password Field for Admin / Special Access -->
                 <div id="loginPasswordGroup" class="hidden">
                     <label class="text-xs font-bold text-rose-600 block mb-1">Password</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                    <input type="password" id="loginPasswordInput" placeholder="Enter password (e.g. 0000 or Admin Pass)" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
                 <div class="flex gap-2">
@@ -128,7 +128,7 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h2 class="text-xl font-extrabold text-rose-500 tracking-wider">LOGIN INVALID ATTEMPT</h2>
-            <p class="text-xs text-slate-300">Incorrect password entered for Admin mobile number (0777353802). This event has been recorded.</p>
+            <p class="text-xs text-slate-300">Incorrect password entered for Admin mobile number. This event has been recorded.</p>
             <button onclick="closeInvalidAttemptPage()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl transition text-xs shadow-lg">Back to Login</button>
         </div>
     </div>
@@ -364,106 +364,55 @@
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="password" id="adminPass" placeholder="Password (e.g. 0000)" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
             <!-- Admin Dashboard Content -->
-            <div id="adminContent" class="hidden space-y-6">
+            <div id="adminContent" class="hidden space-y-4">
                 
-                <!-- Password Change Section (Owner Only) -->
-                <div id="ownerPasswordChangeSection" class="hidden p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
-                    <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-key"></i> Security Settings: Change Admin Password
-                    </h4>
-                    <div class="flex gap-2">
-                        <input type="password" id="newAdminPasswordInput" placeholder="Enter new password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                        <button onclick="changeAdminPassword()" class="bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap">Update Password</button>
-                    </div>
+                <!-- Admin Navigation Tabs -->
+                <div class="flex gap-2 border-b border-[#282c37] pb-3 overflow-x-auto">
+                    <button onclick="switchAdminTab('overviewTab')" id="btnOverviewTab" class="bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Overview & Usage</button>
+                    <button onclick="switchAdminTab('ratesTab')" id="btnRatesTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Rate Sheet Editor</button>
+                    <button onclick="switchAdminTab('securityTab')" id="btnSecurityTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Security & Passwords</button>
                 </div>
 
-                <!-- Global Rate Editor -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
-                        <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
-                    </h4>
-                    
-                    <div class="space-y-2">
-                        <h5 class="text-[11px] font-bold text-amber-500">Registered Rates</h5>
-                        <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <div class="space-y-2 pt-2 border-t border-[#282c37]/50">
-                        <h5 class="text-[11px] font-bold text-indigo-400">Unregistered Rates</h5>
-                        <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <button onclick="saveAdminSettings()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">
-                        Publish Rate Updates Globally
-                    </button>
-                </div>
-
-                <!-- User Management & Security Alerts (Owner Only) -->
-                <div id="ownerUserManagementSection" class="hidden space-y-6 pt-4 border-t border-[#282c37]">
-                    
-                    <!-- Security Alerts Table -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Security Alert: Unauthorized Admin Access Attempts
-                            </h4>
-                            <button onclick="clearUnauthorizedAttempts()" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 transition">
-                                <i class="fa-solid fa-trash-can"></i> Clear Attempts
-                            </button>
+                <!-- TAB 1: Overview & User Details / Pending Approvals (Top of Dashboard) -->
+                <div id="overviewTab" class="space-y-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
+                            <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
+                            <div id="statTotalUsers" class="text-lg font-bold text-goldAccent">0</div>
                         </div>
-                        <div class="overflow-x-auto border border-rose-500/30 bg-rose-950/10 rounded-2xl max-h-40">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead class="bg-[#1a1d24] text-rose-300 sticky top-0 font-bold border-b border-[#282c37]">
-                                    <tr>
-                                        <th class="p-2">User Name</th>
-                                        <th class="p-2">Username</th>
-                                        <th class="p-2">Attempted Password</th>
-                                        <th class="p-2 text-right">Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="unauthorizedAttemptsTable" class="divide-y divide-[#282c37]"></tbody>
-                            </table>
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-rose-500/30 text-center">
+                            <div class="text-[10px] text-rose-400 font-bold">PENDING APPROVALS</div>
+                            <div id="statPendingApprovals" class="text-lg font-bold text-rose-400">0</div>
+                        </div>
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-emerald-500/30 text-center">
+                            <div class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                ACTIVE NOW
+                            </div>
+                            <div id="statActiveNow" class="text-lg font-bold text-emerald-400">0</div>
+                        </div>
+                        <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
+                            <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
+                            <div id="statTotalLogins" class="text-lg font-bold text-indigo-400">0</div>
                         </div>
                     </div>
 
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
                             <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                                <i class="fa-solid fa-users"></i> Owner Control: User Management & Usage Logs
+                                <i class="fa-solid fa-users"></i> User Registration & Usage Logs
                             </h4>
                             <button onclick="shareUsagePDFDirectly()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md border border-indigo-400">
                                 <i class="fa-solid fa-file-pdf text-amber-300"></i> Export Usage PDF
                             </button>
                         </div>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
-                                <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
-                                <div id="statTotalUsers" class="text-lg font-bold text-goldAccent">0</div>
-                            </div>
-                            <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-rose-500/30 text-center">
-                                <div class="text-[10px] text-rose-400 font-bold">PENDING APPROVALS</div>
-                                <div id="statPendingApprovals" class="text-lg font-bold text-rose-400">0</div>
-                            </div>
-                            <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-emerald-500/30 text-center">
-                                <div class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    ACTIVE NOW
-                                </div>
-                                <div id="statActiveNow" class="text-lg font-bold text-emerald-400">0</div>
-                            </div>
-                            <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
-                                <div class="text-[10px] text-slate-400 font-bold">TOTAL LOGINS</div>
-                                <div id="statTotalLogins" class="text-lg font-bold text-indigo-400">0</div>
-                            </div>
-                        </div>
-
-                        <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-2xl max-h-60">
+                        <div id="ownerTableContainer" class="overflow-x-auto border border-[#282c37] rounded-2xl max-h-72">
                             <table class="w-full text-left text-xs border-collapse">
                                 <thead class="bg-[#1a1d24] text-slate-400 sticky top-0 font-bold border-b border-[#282c37]">
                                     <tr>
@@ -480,7 +429,66 @@
                             </table>
                         </div>
                     </div>
+                </div>
 
+                <!-- TAB 2: Rate Sheet Editor -->
+                <div id="ratesTab" class="hidden space-y-4">
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
+                            <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
+                        </h4>
+                        
+                        <div class="space-y-2">
+                            <h5 class="text-[11px] font-bold text-amber-500">Registered Rates</h5>
+                            <div id="regRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                        </div>
+
+                        <div class="space-y-2 pt-2 border-t border-[#282c37]/50">
+                            <h5 class="text-[11px] font-bold text-indigo-400">Unregistered Rates</h5>
+                            <div id="unregRateEditor" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                        </div>
+
+                        <button onclick="saveAdminSettings()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">
+                            Publish Rate Updates Globally
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Security, Password Change & Invalid Attempts -->
+                <div id="securityTab" class="hidden space-y-4">
+                    <div id="ownerPasswordChangeSection" class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
+                        <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-key"></i> Security Settings: Change Admin Password
+                        </h4>
+                        <div class="flex gap-2">
+                            <input type="password" id="newAdminPasswordInput" placeholder="Enter new password (e.g. 0000)" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                            <button onclick="changeAdminPassword()" class="bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap">Update Password</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Security Alert: Unauthorized Admin Access Attempts
+                            </h4>
+                            <button onclick="clearUnauthorizedAttempts()" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 transition">
+                                <i class="fa-solid fa-trash-can"></i> Clear Attempts
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto border border-rose-500/30 bg-rose-950/10 rounded-2xl max-h-48">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-[#1a1d24] text-rose-300 sticky top-0 font-bold border-b border-[#282c37]">
+                                    <tr>
+                                        <th class="p-2">User Name</th>
+                                        <th class="p-2">Username</th>
+                                        <th class="p-2">Attempted Password</th>
+                                        <th class="p-2 text-right">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unauthorizedAttemptsTable" class="divide-y divide-[#282c37]"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -495,7 +503,7 @@
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
         const OWNER_USERNAME = "admin";
-        let currentAdminPassword = "Lakmal@93"; // Default Admin Password
+        let currentAdminPassword = "0000"; // Set default password to 0000 as requested
 
         const firebaseConfig = {
             authDomain: "emi-calculator-9e048.firebaseapp.com",
@@ -928,8 +936,7 @@
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
-                document.getElementById('ownerPasswordChangeSection').classList.remove('hidden');
-                document.getElementById('ownerUserManagementSection').classList.remove('hidden');
+                switchAdminTab('overviewTab');
                 startLiveUserLogsListener();
                 startLiveUnauthorizedAttemptsListener();
             } else {
@@ -941,6 +948,25 @@
 
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
 
+        function switchAdminTab(tabId) {
+            document.getElementById('overviewTab').classList.add('hidden');
+            document.getElementById('ratesTab').classList.add('hidden');
+            document.getElementById('securityTab').classList.add('hidden');
+
+            document.getElementById('btnOverviewTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            document.getElementById('btnRatesTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            document.getElementById('btnSecurityTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+
+            document.getElementById(tabId).classList.remove('hidden');
+            if (tabId === 'overviewTab') {
+                document.getElementById('btnOverviewTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            } else if (tabId === 'ratesTab') {
+                document.getElementById('btnRatesTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            } else if (tabId === 'securityTab') {
+                document.getElementById('btnSecurityTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            }
+        }
+
         function verifyAdmin() {
             const enteredPass = document.getElementById('adminPass').value.trim();
             const officerName = localStorage.getItem('officerName') || "Unknown User";
@@ -951,22 +977,9 @@
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
-
-                const currentKey = officerMobile.replace(/[^0-9]/g, "");
-                const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
-
-                const ownerSection = document.getElementById('ownerUserManagementSection');
-                const ownerPassSection = document.getElementById('ownerPasswordChangeSection');
-
-                if (currentKey === ownerKey) {
-                    ownerSection.classList.remove('hidden');
-                    ownerPassSection.classList.remove('hidden');
-                    startLiveUserLogsListener();
-                    startLiveUnauthorizedAttemptsListener();
-                } else {
-                    ownerSection.classList.add('hidden');
-                    ownerPassSection.classList.add('hidden');
-                }
+                switchAdminTab('overviewTab');
+                startLiveUserLogsListener();
+                startLiveUnauthorizedAttemptsListener();
             } else {
                 const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 db.ref('adminAttempts').push({
@@ -987,6 +1000,7 @@
 
             db.ref('adminSettings/password').set(newPass, (error) => {
                 if (!error) {
+                    currentAdminPassword = newPass;
                     alert("Admin Password updated successfully!");
                     document.getElementById('newAdminPasswordInput').value = '';
                 } else {
@@ -1683,4 +1697,3 @@
     </script>
 </body>
 </html>
- 
