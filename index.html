@@ -82,8 +82,8 @@
                 
                 <!-- Password Field for 0777353802 -->
                 <div id="loginPasswordGroup" class="hidden">
-                    <label class="text-xs font-bold text-rose-600 block mb-1">Login Password (0000)</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Enter password (0000)" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                    <label class="text-xs font-bold text-rose-600 block mb-1">Password</label>
+                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
                 <div class="flex gap-2">
@@ -657,7 +657,29 @@
             }
             let base = nameVal.toLowerCase().replace(/[^a-z0-9]/g, '');
             if (!base) base = "user";
-            usernameInput.value = base;
+            
+            // Ensure uniqueness against cached or firebase users
+            db.ref('userLogs').once('value', (snap) => {
+                const users = snap.val() || {};
+                let finalUname = base;
+                let counter = 1;
+                let exists = true;
+
+                while (exists) {
+                    exists = false;
+                    for (let k in users) {
+                        if (users[k].username === finalUname) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) {
+                        finalUname = base + counter;
+                        counter++;
+                    }
+                }
+                usernameInput.value = finalUname;
+            });
         }
 
         function checkRegisterMobile(input) {
@@ -684,7 +706,7 @@
 
             if (userKey === ownerKey) {
                 const enteredPass = document.getElementById('loginPasswordInput').value.trim();
-                if (enteredPass !== "0000") {
+                if (enteredPass !== currentAdminPassword) {
                     const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     db.ref('adminAttempts').push({
                         userName: "Admin Owner",
@@ -778,18 +800,50 @@
                 return alert("Admin number (0777353802) cannot be registered from here!");
             }
 
-            db.ref('userLogs/' + userKey).once('value', (snapshot) => {
-                const existingUser = snapshot.val();
-                if (existingUser && existingUser.name) {
+            db.ref('userLogs').once('value', (snapshot) => {
+                const users = snapshot.val() || {};
+                
+                // Check if mobile already exists
+                if (users[userKey] && users[userKey].name) {
                     alert("This mobile number is already registered in the system.");
                     return;
+                }
+
+                // Check if username is already taken by someone else
+                let finalUsername = username;
+                let usernameTaken = false;
+                for (let k in users) {
+                    if (users[k].username === finalUsername) {
+                        usernameTaken = true;
+                        break;
+                    }
+                }
+
+                if (usernameTaken) {
+                    let base = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    let counter = 1;
+                    while (true) {
+                        let candidate = base + counter;
+                        let conflict = false;
+                        for (let k in users) {
+                            if (users[k].username === candidate) {
+                                conflict = true;
+                                break;
+                            }
+                        }
+                        if (!conflict) {
+                            finalUsername = candidate;
+                            break;
+                        }
+                        counter++;
+                    }
                 }
 
                 const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
                 db.ref('userLogs/' + userKey).set({
                     name: name,
-                    username: username || name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+                    username: finalUsername,
                     mobile: mobile,
                     status: 'pending',
                     loginCount: 0,
@@ -894,7 +948,7 @@
             const enteredPass = document.getElementById('adminPass').value.trim();
             const officerName = localStorage.getItem('officerName') || "Unknown User";
             const officerMobile = localStorage.getItem('officerMobile') || "Unknown Mobile";
-            const officerUsername = localStorage.getItem('officerUsername') || "user"; // Fixed bracket issue here
+            const officerUsername = localStorage.getItem('officerUsername') || "user";
 
             if (enteredPass === currentAdminPassword) {
                 document.getElementById('adminAuth').classList.add('hidden');
@@ -1533,10 +1587,10 @@
                 const isTargetOwner = (key === OWNER_MOBILE.replace(/[^0-9]/g, ""));
                 const assignedUname = isTargetOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
 
+                // Mobile number excluded from PDF table rows for privacy
                 tableRows.push([
                     u.name + (isTargetOwner ? " (Owner)" : ""),
                     "@" + assignedUname,
-                    u.mobile,
                     (u.status || 'pending').toUpperCase(),
                     u.lastLoggedIn || u.lastActive || "N/A",
                     (u.loginCount || 1).toString() + " Logins"
@@ -1586,18 +1640,17 @@
             if (typeof doc.autoTable === 'function') {
                 doc.autoTable({
                     startY: 56,
-                    head: [['Name', 'Username', 'Mobile', 'Status', 'Last Login', 'Usage Count']],
+                    head: [['Name', 'Username', 'Status', 'Last Login', 'Usage Count']],
                     body: tableRows,
                     theme: 'plain',
                     headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'left' },
                     bodyStyles: { fontSize: 7, cellPadding: 2, fontStyle: 'bold', textColor: [30, 41, 59] },
                     columnStyles: {
-                        0: { halign: 'left', cellWidth: 45 },
-                        1: { halign: 'left', cellWidth: 35 },
-                        2: { halign: 'left', cellWidth: 30 },
-                        3: { halign: 'center', cellWidth: 25 },
-                        4: { halign: 'center', cellWidth: 35 },
-                        5: { halign: 'center', cellWidth: 30 }
+                        0: { halign: 'left', cellWidth: 50 },
+                        1: { halign: 'left', cellWidth: 40 },
+                        2: { halign: 'center', cellWidth: 30 },
+                        3: { halign: 'center', cellWidth: 40 },
+                        4: { halign: 'center', cellWidth: 26 }
                     },
                     alternateRowStyles: { fillColor: [250, 250, 250] },
                     margin: { left: 12, right: 12 },
