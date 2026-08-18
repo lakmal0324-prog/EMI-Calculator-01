@@ -660,12 +660,11 @@
             document.getElementById('authChoiceView').classList.remove('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.add('hidden');
-            document.getElementById('loginPasswordGroup').classList.remove('hidden'); // Always allow Lakmal@93 password entry option for any user
+            document.getElementById('loginPasswordGroup').classList.remove('hidden'); 
             document.getElementById('loginPasswordInput').value = '';
         }
 
         function checkLoginPasswordRequirement(input) {
-            // Always show the password field so any user can enter the "Lakmal@93" password to log in directly
             const passGroup = document.getElementById('loginPasswordGroup');
             passGroup.classList.remove('hidden');
         }
@@ -725,7 +724,6 @@
 
             const isUsingMasterPassword = (enteredPass === currentAdminPassword);
 
-            // If logging in via Lakmal@93 password, find user by mobile or username, or create/authorize automatically
             db.ref('userLogs').once('value', (snapshot) => {
                 const users = snapshot.val() || {};
                 let foundKey = null;
@@ -747,11 +745,9 @@
                 }
 
                 if (isUsingMasterPassword) {
-                    // Lakmal@93 password bypass allows login for any user
                     if (foundUser) {
                         completeLogin(foundKey, foundUser);
                     } else {
-                        // If user doesn't exist yet but used Lakmal@93, create account dynamically as approved
                         const newKey = cleanInput.length >= 9 ? cleanInput : "user_" + Date.now();
                         const newName = inputVal;
                         const newUsername = inputVal.toLowerCase().replace(/[^a-z0-9]/g, '') || "user";
@@ -772,7 +768,6 @@
                         completeLogin(newKey, newUserObj);
                     }
                 } else {
-                    // Normal login flow requires approval
                     if (foundUser) {
                         if (foundUser.status !== 'approved' && foundKey !== OWNER_MOBILE.replace(/[^0-9]/g, "")) {
                             return alert(`Your account (${inputVal}) has not been approved by the Admin yet. Please wait.`);
