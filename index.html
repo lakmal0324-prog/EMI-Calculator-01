@@ -77,13 +77,7 @@
             <div id="loginFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Registered Mobile Number / Username</label>
-                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" oninput="checkLoginPasswordRequirement(this)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
-                </div>
-                
-                <!-- Password Field for Admin / Lakmal@93 Access -->
-                <div id="loginPasswordGroup" class="hidden">
-                    <label class="text-xs font-bold text-rose-600 block mb-1">Password (Lakmal@93)</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500" style="-webkit-text-security: disc; text-security: disc;">
+                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
 
                 <div class="flex gap-2">
@@ -389,7 +383,7 @@
                     <button onclick="switchAdminTab('securityTab')" id="btnSecurityTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Security & Passwords</button>
                 </div>
 
-                <!-- TAB 1: Overview & User Details / Pending Approvals (Top of Dashboard) -->
+                <!-- TAB 1: Overview & User Details / Pending Approvals -->
                 <div id="overviewTab" class="space-y-4">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
@@ -465,14 +459,13 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: Security, Password Change & Invalid Attempts -->
+                <!-- TAB 3: Security & Passwords -->
                 <div id="securityTab" class="hidden space-y-4">
                     <div id="ownerPasswordChangeSection" class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                         <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-key"></i> Security Settings: Change Admin Password
                         </h4>
                         
-                        <!-- Change Admin Page Password -->
                         <div class="space-y-2 pt-1">
                             <label class="text-[11px] font-bold text-slate-300 block">Change Admin Password (Lakmal@93)</label>
                             <div class="space-y-2">
@@ -611,7 +604,6 @@
             if (savedMobile) {
                 showLoginForm();
                 document.getElementById('loginMobileInput').value = savedMobile;
-                checkLoginPasswordRequirement(document.getElementById('loginMobileInput'));
             } else {
                 resetAuthView();
             }
@@ -641,7 +633,6 @@
             const savedMobile = localStorage.getItem('officerMobile') || '';
             if (savedMobile) {
                 document.getElementById('loginMobileInput').value = savedMobile;
-                checkLoginPasswordRequirement(document.getElementById('loginMobileInput'));
             }
         }
 
@@ -660,16 +651,8 @@
             document.getElementById('authChoiceView').classList.remove('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.add('hidden');
-            document.getElementById('loginPasswordGroup').classList.remove('hidden'); 
-            document.getElementById('loginPasswordInput').value = '';
         }
 
-        function checkLoginPasswordRequirement(input) {
-            const passGroup = document.getElementById('loginPasswordGroup');
-            passGroup.classList.remove('hidden');
-        }
-
-        // නම් එක ටයිප් කරන විට එයින් Username එක ස්වයංක්‍රීයව සකස් වීම සහ Database එකේ පරීක්ෂා කිරීම
         function autoGenerateUsername() {
             const nameVal = document.getElementById('setupName').value.trim();
             const usernameInput = document.getElementById('setupUsername');
@@ -720,17 +703,28 @@
 
         function performUserLogin() {
             const inputVal = document.getElementById('loginMobileInput').value.trim();
-            const enteredPass = document.getElementById('loginPasswordInput').value.trim();
             if (!inputVal) return alert("Please enter your mobile number or username.");
 
-            const isUsingMasterPassword = (enteredPass === currentAdminPassword);
+            const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
+            const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
+
+            // Admin Direct Login
+            if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
+                const adminUserObj = {
+                    name: OWNER_NAME,
+                    username: OWNER_USERNAME,
+                    mobile: OWNER_MOBILE,
+                    status: 'approved',
+                    role: 'admin'
+                };
+                completeLogin(ownerKey, adminUserObj);
+                return;
+            }
 
             db.ref('userLogs').once('value', (snapshot) => {
                 const users = snapshot.val() || {};
                 let foundKey = null;
                 let foundUser = null;
-
-                const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
 
                 for (let k in users) {
                     const u = users[k];
@@ -745,38 +739,13 @@
                     }
                 }
 
-                if (isUsingMasterPassword) {
-                    if (foundUser) {
-                        completeLogin(foundKey, foundUser);
-                    } else {
-                        const newKey = cleanInput.length >= 9 ? cleanInput : "user_" + Date.now();
-                        const newName = inputVal;
-                        const newUsername = inputVal.toLowerCase().replace(/[^a-z0-9]/g, '') || "user";
-                        const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-                        const newUserObj = {
-                            name: newName,
-                            username: newUsername,
-                            mobile: inputVal,
-                            status: 'approved',
-                            loginCount: 1,
-                            isOnline: true,
-                            lastActive: nowStr,
-                            lastLoggedIn: nowStr,
-                            role: 'user'
-                        };
-                        db.ref('userLogs/' + newKey).set(newUserObj);
-                        completeLogin(newKey, newUserObj);
+                if (foundUser) {
+                    if (foundUser.status !== 'approved') {
+                        return alert(`Your account (${inputVal}) has not been approved by the Admin yet. Please wait.`);
                     }
+                    completeLogin(foundKey, foundUser);
                 } else {
-                    if (foundUser) {
-                        if (foundUser.status !== 'approved' && foundKey !== OWNER_MOBILE.replace(/[^0-9]/g, "")) {
-                            return alert(`Your account (${inputVal}) has not been approved by the Admin yet. Please wait.`);
-                        }
-                        completeLogin(foundKey, foundUser);
-                    } else {
-                        alert("No account found with this details. Please register or use password 'Lakmal@93' for instant access.");
-                    }
+                    alert("No account found with this details. Please register first.");
                 }
             });
         }
@@ -1766,7 +1735,7 @@
                         data.doc.setFontSize(7);
                         data.doc.setTextColor(148, 163, 184);
                         data.doc.setFont('helvetica', 'bold');
-                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' }, { align: 'right' });
+                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
                     }
                 });
             }
