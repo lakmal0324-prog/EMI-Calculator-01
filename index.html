@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Auto Zoom වෙන එක නවත්වන්න maximum-scale=1, user-scalable=no එකතු කර ඇත -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EMI Master Pro - Advanced EMI & Rate Sheet</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,7 +35,16 @@
         }
     </script>
     <style>
-        body { background-color: #F3F5F9; color: #1E293B; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { 
+            background-color: #F3F5F9; 
+            color: #1E293B; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            touch-action: manipulation; /* Disables double-tap to zoom on touch devices */
+        }
+        /* Mobile Input Auto-Zoom Fix (Font-size 16px rule) */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #F3F5F9; }
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
@@ -69,7 +79,7 @@
             <div id="loginFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Registered Mobile Number</label>
-                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div class="flex gap-2">
                     <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
@@ -81,11 +91,11 @@
             <div id="registerFormView" class="hidden space-y-3 pt-2">
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Your Full Name</label>
-                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="text" id="setupName" placeholder="e.g. Kasun Perera" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Mobile Number</label>
-                    <input type="text" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                    <input type="text" id="setupMobile" placeholder="e.g. 0771234567" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div class="flex gap-2">
                     <button onclick="resetAuthView()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">Back</button>
@@ -159,14 +169,14 @@
                     <div class="grid grid-cols-2 gap-3 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/60">
                         <div>
                             <label class="text-[10px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Registration</label>
-                            <select id="vehicleRegStatus" onchange="populateCategoryDropdown()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                            <select id="vehicleRegStatus" onchange="populateCategoryDropdown()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                                 <option value="registered">Registered</option>
                                 <option value="unregistered">Unregistered</option>
                             </select>
                         </div>
                         <div>
                             <label class="text-[10px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Category</label>
-                            <select id="vehicleCategorySelect" onchange="autoFetchInterestRate()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                            <select id="vehicleCategorySelect" onchange="autoFetchInterestRate()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                             </select>
                         </div>
                     </div>
@@ -174,13 +184,13 @@
                     <div class="space-y-3.5">
                         <div>
                             <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Financed Amount (Rs.)</label>
-                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
+                            <input type="number" id="facilityAmount" placeholder="e.g. 5000000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
-                                <select id="tenureMonths" onchange="autoFetchInterestRate()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
+                                <select id="tenureMonths" onchange="autoFetchInterestRate()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
                                     <option value="12">12 Months (1 Yr)</option>
                                     <option value="24">24 Months (2 Yrs)</option>
                                     <option value="36">36 Months (3 Yrs)</option>
@@ -191,7 +201,7 @@
                             </div>
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="Auto Fetched" class="w-full p-3 bg-indigo-50/60 border border-indigo-200 rounded-2xl text-sm font-bold text-brandPrimary outline-none focus:border-brandPrimary transition">
+                                <input type="number" step="0.01" id="annualRate" placeholder="Auto Fetched" class="w-full p-3 bg-indigo-50/60 border border-indigo-200 rounded-2xl font-bold text-brandPrimary outline-none focus:border-brandPrimary transition">
                             </div>
                         </div>
 
@@ -208,11 +218,11 @@
                         <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
                             <div>
                                 <label class="text-[10px] font-extrabold text-slate-400 uppercase">Officer Name</label>
-                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-xs text-brandPrimary font-bold outline-none cursor-not-allowed">
+                                <input type="text" id="officerNameDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-brandPrimary font-bold outline-none cursor-not-allowed">
                             </div>
                             <div>
                                 <label class="text-[10px] font-extrabold text-slate-400 uppercase">Contact No</label>
-                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-xs text-brandPrimary font-bold outline-none cursor-not-allowed">
+                                <input type="text" id="officerMobileDisplay" readonly class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-brandPrimary font-bold outline-none cursor-not-allowed">
                             </div>
                         </div>
 
@@ -350,7 +360,7 @@
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Enter Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl text-sm font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
@@ -797,10 +807,10 @@
             div.className = "balloon-row flex gap-2 items-center bg-slate-50 p-1.5 rounded-2xl border border-slate-200";
             div.innerHTML = `
                 <div class="w-1/3">
-                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-white border border-slate-200 rounded-xl text-xs text-center font-bold text-slate-800 outline-none">
+                    <input type="number" placeholder="Month #" value="${defaultMonth}" class="b-month w-full p-2 bg-white border border-slate-200 rounded-xl text-center font-bold text-slate-800 outline-none">
                 </div>
                 <div class="w-7/12">
-                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-brandPrimary outline-none">
+                    <input type="number" placeholder="Amount" value="${defaultAmount}" class="b-amount w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-brandPrimary outline-none">
                 </div>
                 <button onclick="this.parentElement.remove()" class="text-rose-400 p-1 hover:text-rose-600"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
@@ -953,7 +963,7 @@
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${regPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" value="${r}" data-type="registered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
@@ -967,7 +977,7 @@
                         ${item.rates.map((r, col) => `
                             <div>
                                 <span class="block text-[9px] font-bold text-slate-400 text-center mb-0.5">${unregPeriods[col]}</span>
-                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-[10px] text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" value="${r}" data-type="unregistered" data-cat="${idx}" data-col="${col}" class="rate-edit-input w-full p-1 bg-[#0b0c0e] border border-[#282c37] rounded text-center font-bold text-slate-100 outline-none focus:border-goldAccent">
                             </div>
                         `).join('')}
                     </div>
@@ -1009,6 +1019,15 @@
             if (calculatedSchedule.length === 0) {
                 return alert("Please enter Financed Amount, Annual Rate, Tenure and click Calculate.");
             }
+
+            // --- Mobile Back Button Handling ---
+            // Push temporary history state so pressing mobile back button cancels share overlay without leaving app
+            window.history.pushState({ pdfShareActive: true }, "");
+
+            const handlePopState = (e) => {
+                window.removeEventListener('popstate', handlePopState);
+            };
+            window.addEventListener('popstate', handlePopState, { once: true });
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
@@ -1144,7 +1163,6 @@
             doc.setFont('helvetica', 'bold');
             doc.text(`Contact: ${officerMobile}`, 120, startTableY + 21);
 
-            // PDF Table Rows Generation with Explicit Strings
             const tableBody = calculatedSchedule.map(s => [
                 s.month.toString(),
                 s.dueDate.toString(),
@@ -1154,7 +1172,6 @@
                 s.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
             ]);
 
-            // Correct AutoTable Call using explicit options
             doc.autoTable({
                 startY: startTableY + 34,
                 head: [['#', 'Due Date', 'Principal', 'Interest', 'Total Due', 'Balance']],
@@ -1201,9 +1218,19 @@
                         title: 'Lease Repayment Schedule',
                         text: `Lease Repayment Schedule (Prepared by ${officerName})`
                     });
-                } catch (err) { console.log('Share canceled', err); }
+                } catch (err) {
+                    console.log('Share canceled', err);
+                } finally {
+                    // Clean history state after sharing is closed/canceled
+                    if (window.history.state && window.history.state.pdfShareActive) {
+                        window.history.back();
+                    }
+                }
             } else {
                 doc.save(`Lease_Schedule_Rs_${summaryMetrics.P}.pdf`);
+                if (window.history.state && window.history.state.pdfShareActive) {
+                    window.history.back();
+                }
             }
         }
     </script>
