@@ -152,8 +152,24 @@
                 <!-- Input Panel -->
                 <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-5 space-y-4 shadow-sm">
                     <h2 class="text-xs font-extrabold text-brandPrimary uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders"></i> Facility Parameters
+                        <i class="fa-solid fa-sliders"></i> Facility Overview
                     </h2>
+
+                    <!-- Vehicle Type & Category Selection Dropdowns -->
+                    <div class="grid grid-cols-2 gap-3 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/60">
+                        <div>
+                            <label class="text-[10px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Registration</label>
+                            <select id="vehicleRegStatus" onchange="populateCategoryDropdown()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                                <option value="unregistered">Unregistered</option>
+                                <option value="registered">Registered</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Category</label>
+                            <select id="vehicleCategorySelect" onchange="autoFetchInterestRate()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-brandPrimary">
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="space-y-3.5">
                         <div>
@@ -163,12 +179,19 @@
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Annual Rate (%)</label>
-                                <input type="number" step="0.01" id="annualRate" placeholder="e.g. 14.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
+                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
+                                <select id="tenureMonths" onchange="autoFetchInterestRate()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
+                                    <option value="12">12 Months (1 Yr)</option>
+                                    <option value="24">24 Months (2 Yrs)</option>
+                                    <option value="36">36 Months (3 Yrs)</option>
+                                    <option value="48">48 Months (4 Yrs)</option>
+                                    <option value="60" selected>60 Months (5 Yrs)</option>
+                                    <option value="72">72 Months (6 Yrs)</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Tenure (Months)</label>
-                                <input type="number" id="tenureMonths" placeholder="e.g. 60" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-brandPrimary focus:bg-white transition">
+                                <label class="text-[11px] font-extrabold text-slate-500 block mb-1 uppercase tracking-wider">Annual Rate (%)</label>
+                                <input type="number" step="0.01" id="annualRate" placeholder="Auto Fetched" class="w-full p-3 bg-indigo-50/60 border border-indigo-200 rounded-2xl text-sm font-bold text-brandPrimary outline-none focus:border-brandPrimary transition">
                             </div>
                         </div>
 
@@ -252,10 +275,11 @@
 
         <!-- Rate Sheet Page -->
         <div id="ratePage" class="hidden space-y-6">
-            <button onclick="showPage('calcPage')" class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 font-black py-4 px-6 rounded-3xl shadow-sm transition duration-200 flex items-center justify-center gap-3 text-base">
-                <i class="fa-solid fa-calculator text-brandPrimary text-xl"></i>
-                <span class="tracking-wide uppercase">Go to Calculator</span>
-                <i class="fa-solid fa-arrow-right text-slate-400"></i>
+            <!-- Highlighted Switch Button -->
+            <button onclick="showPage('calcPage')" class="w-full bg-gradient-to-r from-brandPrimary to-indigo-600 hover:from-brandPrimaryDark hover:to-indigo-700 text-white font-extrabold py-4 px-6 rounded-3xl shadow-lg shadow-indigo-300 transition duration-300 flex items-center justify-center gap-3 text-base border border-indigo-300">
+                <i class="fa-solid fa-calculator text-2xl text-amber-300"></i>
+                <span class="tracking-wide uppercase">Go to Loan Calculator</span>
+                <i class="fa-solid fa-arrow-right text-indigo-200 text-lg"></i>
             </button>
 
             <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-6 shadow-sm">
@@ -266,12 +290,12 @@
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                                 <tr>
                                     <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
-                                    <th class="p-3">6 Years</th>
+                                    <th class="p-3">12 Months</th>
+                                    <th class="p-3">24 Months</th>
+                                    <th class="p-3">36 Months</th>
+                                    <th class="p-3">48 Months</th>
+                                    <th class="p-3">60 Months</th>
+                                    <th class="p-3">72 Months</th>
                                 </tr>
                             </thead>
                             <tbody id="unregTable" class="divide-y divide-slate-100"></tbody>
@@ -286,11 +310,11 @@
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                                 <tr>
                                     <th class="p-3">Category</th>
-                                    <th class="p-3">1 Year</th>
-                                    <th class="p-3">2 Years</th>
-                                    <th class="p-3">3 Years</th>
-                                    <th class="p-3">4 Years</th>
-                                    <th class="p-3">5 Years</th>
+                                    <th class="p-3">12 Months</th>
+                                    <th class="p-3">24 Months</th>
+                                    <th class="p-3">36 Months</th>
+                                    <th class="p-3">48 Months</th>
+                                    <th class="p-3">60 Months</th>
                                 </tr>
                             </thead>
                             <tbody id="regTable" class="divide-y divide-slate-100"></tbody>
@@ -453,6 +477,40 @@
             listenForPendingApprovalsBadge();
         };
 
+        function populateCategoryDropdown() {
+            const regStatus = document.getElementById('vehicleRegStatus').value;
+            const categorySelect = document.getElementById('vehicleCategorySelect');
+            const list = rateData[regStatus] || [];
+            
+            categorySelect.innerHTML = list.map((item, index) => 
+                `<option value="${index}">${item.category}</option>`
+            ).join('');
+
+            autoFetchInterestRate();
+        }
+
+        function autoFetchInterestRate() {
+            const regStatus = document.getElementById('vehicleRegStatus').value;
+            const catIndex = document.getElementById('vehicleCategorySelect').value;
+            const tenureMonths = parseInt(document.getElementById('tenureMonths').value);
+
+            const tenureIndexMap = { 12: 0, 24: 1, 36: 2, 48: 3, 60: 4, 72: 5 };
+            const colIndex = tenureIndexMap[tenureMonths];
+
+            if (catIndex !== null && rateData[regStatus] && rateData[regStatus][catIndex]) {
+                const ratesArr = rateData[regStatus][catIndex].rates;
+                const fetchedRateStr = ratesArr[colIndex] || 'N/A';
+                
+                if (fetchedRateStr !== 'N/A') {
+                    const cleanRate = parseFloat(fetchedRateStr.replace('%', ''));
+                    document.getElementById('annualRate').value = cleanRate;
+                } else {
+                    document.getElementById('annualRate').value = '';
+                    alert('Selected tenure/category rate is not available (N/A). Please enter rate manually.');
+                }
+            }
+        }
+
         function checkUserSession() {
             document.getElementById('loginOverlay').classList.remove('hidden');
 
@@ -593,7 +651,9 @@
         function listenToDatabaseUpdates() {
             db.ref('rateData').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) { rateData = data; renderRates(); } else { renderRates(); }
+                if (data) { rateData = data; } 
+                renderRates();
+                populateCategoryDropdown();
             });
         }
 
@@ -879,8 +939,8 @@
             const unregContainer = document.getElementById('unregRateEditor');
             const regContainer = document.getElementById('regRateEditor');
 
-            const unregPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs", "6 Yrs"];
-            const regPeriods = ["1 Yr", "2 Yrs", "3 Yrs", "4 Yrs", "5 Yrs"];
+            const unregPeriods = ["12 M", "24 M", "36 M", "48 M", "60 M", "72 M"];
+            const regPeriods = ["12 M", "24 M", "36 M", "48 M", "60 M"];
 
             unregContainer.innerHTML = rateData.unregistered.map((item, idx) => `
                 <div class="p-2.5 bg-[#121418] border border-[#282c37] rounded-xl space-y-1.5">
