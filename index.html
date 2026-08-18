@@ -82,8 +82,8 @@
 
                 <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) -->
                 <div id="ownerPasswordContainer" class="hidden space-y-1">
-                    <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Admin Password Required (0000)</label>
-                    <input type="password" id="ownerPinInput" placeholder="Enter 0000" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500" style="-webkit-text-security: disc; text-security: disc;">
+                    <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Admin Password Required</label>
+                    <input type="password" id="ownerPinInput" placeholder="Admin Password Required" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500" style="-webkit-text-security: disc; text-security: disc;">
                 </div>
 
                 <div class="flex gap-2">
@@ -374,8 +374,8 @@
 
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
-                <label class="text-xs font-bold text-slate-300 block">Enter Admin Password (Lakmal@93)</label>
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
+                <label class="text-xs font-bold text-slate-300 block">Enter Admin Password Required</label>
+                <input type="password" id="adminPass" placeholder="Admin Password Required" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
@@ -473,7 +473,7 @@
                         </h4>
                         
                         <div class="space-y-2 pt-1">
-                            <label class="text-[11px] font-bold text-slate-300 block">Change Admin Password (Lakmal@93)</label>
+                            <label class="text-[11px] font-bold text-slate-300 block">Change Admin Password</label>
                             <div class="space-y-2">
                                 <input type="password" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
                                 <input type="password" id="newAdminPasswordInput" placeholder="New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent" style="-webkit-text-security: disc; text-security: disc;">
@@ -570,7 +570,7 @@
             listenForAdminPassword();
             listenForLastRateMeta();
             
-            // Listen to input changes in login field to dynamically show/hide 0000 password box
+            // Listen to input changes in login field to dynamically show/hide password box
             const loginInputElem = document.getElementById('loginMobileInput');
             if(loginInputElem) {
                 loginInputElem.addEventListener('input', function() {
@@ -741,11 +741,11 @@
             const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            // Admin / App Owner Direct Login check with 0000 password requirement
+            // Admin / App Owner Direct Login check with password requirement
             if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
                 const enteredPin = document.getElementById('ownerPinInput').value.trim();
-                if (enteredPin !== "0000") {
-                    return alert("Incorrect Password! Please enter '0000' for Admin access.");
+                if (enteredPin !== currentAdminPassword) {
+                    return alert("Incorrect Password! Please enter the correct Admin Password.");
                 }
 
                 const adminUserObj = {
