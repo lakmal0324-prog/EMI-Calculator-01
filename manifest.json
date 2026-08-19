@@ -1,16 +1,15 @@
 {
   "name": "EMI Master Pro",
-  "short_name": "Calculator",
+  "short_name": "EMI Master",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#090d16",
+  "background_color": "#F3F5F9",
+  "theme_color": "#5345ED",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
