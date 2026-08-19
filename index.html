@@ -1017,6 +1017,14 @@
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
 
         function switchAdminTab(tabId) {
+            const currentMobile = localStorage.getItem('officerMobile') || "";
+            const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+
+            // If a non-owner tries to open restricted tabs, restrict them
+            if (!isOwnerUser && (tabId === 'overviewTab' || tabId === 'securityTab')) {
+                tabId = 'ratesTab';
+            }
+
             document.getElementById('overviewTab').classList.add('hidden');
             document.getElementById('ratesTab').classList.add('hidden');
             document.getElementById('securityTab').classList.add('hidden');
@@ -1037,13 +1045,13 @@
 
         function verifyAdmin() {
             const enteredPass = document.getElementById('adminPass').value.trim();
+            const currentMobile = localStorage.getItem('officerMobile') || "";
+            const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+
             if (enteredPass === currentAdminPassword) {
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
-
-                const currentMobile = localStorage.getItem('officerMobile') || "";
-                const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
 
                 const restrictedElements = document.querySelectorAll('.owner-restricted');
                 restrictedElements.forEach(el => {
@@ -1062,6 +1070,19 @@
                     switchAdminTab('ratesTab');
                 }
             } else {
+                // Record unauthorized attempt if password is wrong
+                if (!isOwnerUser) {
+                    const officerName = localStorage.getItem('officerName') || "Unknown User";
+                    const officerUsername = localStorage.getItem('officerUsername') || "user";
+                    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    
+                    db.ref('adminAttempts').push({
+                        userName: officerName,
+                        userUsername: officerUsername,
+                        attemptedPass: enteredPass,
+                        time: nowStr
+                    });
+                }
                 alert('Access Denied: Incorrect Password');
             }
         }
