@@ -372,13 +372,16 @@
             <div id="adminContent" class="hidden space-y-4">
                 
                 <div class="flex gap-2 border-b border-[#282c37] pb-3 overflow-x-auto">
-                    <button onclick="switchAdminTab('overviewTab')" id="btnOverviewTab" class="bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Overview & Usage</button>
+                    <!-- Overview Tab (Owner Only) -->
+                    <button onclick="switchAdminTab('overviewTab')" id="btnOverviewTab" class="owner-restricted bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Overview & Usage</button>
+                    <!-- Rates Tab (Accessible with Admin Password) -->
                     <button onclick="switchAdminTab('ratesTab')" id="btnRatesTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Rate Sheet Editor</button>
-                    <button onclick="switchAdminTab('securityTab')" id="btnSecurityTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Security & Passwords</button>
+                    <!-- Security Tab (Owner Only) -->
+                    <button onclick="switchAdminTab('securityTab')" id="btnSecurityTab" class="owner-restricted bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Security & Passwords</button>
                 </div>
 
-                <!-- TAB 1: Overview & User Details / Pending Approvals -->
-                <div id="overviewTab" class="space-y-4">
+                <!-- TAB 1: Overview & User Details / Pending Approvals (OWNER ONLY) -->
+                <div id="overviewTab" class="owner-restricted space-y-4">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-[#0b0c0e] p-3 rounded-2xl border border-[#282c37] text-center">
                             <div class="text-[10px] text-slate-400 font-bold">TOTAL USERS</div>
@@ -430,8 +433,8 @@
                     </div>
                 </div>
 
-                <!-- TAB 2: Rate Sheet Editor -->
-                <div id="ratesTab" class="hidden space-y-4">
+                <!-- TAB 2: Rate Sheet Editor (Accessible for anyone who logs in with admin password) -->
+                <div id="ratesTab" class="space-y-4">
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5 border-b border-[#282c37] pb-2">
                             <i class="fa-solid fa-pen-to-square"></i> Global Rate Editor (Rate Sheet Modifier)
@@ -453,8 +456,8 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: Security & Passwords -->
-                <div id="securityTab" class="hidden space-y-4">
+                <!-- TAB 3: Security & Passwords (OWNER ONLY) -->
+                <div id="securityTab" class="owner-restricted space-y-4">
                     
                     <div class="p-4 bg-[#0b0c0e] border border-goldAccent/30 rounded-2xl space-y-3">
                         <div class="flex justify-between items-center">
@@ -1032,8 +1035,10 @@
 
                 const badge = document.getElementById('adminNotificationBadge');
                 const ping = document.getElementById('adminNotificationPing');
+                const currentMobile = localStorage.getItem('officerMobile') || "";
+                const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
 
-                if (pendingCount > 0) {
+                if (pendingCount > 0 && isOwnerUser) {
                     badge.innerText = pendingCount;
                     badge.classList.remove('hidden');
                     ping.classList.remove('hidden');
@@ -1058,17 +1063,17 @@
             document.getElementById('ratesTab').classList.add('hidden');
             document.getElementById('securityTab').classList.add('hidden');
 
-            document.getElementById('btnOverviewTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            document.getElementById('btnOverviewTab').className = "owner-restricted bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
             document.getElementById('btnRatesTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
-            document.getElementById('btnSecurityTab').className = "bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+            document.getElementById('btnSecurityTab').className = "owner-restricted bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
 
             document.getElementById(tabId).classList.remove('hidden');
             if (tabId === 'overviewTab') {
-                document.getElementById('btnOverviewTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+                document.getElementById('btnOverviewTab').className = "owner-restricted bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
             } else if (tabId === 'ratesTab') {
                 document.getElementById('btnRatesTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
             } else if (tabId === 'securityTab') {
-                document.getElementById('btnSecurityTab').className = "bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
+                document.getElementById('btnSecurityTab').className = "owner-restricted bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition";
             }
         }
 
@@ -1078,9 +1083,28 @@
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
-                switchAdminTab('overviewTab');
-                startLiveUserLogsListener();
-                startLiveUnauthorizedAttemptsListener();
+
+                // Check if current logged-in user is the Owner
+                const currentMobile = localStorage.getItem('officerMobile') || "";
+                const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
+
+                // Handle visibility of owner-restricted tabs and elements
+                const restrictedElements = document.querySelectorAll('.owner-restricted');
+                restrictedElements.forEach(el => {
+                    if (isOwnerUser) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+
+                if (isOwnerUser) {
+                    switchAdminTab('overviewTab');
+                    startLiveUserLogsListener();
+                    startLiveUnauthorizedAttemptsListener();
+                } else {
+                    switchAdminTab('ratesTab'); // Non-owner starts directly on Rate Sheet Editor
+                }
             } else {
                 alert('Access Denied: Incorrect Password');
             }
