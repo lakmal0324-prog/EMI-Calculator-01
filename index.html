@@ -83,7 +83,7 @@
                 <!-- Owner Specific Password Field -->
                 <div id="ownerPasswordContainer" class="hidden space-y-1">
                     <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Login Password Required</label>
-                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="ownerPinInput" placeholder="Enter pin" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                    <input type="password" id="ownerPinInput" placeholder="Enter pin" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
                 <div class="flex gap-2">
@@ -118,18 +118,6 @@
             <div class="text-center pt-2 border-t border-slate-100">
                 <p class="text-[10px] text-slate-400 font-semibold">Created by <span class="text-brandPrimary font-bold">Lakmal Maduranga</span></p>
             </div>
-        </div>
-    </div>
-
-    <!-- Admin Invalid Attempt Modal Page -->
-    <div id="adminInvalidModal" class="hidden fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-rose-500/50 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto text-2xl border border-rose-500/30 animate-bounce">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h2 class="text-xl font-extrabold text-rose-500 tracking-wider">LOGIN INVALID ATTEMPT</h2>
-            <p class="text-xs text-slate-300">Incorrect password entered for Admin access. This event has been recorded.</p>
-            <button onclick="closeInvalidAttemptPage()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl transition text-xs shadow-lg">Back to Login</button>
         </div>
     </div>
 
@@ -264,7 +252,6 @@
                             </div>
                         </div>
 
-                        <!-- Calculator கீழ் சேர்க்கப்பட்ட Chart Section (Regular Monthly Rental கீழே மற்றும் දකුණු පසට Total Payable & Interest Doughnut Chart) -->
                         <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="w-full sm:w-1/2 space-y-1">
                                 <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Repayment Breakdown</h3>
@@ -377,14 +364,13 @@
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Admin Page Password Required</label>
-                <input type="text" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="password" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
             <!-- Admin Dashboard Content -->
             <div id="adminContent" class="hidden space-y-4">
                 
-                <!-- Admin Navigation Tabs -->
                 <div class="flex gap-2 border-b border-[#282c37] pb-3 overflow-x-auto">
                     <button onclick="switchAdminTab('overviewTab')" id="btnOverviewTab" class="bg-goldAccent text-slate-950 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Overview & Usage</button>
                     <button onclick="switchAdminTab('ratesTab')" id="btnRatesTab" class="bg-[#1c202a] text-slate-300 hover:bg-[#282c37] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition">Rate Sheet Editor</button>
@@ -496,9 +482,9 @@
                                 <i class="fa-solid fa-key"></i> Change Login Password (0777353802)
                             </h4>
                             <div class="space-y-2 pt-1">
-                                <input type="text" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="text" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="text" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
                                 <button onclick="changeLoginPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
                             </div>
                         </div>
@@ -508,9 +494,9 @@
                                 <i class="fa-solid fa-shield-halved"></i> Change Admin Page Password
                             </h4>
                             <div class="space-y-2 pt-1">
-                                <input type="text" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="text" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="text" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="password" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
                                 <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
                             </div>
                         </div>
@@ -870,7 +856,6 @@
             const assignedUsername = isOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
             const userMobile = u.mobile || OWNER_MOBILE;
             
-            // හැම Log එකකදීම count එක නිවැරදිව increment වීමට transaction එකක් හෝ safe update එකක් භාවිත කෙරේ
             const userRef = db.ref('userLogs/' + userKey);
             userRef.transaction((currentData) => {
                 if (currentData) {
@@ -908,11 +893,6 @@
                     setupPresenceSystem(userMobile, u.name);
                 }
             });
-        }
-
-        function closeInvalidAttemptPage() {
-            document.getElementById('adminInvalidModal').classList.add('hidden');
-            showAuthOverlay();
         }
 
         function submitUserRegistration() {
@@ -1094,10 +1074,6 @@
 
         function verifyAdmin() {
             const enteredPass = document.getElementById('adminPass').value.trim();
-            const officerName = localStorage.getItem('officerName') || "Unknown User";
-            const officerMobile = localStorage.getItem('officerMobile') || "Unknown Mobile";
-            const officerUsername = localStorage.getItem('officerUsername') || "user";
-
             if (enteredPass === currentAdminPassword) {
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
@@ -1106,15 +1082,6 @@
                 startLiveUserLogsListener();
                 startLiveUnauthorizedAttemptsListener();
             } else {
-                const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                db.ref('adminAttempts').push({
-                    userName: officerName,
-                    userUsername: officerUsername,
-                    userMobile: officerMobile,
-                    attemptedPass: enteredPass,
-                    time: nowStr
-                });
-
                 alert('Access Denied: Incorrect Password');
             }
         }
@@ -1271,7 +1238,7 @@
                             <td class="p-2.5 text-center"><span class="bg-[#222630] text-goldAccent font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0} Logins</span></td>
                             <td class="p-2.5 text-right space-x-1">
                                 ${u.status === 'pending' ? `<button onclick="approveUser('${key}', '${u.name}')" class="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-emerald-500/30" title="Approve"><i class="fa-solid fa-check"></i> Approve</button>` : ''}
-                                ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-rose-500/30" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-emerald-500/30" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                             </td>
                         </tr>
                     `;
@@ -1399,7 +1366,6 @@
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-            // Chart එකට Principal සහ Total Interest දත්ත යාවත්කාලීන කිරීම (දකුණු පසට Total Payable & Interest පෙන්වන අයුරින්)
             updateCalculatorSummaryChart(P, totalInterest);
 
             const tbody = document.getElementById('scheduleTable');
