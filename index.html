@@ -1,3 +1,5 @@
+Last update
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,10 +82,10 @@
                     <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
 
-                <!-- User Specific Password Field (Hidden for Admin, required for others) -->
-                <div id="userPasswordContainer" class="hidden space-y-1">
-                    <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Password Required</label>
-                    <input type="password" id="userPinInput" placeholder="Enter password" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
+                <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) - PIN only (Numeric Keyboard) -->
+                <div id="ownerPasswordContainer" class="hidden space-y-1">
+                    <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Login Password Required</label>
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="ownerPinInput" placeholder="Enter pin" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
                 </div>
 
                 <div class="flex gap-2">
@@ -101,10 +103,6 @@
                 <div>
                     <label class="text-xs font-bold text-slate-600 block mb-1">Mobile Number</label>
                     <input type="tel" inputmode="numeric" pattern="[0-9]*" id="setupMobile" placeholder="e.g. 0771234567" oninput="checkRegisterMobile(this)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-600 block mb-1">Set Password</label>
-                    <input type="password" id="setupPassword" placeholder="Enter password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
                 <div id="registerAdminNotice" class="hidden text-[11px] text-rose-600 font-bold bg-rose-50 p-2 rounded-xl border border-rose-100">
                     <i class="fa-solid fa-triangle-exclamation"></i> Admin number (0777353802) cannot be registered from here. Please use Login directly.
@@ -368,7 +366,7 @@
             <!-- Admin Password Verification -->
             <div id="adminAuth" class="space-y-3 max-w-sm mx-auto py-6">
                 <label class="text-xs font-bold text-slate-300 block">Admin Page Password Required</label>
-                <input type="password" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
+                <input type="text" id="adminPass" placeholder="Enter Admin Page Password" class="w-full p-3 bg-[#0b0c0e] border border-[#282c37] rounded-2xl font-bold text-slate-100 outline-none focus:border-goldAccent">
                 <button onclick="verifyAdmin()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-2xl transition text-sm shadow-md">Access Dashboard</button>
             </div>
 
@@ -458,9 +456,10 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: Security & Passwords -->
+                <!-- TAB 3: Security & Passwords - Last Rate Modification Moved Here with PDF Share Option -->
                 <div id="securityTab" class="hidden space-y-4">
                     
+                    <!-- Last Rate Modification Display Box inside Security & Passwords Tab -->
                     <div class="p-4 bg-[#0b0c0e] border border-goldAccent/30 rounded-2xl space-y-3">
                         <div class="flex justify-between items-center">
                             <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
@@ -482,17 +481,35 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Login Password Change Option -->
+                        <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
+                            <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-key"></i> Change Login Password (0777353802)
+                            </h4>
+                            
+                            <div class="space-y-2 pt-1">
+                                <div class="space-y-2">
+                                    <input type="text" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <button onclick="changeLoginPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Admin Page Password Change Option -->
-                        <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3 md:col-span-2">
+                        <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                             <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
                                 <i class="fa-solid fa-shield-halved"></i> Change Admin Page Password
                             </h4>
                             
-                            <div class="space-y-2 pt-1 max-w-md">
-                                <input type="password" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="password" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <input type="password" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                <button onclick="changeAdminPassword()" class="bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
+                            <div class="space-y-2 pt-1">
+                                <div class="space-y-2">
+                                    <input type="text" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <input type="text" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                    <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -534,6 +551,7 @@
         const OWNER_MOBILE = "0777353802";
         const OWNER_NAME = "Lakmal Maduranga";
         const OWNER_USERNAME = "admin";
+        let currentLoginPassword = "0000"; 
         let currentAdminPassword = "0000"; 
 
         const firebaseConfig = {
@@ -590,13 +608,12 @@
                     const val = this.value.trim().toLowerCase();
                     const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
                     const cleanVal = val.replace(/[^a-z0-9]/g, "");
-                    const userPassContainer = document.getElementById('userPasswordContainer');
+                    const ownerPassContainer = document.getElementById('ownerPasswordContainer');
                     
-                    // Admin (ඔබට) password අවශ්‍ය නොවන නිසා input එකේදී password field එක hidden තබයි
                     if (cleanVal === ownerKey || val === OWNER_USERNAME) {
-                        userPassContainer.classList.add('hidden');
+                        ownerPassContainer.classList.remove('hidden');
                     } else {
-                        userPassContainer.classList.remove('hidden');
+                        ownerPassContainer.classList.add('hidden');
                     }
                 });
             }
@@ -643,9 +660,7 @@
                 document.getElementById('loginMobileInput').value = savedMobile;
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
                 if(savedMobile.replace(/[^0-9]/g, "") === ownerKey) {
-                    document.getElementById('userPasswordContainer').classList.add('hidden');
-                } else {
-                    document.getElementById('userPasswordContainer').classList.remove('hidden');
+                    document.getElementById('ownerPasswordContainer').classList.remove('hidden');
                 }
             } else {
                 resetAuthView();
@@ -678,9 +693,7 @@
                 document.getElementById('loginMobileInput').value = savedMobile;
                 const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
                 if(savedMobile.replace(/[^0-9]/g, "") === ownerKey) {
-                    document.getElementById('userPasswordContainer').classList.add('hidden');
-                } else {
-                    document.getElementById('userPasswordContainer').classList.remove('hidden');
+                    document.getElementById('ownerPasswordContainer').classList.remove('hidden');
                 }
             }
         }
@@ -691,7 +704,6 @@
             document.getElementById('registerFormView').classList.remove('hidden');
             document.getElementById('setupName').value = '';
             document.getElementById('setupMobile').value = '';
-            document.getElementById('setupPassword').value = '';
             document.getElementById('setupUsername').value = '';
             document.getElementById('registerAdminNotice').classList.add('hidden');
             document.getElementById('registerBtnContainer').classList.remove('hidden');
@@ -701,8 +713,8 @@
             document.getElementById('authChoiceView').classList.remove('hidden');
             document.getElementById('loginFormView').classList.add('hidden');
             document.getElementById('registerFormView').classList.add('hidden');
-            document.getElementById('userPasswordContainer').classList.add('hidden');
-            document.getElementById('userPinInput').value = '';
+            document.getElementById('ownerPasswordContainer').classList.add('hidden');
+            document.getElementById('ownerPinInput').value = '';
         }
 
         function autoGenerateUsername() {
@@ -760,8 +772,12 @@
             const cleanInput = inputVal.toLowerCase().replace(/[^a-z0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
 
-            // ඔබ (Admin) සඳහා password එකක් අවශ්‍ය නොවන පරිදි කෙලින්ම log වීම
             if (cleanInput === ownerKey || inputVal.toLowerCase() === OWNER_USERNAME) {
+                const enteredPin = document.getElementById('ownerPinInput').value.trim();
+                if (enteredPin !== currentLoginPassword) {
+                    return alert("Incorrect Login Password! Please enter the correct password.");
+                }
+
                 const adminUserObj = {
                     name: OWNER_NAME,
                     username: OWNER_USERNAME,
@@ -773,7 +789,6 @@
                 return;
             }
 
-            // වෙනත් පරිශීලකයින් සඳහා password එක පරීක්ෂා කිරීම
             db.ref('userLogs').once('value', (snapshot) => {
                 const users = snapshot.val() || {};
                 let foundKey = null;
@@ -796,12 +811,6 @@
                     if (foundUser.status !== 'approved') {
                         return alert(`Your account (${inputVal}) has not been approved by the Admin yet. Please wait.`);
                     }
-                    
-                    const enteredPassword = document.getElementById('userPinInput').value.trim();
-                    if (!enteredPassword || enteredPassword !== foundUser.password) {
-                        return alert("Incorrect password! Please enter your correct password.");
-                    }
-
                     completeLogin(foundKey, foundUser);
                 } else {
                     alert("No account found with this details. Please register first.");
@@ -845,10 +854,9 @@
         function submitUserRegistration() {
             const name = document.getElementById('setupName').value.trim();
             const mobile = document.getElementById('setupMobile').value.trim();
-            const password = document.getElementById('setupPassword').value.trim();
             const username = document.getElementById('setupUsername').value.trim();
 
-            if (!name || !mobile || !password) return alert("Please enter your full name, mobile number, and password.");
+            if (!name || !mobile) return alert("Please enter both your full name and mobile number.");
 
             const userKey = mobile.replace(/[^0-9]/g, "");
             const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
@@ -899,7 +907,6 @@
                     name: name,
                     username: finalUsername,
                     mobile: mobile,
-                    password: password,
                     status: 'pending',
                     loginCount: 0,
                     isOnline: false,
@@ -943,6 +950,10 @@
         }
 
         function listenForPasswords() {
+            db.ref('adminSettings/loginPassword').on('value', (snap) => {
+                const val = snap.val();
+                if (val) currentLoginPassword = val;
+            });
             db.ref('adminSettings/password').on('value', (snap) => {
                 const val = snap.val();
                 if (val) currentAdminPassword = val;
@@ -1046,6 +1057,37 @@
 
                 alert('Access Denied: Incorrect Password');
             }
+        }
+
+        function changeLoginPassword() {
+            const currentPass = document.getElementById('currentLoginPasswordInput').value.trim();
+            const newPass = document.getElementById('newLoginPasswordInput').value.trim();
+            const confirmPass = document.getElementById('confirmLoginPasswordInput').value.trim();
+
+            if (!currentPass || !newPass || !confirmPass) {
+                return alert("Please fill in all login password fields.");
+            }
+            if (currentPass !== currentLoginPassword) {
+                return alert("Incorrect current login password.");
+            }
+            if (newPass !== confirmPass) {
+                return alert("New login passwords do not match.");
+            }
+            if (!confirm("Are you sure you want to change the login password?")) {
+                return;
+            }
+
+            db.ref('adminSettings/loginPassword').set(newPass, (error) => {
+                if (!error) {
+                    currentLoginPassword = newPass;
+                    alert("Login Password updated successfully!");
+                    document.getElementById('currentLoginPasswordInput').value = '';
+                    document.getElementById('newLoginPasswordInput').value = '';
+                    document.getElementById('confirmLoginPasswordInput').value = '';
+                } else {
+                    alert("Failed to update login password: " + error.message);
+                }
+            });
         }
 
         function changeAdminPassword() {
@@ -1874,4 +1916,3 @@
     </script>
 </body>
 </html>
- 
