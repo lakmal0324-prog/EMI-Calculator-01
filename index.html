@@ -1094,7 +1094,7 @@
                     if (isOwnerUser) {
                         el.classList.remove('hidden');
                     } else {
-                        el.classList.add('hidden');
+                        el.classList.add('hidden'); // Owner නොවන වෙනත් user කෙනෙක් නම් සම්පූර්ණයෙන්ම සඟවයි
                     }
                 });
 
@@ -1103,7 +1103,7 @@
                     startLiveUserLogsListener();
                     startLiveUnauthorizedAttemptsListener();
                 } else {
-                    switchAdminTab('ratesTab'); // Non-owner starts directly on Rate Sheet Editor
+                    switchAdminTab('ratesTab'); // වෙනත් user කෙනෙක් නම් කෙලින්ම Rate Sheet Tab එකට යවයි
                 }
             } else {
                 alert('Access Denied: Incorrect Password');
