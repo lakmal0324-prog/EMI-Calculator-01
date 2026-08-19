@@ -251,18 +251,6 @@
                                 <span id="summaryPayable" class="text-brandPrimary font-bold font-mono text-sm mt-0.5 block">Rs. 0.00</span>
                             </div>
                         </div>
-
-                        <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div class="w-full sm:w-1/2 space-y-1">
-                                <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Repayment Breakdown</h3>
-                                <p class="text-[11px] text-slate-400">Visual representation showing the proportion of Total Principal versus Total Interest Payable.</p>
-                            </div>
-                            <div class="w-full sm:w-1/2 flex justify-end">
-                                <div class="w-36 h-36 relative">
-                                    <canvas id="calculatorSummaryChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm">
@@ -535,6 +523,7 @@
         </div>
     </div>
 
+    <!-- Hidden canvas for PDF generation -->
     <canvas id="pdfChartCanvas" width="100" height="100" class="hidden"></canvas>
 
     <!-- JAVASCRIPT LOGIC -->
@@ -562,7 +551,6 @@
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
         let cachedUserData = null; 
         let lastRateMeta = null;
-        let calculatorSummaryChartInstance = null;
 
         let defaultRateData = {
             registered: [
@@ -593,7 +581,6 @@
             listenForPendingApprovalsBadge();
             listenForPasswords();
             listenForLastRateMeta();
-            initCalculatorSummaryChart();
             
             const loginInputElem = document.getElementById('loginMobileInput');
             if(loginInputElem) {
@@ -611,35 +598,6 @@
                 });
             }
         };
-
-        function initCalculatorSummaryChart() {
-            const ctx = document.getElementById('calculatorSummaryChart').getContext('2d');
-            calculatorSummaryChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Principal', 'Total Interest'],
-                    datasets: [{
-                        data: [0, 0],
-                        backgroundColor: ['#5345ED', '#D4AF37'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false } 
-                    },
-                    cutout: '70%'
-                }
-            });
-        }
-
-        function updateCalculatorSummaryChart(principal, interest) {
-            if (!calculatorSummaryChartInstance) return;
-            calculatorSummaryChartInstance.data.datasets[0].data = [principal > 0 ? principal : 1, interest > 0 ? interest : 0];
-            calculatorSummaryChartInstance.update();
-        }
 
         function populateCategoryDropdown() {
             const regStatus = document.getElementById('vehicleRegStatus').value;
@@ -1084,17 +1042,15 @@
                 document.getElementById('adminContent').classList.remove('hidden');
                 renderRateEditor();
 
-                // Check if current logged-in user is the Owner
                 const currentMobile = localStorage.getItem('officerMobile') || "";
                 const isOwnerUser = (currentMobile.replace(/[^0-9]/g, "") === OWNER_MOBILE.replace(/[^0-9]/g, ""));
 
-                // Handle visibility of owner-restricted tabs and elements
                 const restrictedElements = document.querySelectorAll('.owner-restricted');
                 restrictedElements.forEach(el => {
                     if (isOwnerUser) {
                         el.classList.remove('hidden');
                     } else {
-                        el.classList.add('hidden'); // Owner නොවන වෙනත් user කෙනෙක් නම් සම්පූර්ණයෙන්ම සඟවයි
+                        el.classList.add('hidden');
                     }
                 });
 
@@ -1103,7 +1059,7 @@
                     startLiveUserLogsListener();
                     startLiveUnauthorizedAttemptsListener();
                 } else {
-                    switchAdminTab('ratesTab'); // වෙනත් user කෙනෙක් නම් කෙලින්ම Rate Sheet Tab එකට යවයි
+                    switchAdminTab('ratesTab');
                 }
             } else {
                 alert('Access Denied: Incorrect Password');
@@ -1389,8 +1345,6 @@
             document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-brandPrimary font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            updateCalculatorSummaryChart(P, totalInterest);
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
@@ -1962,4 +1916,3 @@
     </script>
 </body>
 </html>
- 
