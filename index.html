@@ -1,5 +1,3 @@
-Last update
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +80,7 @@ Last update
                     <input type="text" id="loginMobileInput" placeholder="e.g. 0771234567 or username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-brandPrimary">
                 </div>
 
-                <!-- Owner Specific Password Field (Hidden by default, shows only for 0777353802) - PIN only (Numeric Keyboard) -->
+                <!-- Owner Specific Password Field -->
                 <div id="ownerPasswordContainer" class="hidden space-y-1">
                     <label class="text-xs font-bold text-rose-600 block mb-1"><i class="fa-solid fa-lock"></i> Login Password Required</label>
                     <input type="tel" inputmode="numeric" pattern="[0-9]*" id="ownerPinInput" placeholder="Enter pin" class="w-full p-3 bg-rose-50/50 border border-rose-200 rounded-2xl font-bold text-slate-800 outline-none focus:border-rose-500">
@@ -263,6 +261,19 @@ Last update
                             <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60">
                                 <span class="text-slate-400 block font-bold text-[10px] uppercase">Total Payable</span>
                                 <span id="summaryPayable" class="text-brandPrimary font-bold font-mono text-sm mt-0.5 block">Rs. 0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Calculator கீழ் சேர்க்கப்பட்ட Chart Section (Regular Monthly Rental கீழே மற்றும் දකුණු පසට Total Payable & Interest Doughnut Chart) -->
+                        <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="w-full sm:w-1/2 space-y-1">
+                                <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Repayment Breakdown</h3>
+                                <p class="text-[11px] text-slate-400">Visual representation showing the proportion of Total Principal versus Total Interest Payable.</p>
+                            </div>
+                            <div class="w-full sm:w-1/2 flex justify-end">
+                                <div class="w-36 h-36 relative">
+                                    <canvas id="calculatorSummaryChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -456,10 +467,9 @@ Last update
                     </div>
                 </div>
 
-                <!-- TAB 3: Security & Passwords - Last Rate Modification Moved Here with PDF Share Option -->
+                <!-- TAB 3: Security & Passwords -->
                 <div id="securityTab" class="hidden space-y-4">
                     
-                    <!-- Last Rate Modification Display Box inside Security & Passwords Tab -->
                     <div class="p-4 bg-[#0b0c0e] border border-goldAccent/30 rounded-2xl space-y-3">
                         <div class="flex justify-between items-center">
                             <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
@@ -481,35 +491,27 @@ Last update
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Login Password Change Option -->
                         <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                             <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
                                 <i class="fa-solid fa-key"></i> Change Login Password (0777353802)
                             </h4>
-                            
                             <div class="space-y-2 pt-1">
-                                <div class="space-y-2">
-                                    <input type="text" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="text" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="text" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <button onclick="changeLoginPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
-                                </div>
+                                <input type="text" id="currentLoginPasswordInput" placeholder="Current Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" id="newLoginPasswordInput" placeholder="New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" id="confirmLoginPasswordInput" placeholder="Confirm New Login Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <button onclick="changeLoginPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Login Password</button>
                             </div>
                         </div>
 
-                        <!-- Admin Page Password Change Option -->
                         <div class="p-4 bg-[#0b0c0e] border border-[#282c37] rounded-2xl space-y-3">
                             <h4 class="text-xs font-bold text-goldAccent uppercase tracking-wider flex items-center gap-1.5">
                                 <i class="fa-solid fa-shield-halved"></i> Change Admin Page Password
                             </h4>
-                            
                             <div class="space-y-2 pt-1">
-                                <div class="space-y-2">
-                                    <input type="text" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="text" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <input type="text" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
-                                    <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
-                                </div>
+                                <input type="text" id="currentAdminPasswordInput" placeholder="Current Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" id="newAdminPasswordInput" placeholder="New Admin Page Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <input type="text" id="confirmAdminPasswordInput" placeholder="Confirm New Admin Password" class="w-full p-2.5 bg-[#121418] border border-[#282c37] rounded-xl text-xs font-bold text-slate-100 outline-none focus:border-goldAccent">
+                                <button onclick="changeAdminPassword()" class="w-full bg-goldAccent hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs">Update Admin Password</button>
                             </div>
                         </div>
                     </div>
@@ -571,6 +573,7 @@ Last update
         let summaryMetrics = { P: 0, R: 0, N: 0, regularEMI: 0, totalInterest: 0, totalPayable: 0, balloonDesc: "" };
         let cachedUserData = null; 
         let lastRateMeta = null;
+        let calculatorSummaryChartInstance = null;
 
         let defaultRateData = {
             registered: [
@@ -601,6 +604,7 @@ Last update
             listenForPendingApprovalsBadge();
             listenForPasswords();
             listenForLastRateMeta();
+            initCalculatorSummaryChart();
             
             const loginInputElem = document.getElementById('loginMobileInput');
             if(loginInputElem) {
@@ -618,6 +622,35 @@ Last update
                 });
             }
         };
+
+        function initCalculatorSummaryChart() {
+            const ctx = document.getElementById('calculatorSummaryChart').getContext('2d');
+            calculatorSummaryChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Principal', 'Total Interest'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#5345ED', '#D4AF37'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false } 
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function updateCalculatorSummaryChart(principal, interest) {
+            if (!calculatorSummaryChartInstance) return;
+            calculatorSummaryChartInstance.data.datasets[0].data = [principal > 0 ? principal : 1, interest > 0 ? interest : 0];
+            calculatorSummaryChartInstance.update();
+        }
 
         function populateCategoryDropdown() {
             const regStatus = document.getElementById('vehicleRegStatus').value;
@@ -655,13 +688,19 @@ Last update
             document.getElementById('loginOverlay').classList.remove('hidden');
 
             const savedMobile = localStorage.getItem('officerMobile');
-            if (savedMobile) {
-                showLoginForm();
-                document.getElementById('loginMobileInput').value = savedMobile;
-                const ownerKey = OWNER_MOBILE.replace(/[^0-9]/g, "");
-                if(savedMobile.replace(/[^0-9]/g, "") === ownerKey) {
-                    document.getElementById('ownerPasswordContainer').classList.remove('hidden');
-                }
+            const savedName = localStorage.getItem('officerName');
+            
+            if (savedMobile && savedName) {
+                const userKey = savedMobile.replace(/[^0-9]/g, "");
+                db.ref('userLogs/' + userKey).once('value', (snapshot) => {
+                    const u = snapshot.val();
+                    if (u && u.status === 'approved') {
+                        completeLogin(userKey, u);
+                    } else {
+                        showLoginForm();
+                        document.getElementById('loginMobileInput').value = savedMobile;
+                    }
+                });
             } else {
                 resetAuthView();
             }
@@ -778,14 +817,20 @@ Last update
                     return alert("Incorrect Login Password! Please enter the correct password.");
                 }
 
-                const adminUserObj = {
-                    name: OWNER_NAME,
-                    username: OWNER_USERNAME,
-                    mobile: OWNER_MOBILE,
-                    status: 'approved',
-                    role: 'admin'
-                };
-                completeLogin(ownerKey, adminUserObj);
+                db.ref('userLogs/' + ownerKey).once('value', (snap) => {
+                    let ownerData = snap.val();
+                    if (!ownerData) {
+                        ownerData = {
+                            name: OWNER_NAME,
+                            username: OWNER_USERNAME,
+                            mobile: OWNER_MOBILE,
+                            status: 'approved',
+                            loginCount: 0,
+                            role: 'admin'
+                        };
+                    }
+                    completeLogin(ownerKey, ownerData);
+                });
                 return;
             }
 
@@ -825,25 +870,44 @@ Last update
             const assignedUsername = isOwner ? OWNER_USERNAME : (u.username || u.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
             const userMobile = u.mobile || OWNER_MOBILE;
             
-            db.ref('userLogs/' + userKey).update({
-                loginCount: (u.loginCount || 0) + 1,
-                isOnline: true,
-                lastActive: nowStr,
-                lastLoggedIn: nowStr,
-                username: assignedUsername,
-                status: 'approved'
+            // හැම Log එකකදීම count එක නිවැරදිව increment වීමට transaction එකක් හෝ safe update එකක් භාවිත කෙරේ
+            const userRef = db.ref('userLogs/' + userKey);
+            userRef.transaction((currentData) => {
+                if (currentData) {
+                    currentData.loginCount = (parseInt(currentData.loginCount) || 0) + 1;
+                    currentData.isOnline = true;
+                    currentData.lastActive = nowStr;
+                    currentData.lastLoggedIn = nowStr;
+                    currentData.username = assignedUsername;
+                    currentData.status = 'approved';
+                } else {
+                    currentData = {
+                        name: u.name || OWNER_NAME,
+                        username: assignedUsername,
+                        mobile: userMobile,
+                        status: 'approved',
+                        loginCount: 1,
+                        isOnline: true,
+                        lastActive: nowStr,
+                        lastLoggedIn: nowStr,
+                        role: isOwner ? 'admin' : 'user'
+                    };
+                }
+                return currentData;
+            }, (error, committed) => {
+                if (!error && committed) {
+                    localStorage.setItem('officerName', u.name);
+                    localStorage.setItem('officerMobile', userMobile);
+                    localStorage.setItem('officerUsername', assignedUsername);
+
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('officerNameDisplay').value = u.name;
+                    document.getElementById('officerMobileDisplay').value = userMobile;
+                    document.getElementById('facilityUsernameBadge').innerText = "@" + assignedUsername;
+
+                    setupPresenceSystem(userMobile, u.name);
+                }
             });
-
-            localStorage.setItem('officerName', u.name);
-            localStorage.setItem('officerMobile', userMobile);
-            localStorage.setItem('officerUsername', assignedUsername);
-
-            document.getElementById('loginOverlay').classList.add('hidden');
-            document.getElementById('officerNameDisplay').value = u.name;
-            document.getElementById('officerMobileDisplay').value = userMobile;
-            document.getElementById('facilityUsernameBadge').innerText = "@" + assignedUsername;
-
-            setupPresenceSystem(userMobile, u.name);
         }
 
         function closeInvalidAttemptPage() {
@@ -932,10 +996,6 @@ Last update
             connectedRef.on('value', (snap) => {
                 if (snap.val() === true) {
                     userStatusRef.child('isOnline').onDisconnect().set(false);
-                    userStatusRef.child('lastActive').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
-
-                    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    userStatusRef.update({ isOnline: true, lastActive: nowStr });
                 }
             });
         }
@@ -1185,7 +1245,7 @@ Last update
                     if (!u.name) continue;
 
                     totalUsers++;
-                    totalLogins += (u.loginCount || 1);
+                    totalLogins += (parseInt(u.loginCount) || 0);
                     if (u.status === 'pending') pendingCount++;
                     if (u.isOnline === true) activeNow++;
 
@@ -1208,7 +1268,7 @@ Last update
                             <td class="p-2.5 text-slate-400 font-mono font-bold">${u.mobile || 'N/A'}</td>
                             <td class="p-2.5 text-center">${statusText}</td>
                             <td class="p-2.5 text-center text-[10px] text-slate-300 font-mono font-bold">${lastLogTime}</td>
-                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-goldAccent font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 1} Logins</span></td>
+                            <td class="p-2.5 text-center"><span class="bg-[#222630] text-goldAccent font-bold px-1.5 py-0.5 rounded text-[10px]">${u.loginCount || 0} Logins</span></td>
                             <td class="p-2.5 text-right space-x-1">
                                 ${u.status === 'pending' ? `<button onclick="approveUser('${key}', '${u.name}')" class="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-emerald-500/30" title="Approve"><i class="fa-solid fa-check"></i> Approve</button>` : ''}
                                 ${!isTargetOwner ? `<button onclick="removeUser('${key}', '${u.name}')" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold px-2 py-1 rounded text-[10px] uppercase border border-rose-500/30" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` : ''}
@@ -1338,6 +1398,9 @@ Last update
             document.getElementById('summaryText').innerHTML = `Regular Monthly Rental: <span class="text-brandPrimary font-mono">Rs. ${regularEMI.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`;
             document.getElementById('summaryInterest').innerText = `Rs. ${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('summaryPayable').innerText = `Rs. ${totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            // Chart එකට Principal සහ Total Interest දත්ත යාවත්කාලීන කිරීම (දකුණු පසට Total Payable & Interest පෙන්වන අයුරින්)
+            updateCalculatorSummaryChart(P, totalInterest);
 
             const tbody = document.getElementById('scheduleTable');
             tbody.innerHTML = calculatedSchedule.map(s => `
@@ -1584,7 +1647,7 @@ Last update
                     labels: ['Principal', 'Interest'],
                     datasets: [{
                         data: [summaryMetrics.P, summaryMetrics.totalInterest],
-                        backgroundColor: ['#5345ED', '#E8ECF3'],
+                        backgroundColor: ['#5345ED', '#D4AF37'],
                         borderWidth: 0
                     }]
                 },
@@ -1680,7 +1743,7 @@ Last update
             doc.setFont('helvetica', 'bold');
             doc.text(`Principal: Rs. ${summaryMetrics.P.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 11.5);
 
-            doc.setFillColor(232, 236, 243);
+            doc.setFillColor(212, 175, 55);
             doc.rect(43, startTableY + 16, 4, 4, 'F');
             doc.text(`Interest: Rs. ${summaryMetrics.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2})}`, 49, startTableY + 19.5);
 
@@ -1811,7 +1874,7 @@ Last update
                 if (!u.name) continue;
 
                 totalUsers++;
-                totalLogins += (u.loginCount || 1);
+                totalLogins += (parseInt(u.loginCount) || 0);
                 if (u.status === 'pending') pendingCount++;
                 if (u.isOnline === true) activeNow++;
 
@@ -1823,7 +1886,7 @@ Last update
                     "@" + assignedUname,
                     (u.status || 'pending').toUpperCase(),
                     u.lastLoggedIn || u.lastActive || "N/A",
-                    (u.loginCount || 1).toString() + " Logins"
+                    (u.loginCount || 0).toString() + " Logins"
                 ]);
             }
 
@@ -1873,27 +1936,20 @@ Last update
                     head: [['Name', 'Username', 'Status', 'Last Login', 'Usage Count']],
                     body: tableRows,
                     theme: 'plain',
-                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 7, halign: 'left' },
-                    bodyStyles: { fontSize: 7, cellPadding: 2, fontStyle: 'bold', textColor: [30, 41, 59] },
+                    headStyles: { fillStyle: 'F', fillColor: [243, 245, 249], textColor: [83, 69, 237], fontStyle: 'bold', fontSize: 8, halign: 'center' },
+                    bodyStyles: { fontSize: 7.5, cellPadding: 2, fontStyle: 'bold', textColor: [30, 41, 59] },
                     columnStyles: {
-                        0: { halign: 'left', cellWidth: 50 },
-                        1: { halign: 'left', cellWidth: 40 },
+                        0: { cellWidth: 45 },
+                        1: { cellWidth: 35 },
                         2: { halign: 'center', cellWidth: 30 },
                         3: { halign: 'center', cellWidth: 40 },
-                        4: { halign: 'center', cellWidth: 26 }
+                        4: { halign: 'center', cellWidth: 36 }
                     },
-                    alternateRowStyles: { fillColor: [250, 250, 250] },
-                    margin: { left: 12, right: 12 },
-                    didDrawPage: function (data) {
-                        data.doc.setFontSize(7);
-                        data.doc.setTextColor(148, 163, 184);
-                        data.doc.setFont('helvetica', 'bold');
-                        data.doc.text("EMI Master Pro Usage Report | Developed by Lakmal Maduranga", 105, 290, { align: 'center' });
-                    }
+                    margin: { left: 12, right: 12 }
                 });
             }
 
-            const fileName = `EMI master pro usage.pdf`;
+            const fileName = `User_Usage_Report.pdf`;
             const pdfBlob = doc.output('blob');
             const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
@@ -1901,8 +1957,8 @@ Last update
                 try {
                     await navigator.share({
                         files: [file],
-                        title: 'EMI Master Pro Usage',
-                        text: `EMI Master Pro Usage & User Log Details`
+                        title: 'User Usage Report',
+                        text: `System User Logs and Usage Report`
                     });
                 } catch (err) {
                     if (err.name !== 'AbortError') {
