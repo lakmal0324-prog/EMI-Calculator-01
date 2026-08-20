@@ -1,21 +1,23 @@
 {
   "name": "EMI Master Pro",
   "short_name": "EMI Master",
+  "description": "Advanced EMI & Rate Sheet Calculator",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#F3F5F9",
-  "theme_color": "#5345ED",
+  "background_color": "#ffffff",
+  "theme_color": "#5b3a7d",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icon.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
- 
